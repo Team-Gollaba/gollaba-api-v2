@@ -28,8 +28,9 @@ public class PollOption extends BaseEntity {
     @Column
     private String imageUrl;
 
-    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
-    private Set<Voter> voters = new HashSet<>();
+    //@OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pollOption", cascade = CascadeType.ALL)
+    private Set<Voter> voters = new HashSet<>(); //이거 중복 방지라 hash?
 
     public PollOption(Poll poll,
                       String description,

@@ -32,14 +32,15 @@ public class Poll extends BaseEntity {
     @Column(nullable = false)
     private PollResponseType responseType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean isBallot;
+    private PollType pollType;
 
     @Column(nullable = false)
     private LocalDateTime endedAt;
 
     @Column(nullable = false)
-    private Integer readCount;
+    private Integer readCount; //조회수
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
     @OrderColumn(name = "position")
@@ -48,5 +49,25 @@ public class Poll extends BaseEntity {
     public enum PollResponseType {
         SINGLE,
         MULTI
+    }
+
+    public enum PollType {
+        NAMED,
+        ANYMOUS
+    }
+
+    public Poll(Long userId,
+                String title,
+                String creatorName,
+                PollType pollType,
+                PollResponseType responseType
+    ){
+        this.userId = userId;
+        this.title = title;
+        this.creatorName = creatorName;
+        this.pollType = pollType;
+        this.responseType = responseType;
+        this.endedAt = createdAt().plusDays(7);
+        this.readCount = 0;
     }
 }
