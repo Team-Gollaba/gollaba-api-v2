@@ -38,10 +38,10 @@ class PollServiceTest {
                 Poll.PollResponseType.MULTI);
 
         var poll = new Poll(createRequest.toEntity().getUserId(), //이래야 null은 null로 들어감
-                createRequest.title(),
-                createRequest.creatorName(),
-                createRequest.pollType(),
-                createRequest.responseType());
+                createRequest.toEntity().getTitle(), //반환되어서 저장되는 건 entity로 변경되는 칭구여야 함
+                createRequest.toEntity().getCreatorName(),
+                createRequest.toEntity().getPollType(),
+                createRequest.toEntity().getResponseType());
         ReflectionTestUtils.setField(poll, "id", 1L);
 
         BDDMockito.given(repository.save(Mockito.any(Poll.class)))
@@ -67,10 +67,10 @@ class PollServiceTest {
                 Poll.PollResponseType.MULTI);
 
         var poll = new Poll(createRequest.toEntity().getUserId(), //이래야 null은 null로 들어감
-                createRequest.title(),
-                createRequest.creatorName(),
-                createRequest.pollType(),
-                createRequest.responseType());
+                createRequest.toEntity().getTitle(),
+                createRequest.toEntity().getCreatorName(),
+                createRequest.toEntity().getPollType(),
+                createRequest.toEntity().getResponseType());
         ReflectionTestUtils.setField(poll, "id", 1L);
 
         BDDMockito.given(repository.save(Mockito.any(Poll.class)))

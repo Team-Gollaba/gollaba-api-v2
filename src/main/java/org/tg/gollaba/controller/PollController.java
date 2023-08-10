@@ -16,7 +16,7 @@ import java.util.Optional;
 class PollController {
     private final PollService pollService;
 
-    @PostMapping ("/{userId}")
+    @PostMapping ("/") //userId를 optional로 받을 수 있으려면 "/" 으로 맵핑해야 함
     public ApiResponse<Long> create(@PathVariable Optional<Long> userId,
                                     @RequestBody Request request) {
 //        @PathVariable  Optional<Long> userId,
@@ -31,7 +31,9 @@ class PollController {
             String title,
             @NotBlank(message = "작성자 이름을 입력해 주세요.")
             String creatorName,
+            @NotNull
             Poll.PollType pollType,
+            @NotNull
             Poll.PollResponseType responseType
     ){
         public PollService.CreateRequest toCreateRequest(Optional<Long> userId){
