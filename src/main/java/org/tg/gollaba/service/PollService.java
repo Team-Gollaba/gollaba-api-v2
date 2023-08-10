@@ -5,7 +5,7 @@ import org.tg.gollaba.repository.PollRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tg.gollaba.vo.PollVo;
+import org.tg.gollaba.dto.PollDto;
 
 import java.util.Optional;
 
@@ -15,20 +15,20 @@ public class PollService {
     private final PollRepository pollRepository;
 
     @Transactional // TODO: 구현하기
-    public PollVo create(CreateRequest request) {
+    public PollDto create(CreateRequirement request) {
         var poll = request.toEntity();
 
         pollRepository.save(poll);
-        return PollVo.from(poll);
+        return PollDto.from(poll);
     }
 
-    public record CreateRequest(
-            Optional<Long> userId,
-//            Long userId,
+    public record CreateRequirement(
+            Optional<Long> userId, //creatorId리
             String title,
             String creatorName,
             Poll.PollType pollType,
             Poll.PollResponseType responseType
+
     ) {
         public  Poll toEntity() {
             return new Poll(
@@ -38,5 +38,7 @@ public class PollService {
                 pollType,
                 responseType);
         }
+
+
     }
 }

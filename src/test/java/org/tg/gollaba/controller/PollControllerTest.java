@@ -1,19 +1,9 @@
 package org.tg.gollaba.controller;
 
-import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.tg.gollaba.common.ControllerTestContext;
-import org.tg.gollaba.service.PollService;
-import org.tg.gollaba.vo.PollVo;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 class PollControllerTest extends ControllerTestContext {

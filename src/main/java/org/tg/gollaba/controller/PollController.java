@@ -7,7 +7,8 @@ import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
 import org.tg.gollaba.service.PollService;
 import lombok.RequiredArgsConstructor;
-import org.tg.gollaba.vo.PollVo;
+import org.tg.gollaba.dto.PollDto;
+
 import java.util.Optional;
 
 @RestController
@@ -16,17 +17,17 @@ import java.util.Optional;
 class PollController {
     private final PollService pollService;
 
-    @PostMapping ("/") //userId를 optional로 받을 수 있으려면 "/" 으로 맵핑해야 함
-    public ApiResponse<Long> create(@PathVariable Optional<Long> userId,
-                                    @RequestBody Request request) {
+    @PostMapping  //pollId는 여기서 못받음 전부 body로
+    public ApiResponse<Long> create(@RequestBody CreateRequest request) {
 //        @PathVariable  Optional<Long> userId,
-        PollVo poll = pollService.create(request.toCreateRequest(userId));
-
+        PollDto poll = pollService.create(request.toCreateRequirement());
 
         return ApiResponse.success(poll.id());
     }
 
-    record Request(
+    record CreateRequest(
+            Optional<Long> userId,
+
             @NotBlank(message = "제목을 입력해 주세요.")
             String title,
             @NotBlank(message = "작성자 이름을 입력해 주세요.")
@@ -36,8 +37,8 @@ class PollController {
             @NotNull
             Poll.PollResponseType responseType
     ){
-        public PollService.CreateRequest toCreateRequest(Optional<Long> userId){
-            return new PollService.CreateRequest(
+        public PollService.CreateRequirement toCreateRequirement(){
+            return new PollService.CreateRequirement(
                     userId,
                     title,
                     creatorName,
@@ -45,4 +46,10 @@ class PollController {
                     responseType);
         }
     }
+    record List<PollOption>(
+            @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
+            String description,
+            String imageUrl
+            //짜장면, 탕수율 이렇게 선택지 2개 만들고 싶으면 pollOption 객체 2개 생성?
+    ){}
 }
