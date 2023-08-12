@@ -4,10 +4,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  datasource:
-    url: localhost:3306/example
-    username: example
-    password: example123
 
 logging:
   level:

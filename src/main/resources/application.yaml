@@ -16,6 +16,12 @@ spring:
         default-page-size: 10
         one-indexed-parameters: true
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USER_NAME}
+    password: ${DATASOURCE_PASSWORD}
+
 server:
   servlet:
     encoding:
