@@ -34,11 +34,9 @@ public class PollOption extends BaseEntity {
 
     public PollOption(Poll poll,
                       String description,
-                      String imageUrl,
-                      Set<Voter> voters) {
+                      String imageUrl) {
         this.poll = poll;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.voters = voters;
     }
 }

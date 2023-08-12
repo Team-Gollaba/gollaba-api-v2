@@ -5,11 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
+import org.tg.gollaba.domain.PollOption;
 import org.tg.gollaba.service.PollService;
 import lombok.RequiredArgsConstructor;
 import org.tg.gollaba.dto.PollDto;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v2/polls")
@@ -23,7 +26,14 @@ class PollController {
         PollDto poll = pollService.create(request.toCreateRequirement());
 
         return ApiResponse.success(poll.id());
+
     }
+    //createRequest
+
+    //흐름
+    //1. request 2개 선언한 것처럼 requirement도 2개 선언
+    //2. pollOption request -> requirement 변환 메소드 작성
+    //3. createRequest -> requirement 로 변환할 때, pollOption을 스트림해서 리스트로 넘기자 ...
 
     record CreateRequest(
             Optional<Long> userId,
@@ -35,21 +45,45 @@ class PollController {
             @NotNull(message = "익명투표, 기명투표 선택해 주세요.")
             Poll.PollType pollType,
             @NotNull(message = "단일투표, 중복투표를 선택해 주세요.")
-            Poll.PollResponseType responseType
+            Poll.PollResponseType responseType,
+
+            @NotNull(message = "투표 항목 설정은 필수입니다.")
+            List<PollOptionRequest> pollOptions
     ){
         public PollService.CreateRequirement toCreateRequirement(){
+            //list로 받은 request를 하나하나 requirement로 변경해주자 ...
+            var pollOptionRequirements =
+                    pollOptions.stream()
+                    .map(PollOptionRequest::toPollOptionRequirement)
+                    .collect(Collectors.toList());
+
             return new PollService.CreateRequirement(
                     userId,
                     title,
                     creatorName,
                     pollType,
-                    responseType);
+                    responseType,
+                    pollOptionRequirements //이러면 requirement로 전부 넘겨줄 수 있음
+            );
         }
     }
-    record List<PollOption>(
+
+    record PollOptionRequest(
             @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
             String description,
-            Optional<String> imageUrl
+            String imageUrl
             //짜장면, 탕수율 이렇게 선택지 2개 만들고 싶으면 pollOption 객체 2개 생성?
+    ){
+        public PollService.PollOptionRequirement toPollOptionRequirement() {
+            return new PollService.PollOptionRequirement(
+                    description,
+                    imageUrl
+            );
+        }
+    }
+
+    record Response(
+       Long id,
+       List<PollOption> pollOptions
     ){}
 }
