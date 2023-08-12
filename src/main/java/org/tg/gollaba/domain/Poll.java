@@ -53,7 +53,7 @@ public class Poll extends BaseEntity {
 
     public enum PollType {
         NAMED,
-        ANYMOUS
+        ANONYMOUS
     }
 
     public Poll(Long userId,

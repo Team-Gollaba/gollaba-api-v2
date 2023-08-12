@@ -1,11 +1,10 @@
 package org.tg.gollaba.controller;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
-import org.tg.gollaba.domain.PollOption;
 import org.tg.gollaba.service.PollService;
 import lombok.RequiredArgsConstructor;
 import org.tg.gollaba.dto.PollDto;
@@ -21,8 +20,7 @@ class PollController {
     private final PollService pollService;
 
     @PostMapping  //pollId는 여기서 못받음 전부 body로
-    public ApiResponse<Long> create(@RequestBody CreateRequest request) {
-//        @PathVariable  Optional<Long> userId,
+    public ApiResponse<Long> create(@Validated @RequestBody CreateRequest request) {
         PollDto poll = pollService.create(request.toCreateRequirement());
 
         return ApiResponse.success(poll.id());
@@ -48,6 +46,7 @@ class PollController {
             Poll.PollResponseType responseType,
 
             @NotNull(message = "투표 항목 설정은 필수입니다.")
+            @Size(min = 2, max = 10, message = "투표 항목은 최소 2개에서 최대 10개까지 설정 가능합니다.")
             List<PollOptionRequest> pollOptions
     ){
         public PollService.CreateRequirement toCreateRequirement(){
@@ -81,9 +80,4 @@ class PollController {
             );
         }
     }
-
-    record Response(
-       Long id,
-       List<PollOption> pollOptions
-    ){}
 }
