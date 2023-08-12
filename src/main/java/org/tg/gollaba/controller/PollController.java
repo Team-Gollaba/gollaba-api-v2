@@ -32,9 +32,9 @@ class PollController {
             String title,
             @NotBlank(message = "작성자 이름을 입력해 주세요.")
             String creatorName,
-            @NotNull
+            @NotNull(message = "익명투표, 기명투표 선택해 주세요.")
             Poll.PollType pollType,
-            @NotNull
+            @NotNull(message = "단일투표, 중복투표를 선택해 주세요.")
             Poll.PollResponseType responseType
     ){
         public PollService.CreateRequirement toCreateRequirement(){
@@ -49,7 +49,7 @@ class PollController {
     record List<PollOption>(
             @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
             String description,
-            String imageUrl
+            Optional<String> imageUrl
             //짜장면, 탕수율 이렇게 선택지 2개 만들고 싶으면 pollOption 객체 2개 생성?
     ){}
 }
