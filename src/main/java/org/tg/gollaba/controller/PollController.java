@@ -7,7 +7,6 @@ import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
 import org.tg.gollaba.service.PollService;
 import lombok.RequiredArgsConstructor;
-import org.tg.gollaba.dto.PollDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +19,11 @@ class PollController {
     private final PollService pollService;
 
     @PostMapping  //pollId는 여기서 못받음 전부 body로
-    public ApiResponse<Long> create(@Validated @RequestBody CreateRequest request) {
-        PollDto poll = pollService.create(request.toCreateRequirement());
+    public ApiResponse<Response> create(@Validated @RequestBody CreateRequest request) {
+        var poll = pollService.create(request.toCreateRequirement());
+        var response = new Response(poll.id());
 
-        return ApiResponse.success(poll.id());
+        return ApiResponse.success(response);
 
     }
     //createRequest
@@ -80,4 +80,8 @@ class PollController {
             );
         }
     }
+
+    record Response(
+            Long pollId
+    ){}
 }

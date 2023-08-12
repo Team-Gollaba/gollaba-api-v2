@@ -22,17 +22,11 @@ public interface ApiDocumentUtils {
         return Preprocessors.preprocessResponse(prettyPrint());
     }
 
-//    private static RequestHeadersSnippet requestHeaderWithAuth(String headerName, String description) {
-//        return HeaderDocumentation.requestHeaders(
-//            List.of(headerWithName(headerName).description(description))
-//        );
-//    }
-
     static List<FieldDescriptor> fieldsWithBasic(FieldDescriptor... fieldDescriptors) {
         return Stream.concat(
                 Stream.of(
                     fieldWithPath("status").type(JsonFieldType.STRING).description("결과 상태"),
-                    fieldWithPath("serverDatetime").type(JsonFieldType.STRING).description("응답 시간 (yyyy-MM-dd HH:mm:ss)"),
+                    fieldWithPath("serverDateTime").type(JsonFieldType.STRING).description("응답 시간 (yyyy-MM-dd HH:mm:ss)"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("메시지")
                 ),
                 Arrays.stream(fieldDescriptors)
