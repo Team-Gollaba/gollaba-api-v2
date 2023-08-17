@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class PollOption extends BaseEntity {
 
     @Id

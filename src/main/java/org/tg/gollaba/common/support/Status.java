@@ -23,7 +23,8 @@ public enum Status {
     UNKNOWN("정의 되지 않은 상태입니다."),
 
     //poll
-    POLL_NOT_FOUND("투표를 찾을 수 없습니다.")
+    POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
+    POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다.")
     ;
 
     private final String message;

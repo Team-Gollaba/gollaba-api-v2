@@ -52,6 +52,15 @@ public class CommonExceptionHandler {
     @ExceptionHandler({
         IllegalArgumentException.class,
         IllegalStateException.class,
+    })
+    public ApiResponse<Void> handleIllegalException(Exception e,
+                                                    HttpServletRequest request) {
+        log.warn("[{}] 잘못된 요청이 발생하였습니다.", request.getRequestURI(), e);
+        return ApiResponse.fail(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
         HttpRequestMethodNotSupportedException.class,
         MethodArgumentTypeMismatchException.class,
         MissingServletRequestParameterException.class,

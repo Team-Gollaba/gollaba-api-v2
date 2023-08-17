@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Poll extends BaseEntity {
 
     @Id
@@ -32,8 +32,9 @@ public class Poll extends BaseEntity {
     @Column(nullable = false)
     private PollResponseType responseType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean isBallot;
+    private PollType pollType;
 
     @Column(nullable = false)
     private LocalDateTime endedAt;
@@ -48,5 +49,17 @@ public class Poll extends BaseEntity {
     public enum PollResponseType {
         SINGLE,
         MULTI
+    }
+
+    public enum PollType {
+        NAMED,
+        ANONYMOUS
+    }
+
+    public PollOption getItem(long itemId) {
+        return options.stream()
+          .filter(item -> item.getId() == itemId)
+          .findFirst()
+          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표 항목입니다."));
     }
 }
