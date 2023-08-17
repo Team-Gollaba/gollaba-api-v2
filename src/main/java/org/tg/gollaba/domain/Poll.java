@@ -70,4 +70,18 @@ public class Poll extends BaseEntity {
         this.endedAt = createdAt().plusDays(7);
         this.readCount = 0;
     }
+
+    public void addPollOptions(List<PollOption> pollOptions) {
+            if(pollOptions.size()<2 || pollOptions.size()>10){
+                throw new InvalidOptionSizeException();
+            }
+            for (PollOption pollOption : pollOptions) {
+                this.getOptions().add(pollOption);
+            }
+        }
+    static class InvalidOptionSizeException extends IllegalArgumentException {
+        public InvalidOptionSizeException() { //이름을 그대로 사용해야함
+            super("지정할 수 있는 항목의 범위가 아닙니다.");
+        }
+    }
 }

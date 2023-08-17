@@ -16,65 +16,48 @@ import java.util.Optional;
 public class PollService {
     private final PollRepository pollRepository;
 
-    @Transactional // TODO: 구현하기
-    public PollDto create(CreateRequirement requirement){
+    @Transactional
+    public Long create(CreateRequirement requirement){
+        var poll = createPoll(requirement);
 
-        var poll = requirement.toEntity();
+        var pollOptions = createPollOptions(requirement, poll);
+        poll.addPollOptions(pollOptions);
 
-        var pollOptions = PollOptionRequirement
-                .createPollOptions(requirement, poll);
-        addPollOptions(poll, pollOptions);
-
-
-        pollRepository.save(poll);
-        return PollDto.from(poll);
+        pollRepository.save(poll); //여기서 터짐
+        return poll.getId();
     }
 
-    public void addPollOptions(Poll poll, List<PollOption> pollOptions) {
-        for (PollOption pollOption : pollOptions) {
-            poll.getOptions().add(pollOption);
-        }
+    private static List<PollOption> createPollOptions(CreateRequirement requirement, Poll poll) {
+        return requirement.pollOptions().stream()
+            .map(optionRequirement -> new PollOption(
+                poll,
+                optionRequirement.description(),
+                optionRequirement.imageUrl()
+            ))
+            .toList();
+    }
+
+    private Poll createPoll(CreateRequirement requirement){
+        return new Poll(
+            requirement.userId.orElse(null),
+            requirement.title,
+            requirement.creatorName,
+            requirement.pollType,
+            requirement.responseType
+        );
     }
 
     public record CreateRequirement(
-            Optional<Long> userId, //creatorId리
+            Optional<Long> userId,
             String title,
             String creatorName,
             Poll.PollType pollType,
             Poll.PollResponseType responseType,
             List<PollOptionRequirement> pollOptions
-
-
     ) {
-        public  Poll toEntity() {
-            return new Poll(
-                userId.orElse(null),//userId,
-                title,
-                creatorName,
-                pollType,
-                responseType
-            );
-        }
-    }
-
-    //이거 엔티티 만들겠다고 PollOption 생성자 추가하면 바로 몽둥이겠지???
-    public record PollOptionRequirement( //얘는 poll 만들면서 만들어질거기 때문에 ... 따로 생성자 만들 필요 없음
+        public record PollOptionRequirement(
             String description,
             String imageUrl
-    ){
-        public PollOption toEntity(Poll poll){
-            return new PollOption(
-                    poll,
-                    description,
-                    imageUrl
-            );
-        }
-
-        //requirement에서 pollOption만 빼야함, 그리고 그것만 엔티티로 만들어서 리스트로 반환해야함
-        public static List<PollOption> createPollOptions(CreateRequirement requirement, Poll poll) {
-            return requirement.pollOptions().stream()
-                    .map(optionRequirement -> optionRequirement.toEntity(poll))
-                    .toList();
-        }
+        ){ }
     }
 }

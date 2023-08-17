@@ -18,20 +18,12 @@ import java.util.stream.Collectors;
 class PollController {
     private final PollService pollService;
 
-    @PostMapping  //pollId는 여기서 못받음 전부 body로
-    public ApiResponse<Response> create(@Validated @RequestBody CreateRequest request) {
-        var poll = pollService.create(request.toCreateRequirement());
-        var response = new Response(poll.id());
+    @PostMapping
+    public ApiResponse<Long> create(@Validated @RequestBody CreateRequest request) {
+        var pollId = pollService.create(request.toCreateRequirement());
 
-        return ApiResponse.success(response);
-
+        return ApiResponse.success(pollId);
     }
-    //createRequest
-
-    //흐름
-    //1. request 2개 선언한 것처럼 requirement도 2개 선언
-    //2. pollOption request -> requirement 변환 메소드 작성
-    //3. createRequest -> requirement 로 변환할 때, pollOption을 스트림해서 리스트로 넘기자 ...
 
     record CreateRequest(
             Optional<Long> userId,
@@ -50,7 +42,6 @@ class PollController {
             List<PollOptionRequest> pollOptions
     ){
         public PollService.CreateRequirement toCreateRequirement(){
-            //list로 받은 request를 하나하나 requirement로 변경해주자 ...
             var pollOptionRequirements =
                     pollOptions.stream()
                     .map(PollOptionRequest::toPollOptionRequirement)
@@ -62,26 +53,21 @@ class PollController {
                     creatorName,
                     pollType,
                     responseType,
-                    pollOptionRequirements //이러면 requirement로 전부 넘겨줄 수 있음
+                    pollOptionRequirements
             );
         }
-    }
 
-    record PollOptionRequest(
+        record PollOptionRequest(
             @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
             String description,
             String imageUrl
-            //짜장면, 탕수율 이렇게 선택지 2개 만들고 싶으면 pollOption 객체 2개 생성?
-    ){
-        public PollService.PollOptionRequirement toPollOptionRequirement() {
-            return new PollService.PollOptionRequirement(
+        ){
+            public PollService.CreateRequirement.PollOptionRequirement toPollOptionRequirement() {
+                return new PollService.CreateRequirement.PollOptionRequirement(
                     description,
                     imageUrl
-            );
+                );
+            }
         }
     }
-
-    record Response(
-            Long pollId
-    ){}
 }
