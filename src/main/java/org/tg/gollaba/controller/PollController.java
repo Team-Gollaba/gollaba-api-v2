@@ -1,7 +1,7 @@
 package org.tg.gollaba.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
@@ -19,7 +19,7 @@ class PollController {
     private final PollService pollService;
 
     @PostMapping
-    public ApiResponse<Long> create(@Validated @RequestBody CreateRequest request) {
+    public ApiResponse<Long> create(@Valid @RequestBody CreateRequest request) {
         var pollId = pollService.create(request.toCreateRequirement());
 
         return ApiResponse.success(pollId);
@@ -41,10 +41,13 @@ class PollController {
             @Size(min = 2, max = 10, message = "투표 항목은 최소 2개에서 최대 10개까지 설정 가능합니다.")
             List<PollOptionRequest> pollOptions
     ){
-        public PollService.CreateRequirement toCreateRequirement(){
+        private PollService.CreateRequirement toCreateRequirement(){
             var pollOptionRequirements =
                     pollOptions.stream()
-                    .map(PollOptionRequest::toPollOptionRequirement)
+                        .map(pollOptionRequest -> new PollService.CreateRequirement.PollOptionRequirement(
+                            pollOptionRequest.description,
+                            pollOptionRequest.imageUrl
+                        ))
                     .collect(Collectors.toList());
 
             return new PollService.CreateRequirement(
@@ -61,13 +64,6 @@ class PollController {
             @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
             String description,
             String imageUrl
-        ){
-            public PollService.CreateRequirement.PollOptionRequirement toPollOptionRequirement() {
-                return new PollService.CreateRequirement.PollOptionRequirement(
-                    description,
-                    imageUrl
-                );
-            }
-        }
+        ){}
     }
 }

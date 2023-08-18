@@ -24,15 +24,15 @@ public class PollService {
         poll.addPollOptions(pollOptions);
 
         pollRepository.save(poll); //여기서 터짐
-        return poll.getId();
+        return  poll.getId();
     }
 
     private static List<PollOption> createPollOptions(CreateRequirement requirement, Poll poll) {
         return requirement.pollOptions().stream()
             .map(optionRequirement -> new PollOption(
                 poll,
-                optionRequirement.description(),
-                optionRequirement.imageUrl()
+                optionRequirement.description,
+                optionRequirement.imageUrl
             ))
             .toList();
     }
@@ -58,6 +58,6 @@ public class PollService {
         public record PollOptionRequirement(
             String description,
             String imageUrl
-        ){ }
+        ){}
     }
 }
