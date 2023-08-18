@@ -19,10 +19,12 @@ class PollController {
     private final PollService pollService;
 
     @PostMapping
-    public ApiResponse<Long> create(@Valid @RequestBody CreateRequest request) {
+    public ApiResponse<Response> create(@Valid @RequestBody CreateRequest request) {
         var pollId = pollService.create(request.toCreateRequirement());
 
-        return ApiResponse.success(pollId);
+        return ApiResponse.success(
+            new Response(pollId)
+        );
     }
 
     record CreateRequest(
@@ -65,5 +67,14 @@ class PollController {
             String description,
             String imageUrl
         ){}
+    }
+
+    record Response(
+        Long pollId
+    ) {
+    }
+
+    {
+        "pollId": 1
     }
 }

@@ -33,28 +33,14 @@ class PollControllerTest extends ControllerTestContext {
     @Test
     void success() {
         // given
-        List<PollService.CreateRequirement.PollOptionRequirement> pollOptionRequirements = new ArrayList<>();
-        pollOptionRequirements.add(new PollService.CreateRequirement.PollOptionRequirement("test", "imgUrl"));
-        pollOptionRequirements.add(new PollService.CreateRequirement.PollOptionRequirement("test2", "imgUrl2"));
-
-        var createRequest = new PollService.CreateRequirement(
-            Optional.ofNullable(1L),
-            "title",
-            "hamtori",
-            Poll.PollType.NAMED,
-            Poll.PollResponseType.MULTI,
-            pollOptionRequirements);
-
-        Mockito.when(service.create(createRequest))
+        Mockito.when(service.create(any()))
             .thenReturn(1L); //dto가 들어와야 함
 
         given()
             .contentType(ContentType.JSON) //보내는 방식 추가 ..
-            .body(createRequest) //바디 추가
+            .body(requestBody()) //바디 추가
             .when()
-            .post(
-                "/v2/polls"
-            )
+            .post("/v2/polls")
             .then()
             .log().all()
             .apply(
@@ -75,11 +61,21 @@ class PollControllerTest extends ControllerTestContext {
                     ),
                     responseFields(
                         fieldsWithBasic(
-                            fieldWithPath("data").type(NUMBER).description("투표 ID")
+                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
+                            fieldWithPath("data.pollId").type(NUMBER).description("")
                         )
                     )
                 )
             )
             .status(HttpStatus.OK);
+    }
+
+    private String requestBody() {
+        return """
+            {
+                "title": "dd",
+                "pollType": "NAMED"
+            }
+            """;
     }
 }

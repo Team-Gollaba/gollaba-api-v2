@@ -16,47 +16,21 @@ public class PollTest {
     @Test
     void whenCreatePollFieldTest() {
         //given
-        var pollFixture = new PollFixture()
-            .setPollType(Poll.PollType.ANONYMOUS)
-            .build();
-        var pollItemFixture = new PollOptionFixture()
-            .setPoll(pollFixture)
-            .build();
 
         //when
         var poll = new Poll(
-            pollFixture.getUserId(),
-            pollFixture.getTitle(),
-            pollFixture.getCreatorName(),
-            pollFixture.getPollType(),
-            pollFixture.getResponseType()
-        );
-
-
-        var pollOption = new PollOption(
-            pollItemFixture.getPoll(),
-            pollItemFixture.getDescription(),
-            pollItemFixture.getImageUrl()
+            1L,
+            ~~~,
+            ~~,
+            ~~,
+            ~~
         );
 
         //then
-        Assertions.assertThat(poll.getUserId())
-            .isInstanceOf(Long.class).isEqualTo(1L);
-
-        Assertions.assertThat(poll.getPollType())
-            .isIn(Poll.PollType.NAMED, Poll.PollType.ANONYMOUS);
-
-        Assertions.assertThat(poll.getResponseType())
-            .isIn(Poll.PollResponseType.MULTI, Poll.PollResponseType.SINGLE);
-
-        Assertions.assertThat(poll.getReadCount())
-            .isEqualTo(0);
-
-        Assertions.assertThat(pollOption.getDescription())
-            .isNotNull();
-
-        Assertions.assertThat(pollOption.getImageUrl())
-            .isInstanceOf(String.class).startsWith("https://example.com/imageA.jpg");
+        Assertions.assertThat(poll.getUserId()).isEqualTo(1L);
+        Assertions.assertThat(poll.getPollType()).isEqualTo(Poll.PollType.ANONYMOUS);
+        ....
+        
     }
 
 
@@ -64,9 +38,6 @@ public class PollTest {
     @Test
     void whenCreatePollEndedAtFieldTest() {
         //given
-        var pollFixture = new PollFixture()
-            .setPollType(Poll.PollType.ANONYMOUS)
-            .build();
 
         //when
         var poll = new Poll(
@@ -87,44 +58,24 @@ public class PollTest {
     @Test
     void whenCreatePollOptionRangeTest() {
         //given
-        var pollFixture = new PollFixture()
-            .setPollType(Poll.PollType.ANONYMOUS)
-            .build();
-
-        var poll = new Poll(
-            pollFixture.getUserId(),
-            pollFixture.getTitle(),
-            pollFixture.getCreatorName(),
-            pollFixture.getPollType(),
-            pollFixture.getResponseType()
+        var poll = new PollFixture().build();
+        var options = List.of(
+            new PollOptionFixture().setId(1L).build()
         );
 
-        List<PollOption> pollOptionFixtures = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            pollOptionFixtures.add(
-                new PollOptionFixture()
-                    .setPoll(pollFixture)
-                    .build());
-        }
+        var overSizeOptions = new ArrayList<>();
 
-        List<PollOption> pollOptions = new ArrayList<>();
-        for (PollOption pollOptionFixture : pollOptionFixtures) {
-            PollOption pollOption = new PollOption(
-                pollOptionFixture.getPoll(),
-                pollOptionFixture.getDescription(),
-                pollOptionFixture.getImageUrl()
-            );
-            pollOptions.add(pollOption);
+        for (int i = 0 <11) {
+            overSizeOptions.add(
+                new PollOptionFixture().setId(i + 1).build()
+            )
         }
-
         //when
-        poll.addPollOptions(pollOptions);
+        var throwable1 = poll.addPollOptions(options);
+        var throwable2 = catchThrowable(() -> poll addPollOptions(overSizeOptions));
 
         //then
-        var optionSize = poll.getOptions().size();
-
-        Assertions.assertThat(optionSize)
-            .as("항목은 최소 2개부터 최대 10개까지 입니다")
-            .isBetween(2, 10);
+        assertThat(throwable1).isIstanceOf()
+        assertThat(throwable2).isIstanceOf(InvalidOptionSizeException.class);
     }
 }

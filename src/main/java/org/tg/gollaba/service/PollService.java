@@ -19,16 +19,17 @@ public class PollService {
     @Transactional
     public Long create(CreateRequirement requirement){
         var poll = createPoll(requirement);
-
         var pollOptions = createPollOptions(requirement, poll);
-        poll.addPollOptions(pollOptions);
 
+        poll.addPollOptions(pollOptions);
         pollRepository.save(poll); //여기서 터짐
+        
         return  poll.getId();
     }
 
     private static List<PollOption> createPollOptions(CreateRequirement requirement, Poll poll) {
-        return requirement.pollOptions().stream()
+        return requirement.pollOptions()
+            .stream()
             .map(optionRequirement -> new PollOption(
                 poll,
                 optionRequirement.description,

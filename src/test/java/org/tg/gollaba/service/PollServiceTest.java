@@ -40,7 +40,8 @@ class PollServiceTest {
                 "hamtori",
                 Poll.PollType.NAMED,
                 Poll.PollResponseType.MULTI,
-                pollOptionRequirements);
+                pollOptionRequirements
+        );
 
         var poll = new Poll(createRequest.toEntity().getUserId(), //이래야 null은 null로 들어감
                 createRequest.toEntity().getTitle(), //반환되어서 저장되는 건 entity로 변경되는 칭구여야 함
