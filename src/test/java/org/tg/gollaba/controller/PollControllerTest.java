@@ -33,9 +33,9 @@ class PollControllerTest extends ControllerTestContext {
     @Test
     void success() {
         // given
-        List<PollService.PollOptionRequirement> pollOptionRequirements = new ArrayList<>();
-        pollOptionRequirements.add(new PollService.PollOptionRequirement("test", "imgUrl"));
-        pollOptionRequirements.add(new PollService.PollOptionRequirement("test2", "imgUrl2"));
+        List<PollService.CreateRequirement.PollOptionRequirement> pollOptionRequirements = new ArrayList<>();
+        pollOptionRequirements.add(new PollService.CreateRequirement.PollOptionRequirement("test", "imgUrl"));
+        pollOptionRequirements.add(new PollService.CreateRequirement.PollOptionRequirement("test2", "imgUrl2"));
 
         var createRequest = new PollService.CreateRequirement(
             Optional.ofNullable(1L),
@@ -45,9 +45,8 @@ class PollControllerTest extends ControllerTestContext {
             Poll.PollResponseType.MULTI,
             pollOptionRequirements);
 
-
         Mockito.when(service.create(createRequest))
-            .thenReturn(mockResult()); //dto가 들어와야 함
+            .thenReturn(1L); //dto가 들어와야 함
 
         given()
             .contentType(ContentType.JSON) //보내는 방식 추가 ..
@@ -73,29 +72,14 @@ class PollControllerTest extends ControllerTestContext {
                         fieldWithPath("pollOptions").type(ARRAY).description("투표 옵션"),
                         fieldWithPath("pollOptions[].description").type(STRING).description("투표 옵션 항목"),
                         fieldWithPath("pollOptions[].imageUrl").type(STRING).description("투표 옵션 이미지")
-                        //코파일럿?
                     ),
                     responseFields(
                         fieldsWithBasic(
-                            fieldWithPath("data").type(OBJECT).description("결과 데이터"),
-                            fieldWithPath("data.pollId").type(NUMBER).description("투표 ID")
+                            fieldWithPath("data").type(NUMBER).description("투표 ID")
                         )
                     )
                 )
             )
             .status(HttpStatus.OK);
-    }
-
-    private PollDto mockResult() {
-        return new PollDto(
-            1L,
-            1L,
-            "title",
-            "creatorName",
-            Poll.PollResponseType.MULTI,
-            Poll.PollType.NAMED,
-            LocalDateTime.now(),
-            0
-        );
     }
 }
