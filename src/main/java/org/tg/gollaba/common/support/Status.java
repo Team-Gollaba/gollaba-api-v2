@@ -24,7 +24,10 @@ public enum Status {
 
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
-    POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다.")
+    POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다."),
+
+    //vote
+    ALREADY_VOTED("이미 투표하셨습니다."),
     ;
 
     private final String message;

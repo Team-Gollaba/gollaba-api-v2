@@ -42,7 +42,6 @@ public class ControllerTestContext {
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation) {
-
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(print())
@@ -76,7 +75,7 @@ public class ControllerTestContext {
     }
 
     protected enum Tags {
-        PRODUCT("상품");
+        POLL("투표");
 
         private final String tagName;
 

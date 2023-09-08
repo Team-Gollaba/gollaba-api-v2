@@ -17,7 +17,17 @@ public class FixtureReflectionUtils {
         }
     }
 
-    private static Field getField(Object obj,Class<?> clazz, String fieldName) {
+    public static void setField(Object obj, String fieldName, Object value) {
+        try {
+            var field = getField(obj, obj.getClass(), fieldName);
+            field.setAccessible(true);
+            field.set(obj, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Field getField(Object obj, Class<?> clazz, String fieldName) {
         try {
             if (clazz == Object.class) {
                 throw new IllegalArgumentException("해당 필드를 찾을 수 없습니다. fieldName: " + fieldName);
