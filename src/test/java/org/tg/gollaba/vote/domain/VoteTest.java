@@ -1,15 +1,23 @@
 package org.tg.gollaba.vote.domain;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.tg.gollaba.domain.Poll;
+import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollFixture;
-import org.tg.gollaba.poll.domain.PollOptionFixture;
-import org.tg.gollaba.vote.domain.Voter.RequiredVoterNameException;
-;
+import org.tg.gollaba.vote.domain.Vote.RequiredVoterNameException;
+;import java.util.Set;
 
-class VoterTest {
+class VoteTest {
+    private VoteValidator voteValidator;
+
+    @BeforeEach
+    void setUp() {
+        this.voteValidator = vote -> {
+            // do nothing
+        };
+    }
 
     @DisplayName("투표자 생성시 익명 투표인 경우 이름이 '익명'으로 시작한다.")
     @Test
@@ -18,20 +26,20 @@ class VoterTest {
         var poll = new PollFixture()
             .setPollType(Poll.PollType.ANONYMOUS)
             .build();
-        var pollItem = new PollOptionFixture()
-            .setPoll(poll)
-            .build();
 
         // when
-        var voter = new Voter(
-                pollItem.getPoll().getId(),
+        var vote = new Vote(
+            poll,
             1L,
             null,
-                pollItem
-            );
+            Set.of(
+                new VoteItem(poll.items().get(0).id())
+            ),
+            voteValidator
+        );
 
         //then
-        Assertions.assertThat(voter.voterName()).startsWith("익명");
+        Assertions.assertThat(vote.voterName()).startsWith("익명");
     }
 
     @DisplayName("기명 투표일때 voterName이 비어 있으면 에러를 뱉는다.")
@@ -41,16 +49,16 @@ class VoterTest {
         var poll = new PollFixture()
             .setPollType(Poll.PollType.NAMED)
             .build();
-        var pollItem = new PollOptionFixture()
-            .setPoll(poll)
-            .build();
 
         // when
-        var throwable = Assertions.catchThrowable(() -> new Voter(
-            pollItem.getPoll().getId(),
+        var throwable = Assertions.catchThrowable(() -> new Vote(
+            poll,
             1L,
             null,
-            pollItem
+            Set.of(
+                new VoteItem(poll.items().get(0).id())
+            ),
+            voteValidator
         ));
 
         //then

@@ -8,55 +8,56 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.tg.gollaba.common.entity.BaseEntity;
 import org.tg.gollaba.common.support.StringUtils;
-import org.tg.gollaba.domain.Poll;
-import org.tg.gollaba.domain.Poll.PollType;
-import org.tg.gollaba.domain.PollOption;
+import org.tg.gollaba.poll.domain.Poll;
+import org.tg.gollaba.poll.domain.Poll.PollType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Accessors(fluent = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Voter extends BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED) 
+public class Vote extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private Long pollId;
 
-
-    @Column // TODO: User 연관관계 매핑
+    @Column
     private Long userId;
 
     @Column(nullable = false)
     private String voterName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_option_id", nullable = false)
-    private PollOption pollOption;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "vote_id", nullable = false)
+    private Set<VoteItem> items = new HashSet<>();
 
-    private static final String ANONYMOUS_NAME_PREFIX = "익명";
+    public static final String ANONYMOUS_NAME_PREFIX = "익명-";
 
-
-    public Voter(Long pollId,
-                 Long userId,
-                 String voterName,
-                 PollOption pollOption) {
-        this.pollId = pollId;
+    public Vote(Poll poll,
+                Long userId,
+                String voterName,
+                Set<VoteItem> items,
+                VoteValidator validator) {
+        this.pollId = poll.id();
         this.userId = userId;
-        this.pollOption = pollOption;
-        setVoterName(voterName);
+        setVoterName(poll, voterName);
+        this.items = items;
+        validator.validate(this);
     }
 
-    private void setVoterName(String voterName) {
-        var pollType = pollOption.getPoll().getPollType();
+    private void setVoterName(Poll poll, String voterName) {
+        var pollType = poll.pollType();
 
         if (StringUtils.isBlank(voterName) && pollType == PollType.NAMED) {
             throw new RequiredVoterNameException();
         }
 
         if (pollType == PollType.ANONYMOUS) {
-            this.voterName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.random(7);
+            this.voterName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
         } else {
             this.voterName = voterName;
         }
