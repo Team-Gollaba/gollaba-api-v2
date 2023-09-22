@@ -1,13 +1,14 @@
 package org.tg.gollaba.service;
 
 import org.tg.gollaba.domain.Poll;
-import org.tg.gollaba.domain.PollOption;
+import org.tg.gollaba.domain.PollItem;
 import org.tg.gollaba.repository.PollRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.dto.PollDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,16 +21,16 @@ public class PollService {
     public Long create(CreateRequirement requirement){
         var poll = createPoll(requirement);
 
-        var pollOptions = createPollOptions(requirement, poll);
-        poll.updatePollOptions(pollOptions);
+        var pollItems = createPollOptions(requirement, poll);
+        poll.updatePollOptions(pollItems);
 
         pollRepository.save(poll); //여기서 터짐
         return  poll.getId();
     }
 
-    private static List<PollOption> createPollOptions(CreateRequirement requirement, Poll poll) {
-        return requirement.pollOptions().stream()
-            .map(optionRequirement -> new PollOption(
+    private static List<PollItem> createPollOptions(CreateRequirement requirement, Poll poll) {
+        return requirement.pollItems().stream()
+            .map(optionRequirement -> new PollItem(
                 poll,
                 optionRequirement.description,
                 optionRequirement.imageUrl
@@ -43,7 +44,8 @@ public class PollService {
             requirement.title,
             requirement.creatorName,
             requirement.pollType,
-            requirement.responseType
+            requirement.responseType,
+            requirement.endedAt.orElse(null)
         );
     }
 
@@ -53,9 +55,10 @@ public class PollService {
             String creatorName,
             Poll.PollType pollType,
             Poll.PollResponseType responseType,
-            List<PollOptionRequirement> pollOptions
+            List<PollItemRequirement> pollItems,
+            Optional<LocalDateTime> endedAt
     ){
-        public record PollOptionRequirement(
+        public record PollItemRequirement(
             String description,
             String imageUrl
         ){}

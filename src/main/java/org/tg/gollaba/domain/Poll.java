@@ -44,7 +44,7 @@ public class Poll extends BaseEntity {
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
     @OrderColumn(name = "position")
-    private List<PollOption> options = new ArrayList<>();
+    private List<PollItem> items = new ArrayList<>();
 
     public enum PollResponseType {
         SINGLE,
@@ -60,7 +60,8 @@ public class Poll extends BaseEntity {
                 String title,
                 String creatorName,
                 PollType pollType,
-                PollResponseType responseType
+                PollResponseType responseType,
+                LocalDateTime endedAt
     ){
         this.userId = userId;
         this.title = title;
@@ -77,11 +78,11 @@ public class Poll extends BaseEntity {
             : endedAt;
     }
 
-    public void updatePollOptions(List<PollOption> pollOptions) {
-            if(pollOptions.size()<2 || pollOptions.size()>10){
+    public void updatePollOptions(List<PollItem> pollItems) {
+            if(pollItems.size() < 2 || pollItems.size() > 10){
                 throw new InvalidOptionSizeException();
             }
-        this.options.addAll(pollOptions);
+        this.items.addAll(pollItems);
         }
     public static class InvalidOptionSizeException extends IllegalArgumentException {
         public InvalidOptionSizeException() { //이름을 그대로 사용해야함

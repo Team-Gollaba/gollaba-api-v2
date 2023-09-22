@@ -16,8 +16,8 @@ public class Voter extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_option_id", nullable = false)
-    private PollOption pollOption;
+    @JoinColumn(name = "poll_item_id", nullable = false)
+    private PollItem pollItem;
 
     @Column // TODO: User 연관관계 매핑
     private Long userId;
@@ -28,11 +28,11 @@ public class Voter extends BaseEntity {
     @Column(nullable = false)
     private String ipAddress;
 
-    public Voter(PollOption pollOption,
+    public Voter(PollItem pollItem,
                  Long userId,
                  String voterName,
                  String ipAddress) {
-        this.pollOption = pollOption;
+        this.pollItem = pollItem;
         this.userId = userId;
         this.voterName = voterName;
         this.ipAddress = ipAddress;

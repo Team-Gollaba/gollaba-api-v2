@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PollOption extends BaseEntity {
+public class PollItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +28,10 @@ public class PollOption extends BaseEntity {
     @Column
     private String imageUrl;
 
-    @OneToMany(mappedBy = "pollOption", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pollItem", cascade = CascadeType.ALL)
     private Set<Voter> voters = new HashSet<>();
 
-    public PollOption(Poll poll,
+    public PollItem(Poll poll,
                       String description,
                       String imageUrl) {
         this.poll = poll;

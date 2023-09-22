@@ -1,5 +1,6 @@
 package org.tg.gollaba.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import org.tg.gollaba.domain.Poll;
 import org.tg.gollaba.service.PollService;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,12 +43,15 @@ class PollController {
 
             @NotNull(message = "투표 항목 설정은 필수입니다.")
             @Size(min = 2, max = 10, message = "투표 항목은 최소 2개에서 최대 10개까지 설정 가능합니다.")
-            List<PollOptionRequest> pollOptions
+            List<PollOptionRequest> pollOptions,
+
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            Optional<LocalDateTime> endedAt
     ){
         private PollService.CreateRequirement toCreateRequirement(){
             var pollOptionRequirements =
                     pollOptions.stream()
-                        .map(pollOptionRequest -> new PollService.CreateRequirement.PollOptionRequirement(
+                        .map(pollOptionRequest -> new PollService.CreateRequirement.PollItemRequirement(
                             pollOptionRequest.description,
                             pollOptionRequest.imageUrl
                         ))
@@ -58,7 +63,8 @@ class PollController {
                     creatorName,
                     pollType,
                     responseType,
-                    pollOptionRequirements
+                    pollOptionRequirements,
+                    endedAt
             );
         }
 
