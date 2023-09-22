@@ -21,7 +21,7 @@ public class PollService {
         var poll = createPoll(requirement);
 
         var pollOptions = createPollOptions(requirement, poll);
-        poll.addPollOptions(pollOptions);
+        poll.updatePollOptions(pollOptions);
 
         pollRepository.save(poll); //여기서 터짐
         return  poll.getId();
@@ -54,7 +54,7 @@ public class PollService {
             Poll.PollType pollType,
             Poll.PollResponseType responseType,
             List<PollOptionRequirement> pollOptions
-    ) {
+    ){
         public record PollOptionRequirement(
             String description,
             String imageUrl
