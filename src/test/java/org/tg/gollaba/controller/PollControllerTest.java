@@ -49,9 +49,9 @@ class PollControllerTest extends ControllerTestContext {
                         fieldWithPath("creatorName").type(STRING).description("작성자 이름"),
                         fieldWithPath("responseType").type(STRING).description("응답 타입"),
                         fieldWithPath("pollType").type(STRING).description("투표 타입"),
-                        fieldWithPath("pollOptions").type(ARRAY).description("투표 옵션"),
-                        fieldWithPath("pollOptions[].description").type(STRING).description("투표 옵션 항목"),
-                        fieldWithPath("pollOptions[].imageUrl").type(STRING).description("투표 옵션 이미지")
+                        fieldWithPath("pollItems").type(ARRAY).description("투표 옵션"),
+                        fieldWithPath("pollItems[].description").type(STRING).description("투표 옵션 항목"),
+                        fieldWithPath("pollItems[].imageUrl").type(STRING).description("투표 옵션 이미지")
                     ),
                     responseFields(
                         fieldsWithBasic(
@@ -71,7 +71,7 @@ class PollControllerTest extends ControllerTestContext {
                 "creatorName": "hamtori",
                 "responseType": "SINGLE",
                 "pollType": "ANONYMOUS",
-                "pollOptions": [
+                "pollItems": [
                     {
                         "description": "test1",
                         "imageUrl": "link1"

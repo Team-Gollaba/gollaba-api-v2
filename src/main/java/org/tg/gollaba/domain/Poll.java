@@ -78,7 +78,7 @@ public class Poll extends BaseEntity {
             : endedAt;
     }
 
-    public void updatePollOptions(List<PollItem> pollItems) {
+    public void updatePollItems(List<PollItem> pollItems) {
             if(pollItems.size() < 2 || pollItems.size() > 10){
                 throw new InvalidOptionSizeException();
             }

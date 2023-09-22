@@ -21,14 +21,14 @@ public class PollService {
     public Long create(CreateRequirement requirement){
         var poll = createPoll(requirement);
 
-        var pollItems = createPollOptions(requirement, poll);
-        poll.updatePollOptions(pollItems);
+        var pollItems = createPollItems(requirement, poll);
+        poll.updatePollItems(pollItems);
 
         pollRepository.save(poll); //여기서 터짐
         return  poll.getId();
     }
 
-    private static List<PollItem> createPollOptions(CreateRequirement requirement, Poll poll) {
+    private static List<PollItem> createPollItems(CreateRequirement requirement, Poll poll) {
         return requirement.pollItems().stream()
             .map(optionRequirement -> new PollItem(
                 poll,

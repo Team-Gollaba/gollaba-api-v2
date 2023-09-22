@@ -43,17 +43,17 @@ class PollController {
 
             @NotNull(message = "투표 항목 설정은 필수입니다.")
             @Size(min = 2, max = 10, message = "투표 항목은 최소 2개에서 최대 10개까지 설정 가능합니다.")
-            List<PollOptionRequest> pollOptions,
+            List<PollItemRequest> pollItems,
 
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             Optional<LocalDateTime> endedAt
     ){
         private PollService.CreateRequirement toCreateRequirement(){
-            var pollOptionRequirements =
-                    pollOptions.stream()
-                        .map(pollOptionRequest -> new PollService.CreateRequirement.PollItemRequirement(
-                            pollOptionRequest.description,
-                            pollOptionRequest.imageUrl
+            var pollItemRequirements =
+                pollItems.stream()
+                        .map(pollItemRequest -> new PollService.CreateRequirement.PollItemRequirement(
+                            pollItemRequest.description,
+                            pollItemRequest.imageUrl
                         ))
                     .collect(Collectors.toList());
 
@@ -63,12 +63,12 @@ class PollController {
                     creatorName,
                     pollType,
                     responseType,
-                    pollOptionRequirements,
+                    pollItemRequirements,
                     endedAt
             );
         }
 
-        record PollOptionRequest(
+        record PollItemRequest(
             @NotBlank(message = "항목은 필수로 입력해 주어야 합니다")
             String description,
             String imageUrl

@@ -6,16 +6,14 @@ import lombok.experimental.Accessors;
 import org.tg.gollaba.common.FixtureReflectionUtils;
 import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.domain.Poll;
-import org.tg.gollaba.domain.PollOption;
+import org.tg.gollaba.domain.PollItem;
 //import org.tg.gollaba.vote.domain.Voter;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @Accessors(chain = true)
-public class PollOptionFixture implements TestFixture<PollOption>{
+public class PollItemFixture implements TestFixture<PollItem>{
     private Long id = 1L;
     private Poll poll = new PollFixture().build();
     private String description = "Option A";
@@ -23,13 +21,13 @@ public class PollOptionFixture implements TestFixture<PollOption>{
 //    private Set<Voter> voters = new HashSet<>();
 
     @Override
-    public PollOption build() {
-        var pollOption = new PollOption(
+    public PollItem build() {
+        var pollItem = new PollItem(
             poll,
             description,
             imageUrl
         );
-        FixtureReflectionUtils.reflect(pollOption, this);
-        return pollOption;
+        FixtureReflectionUtils.reflect(pollItem, this);
+        return pollItem;
     }
 }

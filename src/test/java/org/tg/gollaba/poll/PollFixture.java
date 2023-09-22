@@ -31,7 +31,8 @@ public class PollFixture implements TestFixture<Poll>{
             title,
             creatorName,
             pollType,
-            responseType
+            responseType,
+            endedAt
         );
         FixtureReflectionUtils.reflect(poll, this);
         return poll;

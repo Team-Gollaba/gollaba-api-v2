@@ -11,11 +11,11 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.domain.Poll;
-import org.tg.gollaba.domain.PollOption;
 import org.tg.gollaba.poll.PollFixture;
-import org.tg.gollaba.poll.PollOptionFixture;
+import org.tg.gollaba.poll.PollItemFixture;
 import org.tg.gollaba.repository.PollRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +42,9 @@ class PollServiceTest {
             .setPollType(Poll.PollType.ANONYMOUS)
             .build();
 
-        List<PollOption> pollOptions = Arrays.asList(
-            new PollOptionFixture().build(),
-            new PollOptionFixture().build()
+        var pollItems = Arrays.asList(
+            new PollItemFixture().build(),
+            new PollItemFixture().build()
         );
 
         ReflectionTestUtils.setField(poll, "id", 1L);
@@ -53,7 +53,7 @@ class PollServiceTest {
                 .willReturn(poll);
 
         //when
-        poll.updatePollOptions(pollOptions);
+        poll.updatePollItems(pollItems);
         Throwable throwable = BDDAssertions
                 .catchThrowable(() -> service.create(requirement));
 
@@ -75,8 +75,14 @@ class PollServiceTest {
 
         Poll.PollResponseType responseType = Poll.PollResponseType.MULTI;
 
-        List<PollService.CreateRequirement.PollOptionRequirement> pollOptions = new ArrayList<>();
+        LocalDateTime endedAt = LocalDateTime.now().plusDays(2);
 
+        List<PollService.CreateRequirement.PollItemRequirement> pollItems = new ArrayList<>();
+
+        RequirementFixture() {
+            pollItems.add(new RequirementOptionFixture().build());
+            pollItems.add(new RequirementOptionFixture().build());
+        }
 
         @Override
         public PollService.CreateRequirement build() {
@@ -86,7 +92,8 @@ class PollServiceTest {
                 creatorName,
                 pollType,
                 responseType,
-                pollOptions
+                pollItems,
+                Optional.ofNullable(endedAt)
             );
         }
     }
@@ -94,13 +101,13 @@ class PollServiceTest {
     @Getter
     @Setter
     @Accessors(fluent = true)
-    static class RequirementOptionFixture implements TestFixture<PollService.CreateRequirement.PollOptionRequirement> {
+    static class RequirementOptionFixture implements TestFixture<PollService.CreateRequirement.PollItemRequirement> {
         String description = "description";
         String imageUrl = "imageUrl";
 
         @Override
-        public PollService.CreateRequirement.PollOptionRequirement build() {
-            return new PollService.CreateRequirement.PollOptionRequirement(description, imageUrl);
+        public PollService.CreateRequirement.PollItemRequirement build() {
+            return new PollService.CreateRequirement.PollItemRequirement(description, imageUrl);
         }
     }
 }

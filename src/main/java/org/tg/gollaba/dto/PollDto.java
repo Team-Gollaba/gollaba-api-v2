@@ -4,7 +4,7 @@ import org.tg.gollaba.domain.Poll;
 
 import java.time.LocalDateTime;
 
-public record PollDto( //얘가 dto 일 거임
+public record PollDto(
                        Long id,
                        Long userId,
                        String title,
@@ -13,17 +13,4 @@ public record PollDto( //얘가 dto 일 거임
                        Poll.PollType pollType,
                        LocalDateTime endedAt,
                        Integer readCount
-){
-    public static PollDto from(Poll poll) {
-        return new PollDto(
-                poll.getId(),
-                poll.getUserId(),
-                poll.getTitle(),
-                poll.getCreatorName(),
-                poll.getResponseType(),
-                poll.getPollType(),
-                poll.getEndedAt(),
-                poll.getReadCount()
-        );
-    }
-}
+){}
