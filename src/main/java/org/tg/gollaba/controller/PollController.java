@@ -1,8 +1,8 @@
 package org.tg.gollaba.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.domain.Poll;
@@ -38,14 +38,16 @@ class PollController {
             String creatorName,
             @NotNull(message = "익명투표, 기명투표 선택해 주세요.")
             Poll.PollType pollType,
+            //ㄴ> @NotEmpty: No validator could be found for constraint 'jakarta.validation.constraints.NotEmpty'
             @NotNull(message = "단일투표, 중복투표를 선택해 주세요.")
             Poll.PollResponseType responseType,
+            //ㄴ> pollType과 동일한 에러
 
-            @NotNull(message = "투표 항목 설정은 필수입니다.")
+            @NotEmpty(message = "투표 항목 설정은 필수입니다.")
             @Size(min = 2, max = 10, message = "투표 항목은 최소 2개에서 최대 10개까지 설정 가능합니다.")
             List<PollItemRequest> pollItems,
 
-            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             Optional<LocalDateTime> endedAt
     ){
         private PollService.CreateRequirement toCreateRequirement(){

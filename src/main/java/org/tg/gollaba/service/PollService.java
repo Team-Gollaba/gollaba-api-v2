@@ -24,7 +24,7 @@ public class PollService {
         var pollItems = createPollItems(requirement, poll);
         poll.updatePollItems(pollItems);
 
-        pollRepository.save(poll); //여기서 터짐
+        pollRepository.save(poll);
         return  poll.getId();
     }
 

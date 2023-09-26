@@ -82,8 +82,9 @@ public class Poll extends BaseEntity {
             if(pollItems.size() < 2 || pollItems.size() > 10){
                 throw new InvalidOptionSizeException();
             }
-        this.items.addAll(pollItems);
+            this.items.addAll(pollItems);
         }
+
     public static class InvalidOptionSizeException extends IllegalArgumentException {
         public InvalidOptionSizeException() { //이름을 그대로 사용해야함
             super("지정할 수 있는 항목의 범위가 아닙니다.");
