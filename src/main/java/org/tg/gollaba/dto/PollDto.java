@@ -4,7 +4,7 @@ import org.tg.gollaba.domain.Poll;
 
 import java.time.LocalDateTime;
 
-    public record PollDto(
+public record PollDto(
                        Long id,
                        Long userId,
                        String title,
@@ -13,4 +13,4 @@ import java.time.LocalDateTime;
                        Poll.PollType pollType,
                        LocalDateTime endedAt,
                        Integer readCount
-    ){}
+){}

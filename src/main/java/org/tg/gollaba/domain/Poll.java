@@ -79,11 +79,11 @@ public class Poll extends BaseEntity {
     }
 
     public void updatePollItems(List<PollItem> pollItems) {
-            if(pollItems.size() < 2 || pollItems.size() > 10){
-                throw new InvalidOptionSizeException();
-            }
-            this.items.addAll(pollItems);
+        if(pollItems.size() < 2 || pollItems.size() > 10){
+            throw new InvalidOptionSizeException();
         }
+        this.items.addAll(pollItems);
+    }
 
     public static class InvalidOptionSizeException extends IllegalArgumentException {
         public InvalidOptionSizeException() { //이름을 그대로 사용해야함
