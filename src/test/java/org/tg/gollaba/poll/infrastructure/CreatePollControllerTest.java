@@ -61,21 +61,21 @@ class CreatePollControllerTest extends ControllerTestContext {
 
     private String requestBody() {
         return """
-             {
-                 "title": "투표 제목",
-                 "creatorName": "투표 생성자 이름",
-                 "responseType": "SINGLE",
-                 "pollType": "ANONYMOUS",
-                 "endedAt": "2021-10-10T10:10:10",
-                 "items": [
-                     {
-                         "description": "탕수육"
-                     },
-                     {
-                         "description": "짜장"
-                     }
-                 ]
-             }
+            {
+                "title": "투표 제목",
+                "creatorName": "투표 생성자 이름",
+                "responseType": "SINGLE",
+                "pollType": "ANONYMOUS",
+                "endedAt": "2021-10-10T10:10:10",
+                "items": [
+                    {
+                        "description": "탕수육"
+                    },
+                    {
+                        "description": "짜장"
+                    }
+                ]
+            }
             """;
     }
 }

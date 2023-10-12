@@ -18,8 +18,7 @@ public class CreatePollService {
     public Long create(Requirement requirement) {
         var poll = createPoll(requirement);
 
-        return pollRepository.save(poll)
-            .id();
+        return pollRepository.save(poll).id();
     }
 
     private Poll createPoll(Requirement requirement) {
