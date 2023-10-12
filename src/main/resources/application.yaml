@@ -10,11 +10,14 @@ spring:
       ddl-auto: none
     generate-ddl: false
 
+
   data:
     web:
       pageable:
         default-page-size: 10
         one-indexed-parameters: true
+    redis:
+      host: ${REDIS_HOST}
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

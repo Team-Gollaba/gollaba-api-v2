@@ -1,7 +1,7 @@
-package org.tg.gollaba.repository;
+package org.tg.gollaba.poll.application;
 
-import org.tg.gollaba.domain.Poll;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.tg.gollaba.poll.domain.Poll;
 
 public interface PollRepository extends JpaRepository<Poll, Long> {
 }
