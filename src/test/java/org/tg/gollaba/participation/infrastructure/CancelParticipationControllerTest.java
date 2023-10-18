@@ -22,9 +22,8 @@ class CancelParticipationControllerTest extends ControllerTestContext {
     @Test
     void success() {
         given()
-            //.pathParam("participantId", 1L) // * 저 이거 너무 갑갑해서 올리고 그냥 한 소리 듣고싶엇어요 ....
             .when()
-            .delete("/v2/participation/{participantId}")
+            .delete("/v2/participation/{participantId}", 1L)
             .then()
             .log().all()
             .apply(
