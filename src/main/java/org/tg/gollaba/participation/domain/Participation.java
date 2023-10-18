@@ -30,11 +30,11 @@ public class Participation extends BaseEntity {
     @Column
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(name = "voter_name", nullable = false) //* DB에는 "voter_name"로 명시되어있음
     private String participantName;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "participation_id", nullable = false)
+    @JoinColumn(name = "participation_id", nullable = false) //* create: db 최신화 이슈로 해당 컬럼 이용 불가
     private Set<ParticipationItem> items = new HashSet<>();
 
     public static final String ANONYMOUS_NAME_PREFIX = "익명-";
