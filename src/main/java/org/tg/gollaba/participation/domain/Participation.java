@@ -30,7 +30,7 @@ public class Participation extends BaseEntity {
     @Column
     private Long userId;
 
-    @Column(name = "voter_name", nullable = false) //* DB에는 "voter_name"로 명시되어있음
+    @Column(nullable = false) //* DB에는 "voter_name"로 명시되어있음
     private String participantName;
 
     @OneToMany(cascade = CascadeType.ALL)
