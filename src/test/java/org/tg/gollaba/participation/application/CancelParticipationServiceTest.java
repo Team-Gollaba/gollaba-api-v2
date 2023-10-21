@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.participation.domain.ParticipationFixture;
 import org.tg.gollaba.participation.domain.ParticipationItemFixture;
 import org.tg.gollaba.poll.domain.PollFixture;
@@ -17,8 +16,8 @@ import org.tg.gollaba.poll.domain.PollFixture;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CancelParticipationServiceTest {
@@ -49,23 +48,15 @@ class CancelParticipationServiceTest {
             .setItems(Set.of(new ParticipationItemFixture().setId(1L).build()))
             .build();
 
-        when(participationRepository
-            .findById(participation.id()))
-            .thenReturn(Optional.of(participation));
+        given(
+            participationRepository.findById(participation.id()))
+            .willReturn(Optional.of(participation)
+        );
 
         //when
         service.cancel(participation.id());
 
         //then
-        verify(participationRepository, times(1)).delete(participation);
-    }
-
-    @DisplayName("비회원이 투표 철회 요청을 넣으면 예외가 발생한다.")
-    @Test
-    void cancelToAnonymous(){
-        assertThrows(
-            BadRequestException.class,
-            () -> service.cancel(null)
-        );
+        assertNotNull(participation.deletedAt());
     }
 }

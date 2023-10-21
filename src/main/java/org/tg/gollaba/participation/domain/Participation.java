@@ -11,6 +11,7 @@ import org.tg.gollaba.common.support.StringUtils;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.Poll.PollType;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,11 +31,14 @@ public class Participation extends BaseEntity {
     @Column
     private Long userId;
 
-    @Column(name = "voter", nullable = false) //* DB에는 "voter_name"로 명시되어있음
+    @Column(name = "voter_name", nullable = false)
     private String participantName;
 
+    @Column
+    private LocalDateTime deletedAt;
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "participation_id", nullable = false) //* create: db 최신화 이슈로 해당 컬럼 이용 불가
+    @JoinColumn(name = "participation_id", nullable = false)
     private Set<ParticipationItem> items = new HashSet<>();
 
     public static final String ANONYMOUS_NAME_PREFIX = "익명-";
@@ -66,6 +70,20 @@ public class Participation extends BaseEntity {
     static class RequiredVoterNameException extends IllegalArgumentException {
         public RequiredVoterNameException() {
             super("기명 투표에는 투표자 이름이 필요합니다.");
+        }
+    }
+
+    public void cancel(){
+        if (deletedAt != null){
+            throw new AlreadyCancelException();
+        }
+
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    static class AlreadyCancelException extends IllegalArgumentException{
+        public AlreadyCancelException(){
+            super("이미 투표가 철회됐습니다.");
         }
     }
 }

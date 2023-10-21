@@ -4,15 +4,12 @@ import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
-import static io.restassured.RestAssured.patch;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
-
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 
 class CancelParticipationControllerTest extends ControllerTestContext {
 
@@ -32,9 +29,6 @@ class CancelParticipationControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
-                    requestFields(
-                        fieldWithPath("participantId").type(NUMBER).description("투표 참여 ID")
-                    ),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(NULL).description("응답 데이터")

@@ -17,8 +17,8 @@ public class CancelParticipationController {
 
     @DeleteMapping("/{participantId}") //TODO user 추가
     public ApiResponse<Void> cancel(@PathVariable
-                                        @NotNull(message = "비회원일 경우, 투표를 취소할 수 없습니다.")
-                                        Long participantId){
+                                    @NotNull(message = "비회원일 경우, 투표를 취소할 수 없습니다.")
+                                    Long participantId){
         service.cancel(participantId);
 
         return ApiResponse.success();
