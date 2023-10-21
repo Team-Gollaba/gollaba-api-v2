@@ -32,7 +32,7 @@ public class Participation extends BaseEntity {
     private Long userId;
 
     @Column(name = "voter_name", nullable = false)
-    private String participantName;
+    private String voterName;
 
     @Column
     private LocalDateTime deletedAt;
@@ -61,9 +61,9 @@ public class Participation extends BaseEntity {
         }
 
         if (pollType == PollType.ANONYMOUS) {
-            this.participantName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
+            this.voterName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
         } else {
-            this.participantName = voterName;
+            this.voterName = voterName;
         }
     }
 
@@ -74,16 +74,6 @@ public class Participation extends BaseEntity {
     }
 
     public void cancel(){
-        if (deletedAt != null){
-            throw new AlreadyCancelException();
-        }
-
         this.deletedAt = LocalDateTime.now();
-    }
-
-    static class AlreadyCancelException extends IllegalArgumentException{
-        public AlreadyCancelException(){
-            super("이미 투표가 철회됐습니다.");
-        }
     }
 }
