@@ -11,6 +11,7 @@ import org.tg.gollaba.common.support.StringUtils;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.Poll.PollType;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,8 +31,11 @@ public class Participation extends BaseEntity {
     @Column
     private Long userId;
 
-    @Column(nullable = false)
-    private String participantName;
+    @Column(name = "voter_name", nullable = false)
+    private String voterName;
+
+    @Column
+    private LocalDateTime deletedAt;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "participation_id", nullable = false)
@@ -57,9 +61,9 @@ public class Participation extends BaseEntity {
         }
 
         if (pollType == PollType.ANONYMOUS) {
-            this.participantName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
+            this.voterName = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
         } else {
-            this.participantName = voterName;
+            this.voterName = voterName;
         }
     }
 
@@ -67,5 +71,9 @@ public class Participation extends BaseEntity {
         public RequiredVoterNameException() {
             super("기명 투표에는 투표자 이름이 필요합니다.");
         }
+    }
+
+    public void cancel(){
+        this.deletedAt = LocalDateTime.now();
     }
 }
