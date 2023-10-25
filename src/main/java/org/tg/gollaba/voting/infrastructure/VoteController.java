@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.infrastructure;
+package org.tg.gollaba.voting.infrastructure;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -7,16 +7,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.participation.application.ParticipateService;
+import org.tg.gollaba.voting.application.VoteService;
 
 import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/v2/participation")
+@RequestMapping("/v2/voting")
 @RequiredArgsConstructor
-public class ParticipateController {
-    private final ParticipateService service;
+public class VoteController {
+    private final VoteService service;
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid Request request,
@@ -26,19 +26,19 @@ public class ParticipateController {
             httpServletRequest
         );
 
-        service.participate(requirement);
+        service.vote(requirement);
 
         return ApiResponse.success();
     }
 
-    private ParticipateService.Requirement createRequirement(Request request,
-                                                             HttpServletRequest httpServletRequest) {
-        return new ParticipateService.Requirement(
+    private VoteService.Requirement createRequirement(Request request,
+                                                      HttpServletRequest httpServletRequest) {
+        return new VoteService.Requirement(
             request.pollId(),
             request.pollItemIds(),
             "", // TODO: IP 주소 추가
             request.userId(),
-            request.participantName()
+            request.voterName()
         );
     }
 
@@ -47,8 +47,8 @@ public class ParticipateController {
         Long pollId,
         @NotEmpty(message = "투표 항목 ID는 필수입니다.")
         Set<Long> pollItemIds,
-        Optional<Long> userId,
-        Optional<String> participantName
+        Optional<Long> userId, //TODO: user 인증 생기면 삭제
+        Optional<String> voterName
     ) {
     }
 }

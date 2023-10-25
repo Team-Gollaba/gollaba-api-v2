@@ -10,6 +10,7 @@ import org.tg.gollaba.common.entity.BaseEntity;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -91,6 +92,12 @@ public class Poll extends BaseEntity {
           .filter(item -> item.id().equals(itemId))
           .findFirst()
           .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표 항목입니다."));
+    }
+
+    public List<PollItem> getItems(Collection<Long> itemIds) {
+        return items.stream()
+          .filter(item -> itemIds.contains(item.id()))
+          .toList();
     }
 
     public enum PollResponseType {

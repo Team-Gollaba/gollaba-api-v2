@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.application;
+package org.tg.gollaba.voting.application;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,17 +26,17 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateParticipationServiceTest {
+class CreateVotingServiceTest {
     @InjectMocks
-    private ParticipateService service;
+    private VoteService service;
     @Mock
     private PollRepository pollRepository;
     @Mock
-    private ParticipationRepository participationRepository;
+    private VotingRepository votingRepository;
     @Mock
-    private DuplicatedParticipationChecker duplicatedParticipationChecker;
+    private DuplicatedVotingChecker duplicatedVotingChecker;
     @Mock
-    private ParticipationValidator participationValidator;
+    private VotingValidator votingValidator;
 
     @DisplayName("투표 요청을 처리한다.")
     @Test
@@ -48,13 +48,13 @@ class CreateParticipationServiceTest {
             .willReturn(Optional.of(poll));
 
         // when
-        var throwable = Assertions.catchThrowable(() -> service.participate(requirement));
+        var throwable = Assertions.catchThrowable(() -> service.vote(requirement));
 
         // then
         assertThat(throwable).isNull();
-        verify(duplicatedParticipationChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
-        verify(duplicatedParticipationChecker, times(1)).record(eq(requirement.ipAddress()), eq(requirement.pollId()));
-        verify(participationRepository, times(1)).save(any());
+        verify(duplicatedVotingChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
+        verify(duplicatedVotingChecker, times(1)).record(eq(requirement.ipAddress()), eq(requirement.pollId()));
+        verify(votingRepository, times(1)).save(any());
     }
 
     @DisplayName("이미 진행된 투표면 에러가 발생한다.")
@@ -62,16 +62,16 @@ class CreateParticipationServiceTest {
     void alreadyVoted() {
         // given
         var requirement = new RequirementFixture().build();
-        doThrow(new BadRequestException(Status.ALREADY_VOTED))
-            .when(duplicatedParticipationChecker).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
+        doThrow(new BadRequestException(Status.ALREADY_VOTING))
+            .when(duplicatedVotingChecker).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
 
         // when
-        var throwable = Assertions.catchThrowable(() -> service.participate(requirement));
+        var throwable = Assertions.catchThrowable(() -> service.vote(requirement));
 
         // then
         assertThat(throwable).isInstanceOf(BadRequestException.class)
-            .hasMessage(Status.ALREADY_VOTED.message());
-        verify(duplicatedParticipationChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
+            .hasMessage(Status.ALREADY_VOTING.message());
+        verify(duplicatedVotingChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
     }
 
     @DisplayName("회원인 경우 투표가 중복인지 영속화된 데이터를 통해 확인한다.")
@@ -80,32 +80,32 @@ class CreateParticipationServiceTest {
         // given
         var userId = 1L;
         var requirement = new RequirementFixture().userId(Optional.of(1L)).build();
-        given(participationRepository.existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId)))
+        given(votingRepository.existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId)))
             .willReturn(true);
 
         // when
-        var throwable = Assertions.catchThrowable(() -> service.participate(requirement));
+        var throwable = Assertions.catchThrowable(() -> service.vote(requirement));
 
         // then
         assertThat(throwable).isInstanceOf(BadRequestException.class)
-            .hasMessage(Status.ALREADY_VOTED.message());
-        verify(duplicatedParticipationChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
-        verify(participationRepository, times(1)).existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId));
+            .hasMessage(Status.ALREADY_VOTING.message());
+        verify(duplicatedVotingChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
+        verify(votingRepository, times(1)).existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId));
     }
 
     @Getter
     @Setter
     @Accessors(fluent = true)
-    static class RequirementFixture implements TestFixture<ParticipateService.Requirement> {
+    static class RequirementFixture implements TestFixture<VoteService.Requirement> {
         private Long pollId = 1L;
         private Set<Long> pollItemIds = Set.of(1L);
         private String ipAddress = "0.0.0.0";
         private Optional<Long> userId = Optional.empty();
-        private Optional<String> voterName = Optional.of("participantName");
+        private Optional<String> voterName = Optional.of("voterName");
 
         @Override
-        public ParticipateService.Requirement build() {
-            return new ParticipateService.Requirement(
+        public VoteService.Requirement build() {
+            return new VoteService.Requirement(
                 pollId,
                 pollItemIds,
                 ipAddress,

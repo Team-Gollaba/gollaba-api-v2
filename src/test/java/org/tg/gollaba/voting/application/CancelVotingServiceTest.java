@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.application;
+package org.tg.gollaba.voting.application;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.participation.domain.ParticipationFixture;
+import org.tg.gollaba.voting.domain.VotingFixture;
 
 
 import java.util.Optional;
@@ -15,28 +15,28 @@ import static org.mockito.BDDMockito.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class CancelParticipationServiceTest {
+class CancelVotingServiceTest {
     @InjectMocks
-    private CancelParticipationService service;
+    private CancelVotingService service;
 
     @Mock
-    private ParticipationRepository participationRepository;
+    private VotingRepository votingRepository;
 
     @DisplayName("회원이 투표를 철회한다.")
     @Test
     void success(){
         //given
-        var participation = new ParticipationFixture().build();
+        var voting = new VotingFixture().build();
 
         given(
-            participationRepository.findById(participation.id()))
-            .willReturn(Optional.of(participation)
+            votingRepository.findById(voting.id()))
+            .willReturn(Optional.of(voting)
         );
 
         //when
-        service.cancel(participation.id());
+        service.cancel(voting.id());
 
         //then
-        assertNotNull(participation.deletedAt());
+        assertNotNull(voting.deletedAt());
     }
 }
