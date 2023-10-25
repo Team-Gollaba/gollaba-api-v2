@@ -2,6 +2,7 @@ package org.tg.gollaba.poll.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollItem;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class CreatePollService {
     private final PollRepository pollRepository;
 
+    @Transactional
     public Long create(Requirement requirement) {
         var poll = createPoll(requirement);
 

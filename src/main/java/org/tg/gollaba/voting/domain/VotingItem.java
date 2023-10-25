@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.domain;
+package org.tg.gollaba.voting.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.tg.gollaba.common.entity.BaseEntityForOnlyCreatedAt;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Accessors(fluent = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED) 
-public class ParticipationItem extends BaseEntityForOnlyCreatedAt {
+public class VotingItem extends BaseEntityForOnlyCreatedAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,20 +21,23 @@ public class ParticipationItem extends BaseEntityForOnlyCreatedAt {
     @Column(nullable = false)
     private Long pollItemId;
 
-    public ParticipationItem(Long pollItemId) {
+    public VotingItem(Long pollItemId) {
         this.pollItemId = pollItemId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ParticipationItem participationItem)) return false;
+        if (!(o instanceof VotingItem that)) return false;
 
-        return pollItemId.equals(participationItem.pollItemId);
+        return Objects.equals(
+            pollItemId,
+            that.pollItemId
+        );
     }
 
     @Override
     public int hashCode() {
-        return pollItemId.hashCode();
+        return pollItemId != null ? pollItemId.hashCode() : 0;
     }
 }

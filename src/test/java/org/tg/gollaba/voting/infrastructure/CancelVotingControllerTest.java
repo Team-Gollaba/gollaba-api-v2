@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.infrastructure;
+package org.tg.gollaba.voting.infrastructure;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
 
-class CancelParticipationControllerTest extends ControllerTestContext {
+class CancelVotingControllerTest extends ControllerTestContext {
 
     private static final String TAG = Tags.VOTING.tagName();
     private static final String DESCRIPTION = Tags.VOTING.descriptionWith("투표 철회");
@@ -20,7 +20,7 @@ class CancelParticipationControllerTest extends ControllerTestContext {
     void success() {
         given()
             .when()
-            .delete("/v2/participation/{participantId}", 1L)
+            .delete("/v2/voting/{votingId}", 1L)
             .then()
             .log().all()
             .apply(
