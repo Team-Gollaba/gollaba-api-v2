@@ -1,6 +1,6 @@
-package org.tg.gollaba.participation.application;
+package org.tg.gollaba.voting.application;
 
-public interface DuplicatedParticipationChecker {
+public interface DuplicatedVotingChecker {
 
     void check(String ipAddress, Long pollId);
 

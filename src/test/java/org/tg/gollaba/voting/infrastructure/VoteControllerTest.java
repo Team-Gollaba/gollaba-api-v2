@@ -1,4 +1,4 @@
-package org.tg.gollaba.participation.infrastructure;
+package org.tg.gollaba.voting.infrastructure;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
 
-class ParticipateControllerTest extends ControllerTestContext {
+class VoteControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.VOTING.tagName();
     private static final String DESCRIPTION = Tags.VOTING.descriptionWith("투표 참여");
 
@@ -22,7 +22,7 @@ class ParticipateControllerTest extends ControllerTestContext {
         given()
             .body(requestBody()) //바디 추가
             .when()
-            .post("/v2/participation")
+            .post("/v2/voting")
             .then()
             .log().all()
             .apply(
@@ -35,7 +35,7 @@ class ParticipateControllerTest extends ControllerTestContext {
                         fieldWithPath("pollId").type(NUMBER).description("투표 ID"),
                         fieldWithPath("pollItemIds").type(ARRAY).description("투표 항목 ID"),
                         fieldWithPath("userId").type(NUMBER).description("투표자 ID"),
-                        fieldWithPath("participantName").type(STRING).description("투표자 이름")
+                        fieldWithPath("voterName").type(STRING).description("투표자 이름")
                     ),
                     responseFields(
                         fieldsWithBasic(
@@ -53,7 +53,7 @@ class ParticipateControllerTest extends ControllerTestContext {
                 "pollId": 1,
                 "pollItemIds": [1, 2, 3],
                 "userId": 1,
-                "participantName": "투표자"
+                "voterName": "투표자"
             }
             """;
     }
