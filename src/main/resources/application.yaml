@@ -30,6 +30,29 @@ server:
     encoding:
       charset: UTF-8
 
+    multipart:
+      max-request-size: 20MB
+      max-file-size: 20MB
+
+#AWS-S3 Bucket
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+    s3:
+      bucket: ${S3_BUCKET}
+    stack:
+      auto-: 'false'
+    region:
+      static: ap-northeast-2
+
+application:
+  s3:
+    poll-item:
+      dir: "gollaba-image-bucket-dev"
+
+
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8

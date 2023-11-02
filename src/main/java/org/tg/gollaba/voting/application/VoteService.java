@@ -50,8 +50,7 @@ public class VoteService {
         }
     }
 
-    private Voting createVoting(Poll poll,
-                                Requirement requirement) {
+    private Voting createVoting(Poll poll, Requirement requirement) {
         var userId = requirement.userId()
             .orElse(null);
         var voterName = requirement.voterName()
