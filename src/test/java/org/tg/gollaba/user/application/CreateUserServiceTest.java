@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.TestFixture;
-import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.poll.infrastructure.S3Uploader;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.domain.UserFixture;
@@ -35,6 +34,9 @@ class CreateUserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserValidator userValidator;
 
     @Mock
     private S3Uploader s3Uploader;
@@ -77,25 +79,6 @@ class CreateUserServiceTest {
         assertThat(throwable).isNull();
         verify(userRepository, times(1)).save(any(User.class));
 
-    }
-
-    @DisplayName("중복된 이메일로 가입할 경우 예외가 발생한다.")
-    @Test
-    void isEmailDuplicate(){
-        //given
-        var userFixture = new UserFixture();
-        var signedUser = userFixture.build();
-        given(userRepository.existsByEmail(signedUser.email()))
-            .willReturn(true);
-        var requirement = new RequirementFixture()
-            .setEmail(signedUser.email())
-            .build();
-
-        //when
-        var throwable = catchThrowable(() -> service.signup(requirement));
-
-        //then
-        assertThat(throwable).isInstanceOf(BadRequestException.class);
     }
 
     @Getter

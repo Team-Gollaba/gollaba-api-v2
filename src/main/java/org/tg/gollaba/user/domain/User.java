@@ -26,17 +26,21 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "profile_image_url")
+    @Column
     private String profileImageUrl;
 
-    @Column(name = "background_image_url")
+    @Column
     private String backgroundImageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", nullable = false)
+    @Column(nullable = false)
     private UserRoleType userRole;
 
-    public User(String email, String nickName, String password, String profileImageUrl, String backgroundImageUrl) {
+    public User(String email,
+                String nickName,
+                String password,
+                String profileImageUrl,
+                String backgroundImageUrl) {
         this.email = email;
         this.nickName = nickName;
         this.password = password;
