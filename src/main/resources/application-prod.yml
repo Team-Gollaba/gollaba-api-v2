@@ -1,1 +1,4 @@
-
+application:
+  s3:
+    poll-item:
+      dir: "gollaba-image-bucket"

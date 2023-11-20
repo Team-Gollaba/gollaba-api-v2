@@ -7,11 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.poll.application.CreatePollService.Requirement.Item;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollFixture;
+import org.tg.gollaba.poll.infrastructure.S3Uploader;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +35,19 @@ class CreatePollServiceTest {
     @Mock
     private PollRepository pollRepository;
 
+    @Mock
+    private S3Uploader s3Uploader;
+
     @Test
     void create() {
         //given
-        var requirement = new RequirementFixture().build();
+        var mockImageFile = Mockito.mock(MultipartFile.class);
+        var requirement = new RequirementFixture()
+            .setItems(List.of(
+                new Item("description1", Optional.ofNullable(null)),
+                new Item("description2", Optional.ofNullable(mockImageFile))
+                ))
+            .build();
         var poll = new PollFixture().build();
         given(pollRepository.save(any(Poll.class)))
             .willReturn(poll);
@@ -48,10 +60,9 @@ class CreatePollServiceTest {
         verify(pollRepository, times(1)).save(any(Poll.class));
     }
 
-
     @Getter
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     static class RequirementFixture implements TestFixture<CreatePollService.Requirement> {
         private Long userId = 1L;
         private String title = "title";
@@ -75,6 +86,10 @@ class CreatePollServiceTest {
                 endedAt,
                 items
             );
+        }
+        private MultipartFile mockMultipartFile(String fileName) {
+            MultipartFile mockMultipartFile = Mockito.mock(MultipartFile.class);
+            return mockMultipartFile;
         }
     }
 }

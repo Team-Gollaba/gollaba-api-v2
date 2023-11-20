@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollItem;
+import org.tg.gollaba.poll.infrastructure.S3Uploader;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,23 +16,29 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CreatePollService {
     private final PollRepository pollRepository;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public Long create(Requirement requirement) {
-        var poll = createPoll(requirement);
-
-        return pollRepository.save(poll).id();
-    }
-
-    private Poll createPoll(Requirement requirement) {
         var items = requirement.items()
             .stream()
             .map(item -> new PollItem(
                 item.description(),
-                null // TODO: 투표 항목 이미지 기능 구현
+                item.imageFile()
+                    .map(this::upload)
+                    .orElse(null)
             ))
             .toList();
+        var poll = createPoll(requirement, items);
 
+        return pollRepository.save(poll).id();
+    }
+
+    private String upload(MultipartFile file) {
+        return s3Uploader.upload(file, "gollaba-image-bucket");
+    }
+
+    private Poll createPoll(Requirement requirement, List<PollItem> items) {
         return new Poll(
             requirement.userId(),
             requirement.title(),
@@ -55,7 +62,7 @@ public class CreatePollService {
     ) {
         public record Item(
             String description,
-            MultipartFile imageFile
+            Optional<MultipartFile> imageFile
         ) {
         }
     }
