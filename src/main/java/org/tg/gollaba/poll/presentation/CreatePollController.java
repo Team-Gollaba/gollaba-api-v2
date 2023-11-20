@@ -1,14 +1,13 @@
-package org.tg.gollaba.poll.infrastructure;
+package org.tg.gollaba.poll.presentation;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Setter;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.poll.application.CreatePollService;
 import org.tg.gollaba.poll.domain.Poll;
@@ -24,7 +23,7 @@ public class CreatePollController {
     private final CreatePollService service;
 
     @PostMapping
-    public ApiResponse<Response> create(@RequestBody @Valid Request request) {
+    public ApiResponse<Response> create(@Valid Request request) {
         var pollId = service.create(request.toRequirement());
 
         return ApiResponse.success(
@@ -32,19 +31,23 @@ public class CreatePollController {
         );
     }
 
-    record Request(
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    static class Request {
         @NotBlank(message = "제목을 입력해주세요.")
-        String title,
+        private String title;
         @NotBlank(message = "작성자 이름을 입력해주세요.")
-        String creatorName,
+        private String creatorName;
         @NotNull(message = "응답 유형을 선택해주세요.")
-        Poll.PollResponseType responseType,
+        private Poll.PollResponseType responseType;
         @NotNull(message = "투표 유형을 선택해주세요.")
-        Poll.PollType pollType,
-        Optional<LocalDateTime> endedAt,
+        private Poll.PollType pollType;
+        private LocalDateTime endedAt;
         @NotEmpty(message = "투표 항목을 입력해주세요.")
-        List<Item> items
-    ) {
+        @Valid
+        private List<Item> items;
+
         public CreatePollService.Requirement toRequirement() {
 
             return new CreatePollService.Requirement(
@@ -53,20 +56,25 @@ public class CreatePollController {
                 creatorName,
                 responseType,
                 pollType,
-                endedAt,
+                Optional.ofNullable(endedAt),
                 items.stream()
                     .map(Item::toItem)
                     .toList()
             );
         }
 
-        record Item(
-            String description
-        ) {
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        static class Item {
+            @NotBlank(message = "투표 항목은 비어있을 수 없습니다.")
+            private String description;
+            private MultipartFile image;
+
             public CreatePollService.Requirement.Item toItem() {
                 return new CreatePollService.Requirement.Item(
                     description,
-                    null
+                    Optional.ofNullable(image)
                 );
             }
         }
