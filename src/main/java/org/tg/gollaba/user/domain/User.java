@@ -48,7 +48,4 @@ public class User extends BaseEntity {
         this.backgroundImageUrl = backgroundImageUrl;
         this.userRole = UserRoleType.ROLE_USER;
     }
-
-
-
 }
