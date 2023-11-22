@@ -35,7 +35,7 @@ class UserValidatorTest {
             .build();
 
         //when
-        var throwable = catchThrowable(() -> validator.existedEmail(newUser));
+        var throwable = catchThrowable(() -> validator.validate(newUser));
 
         //then
         assertThat(throwable).isInstanceOf(BadRequestException.class);

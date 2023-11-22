@@ -15,7 +15,7 @@ public class UserValidator {
 
     private final UserRepository userRepository;
 
-    public void existedEmail(User user){
+    public void validate(User user){
         var isEmail = userRepository.existsByEmail(user.email());
 
         if (isEmail){

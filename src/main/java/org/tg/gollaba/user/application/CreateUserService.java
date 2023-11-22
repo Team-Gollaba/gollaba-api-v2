@@ -25,7 +25,7 @@ public class CreateUserService {
         //TODO providerId 체크
         //TODO UserProvider 생성
 
-        userValidator.existedEmail(user);
+        userValidator.validate(user);
         userRepository.save(user);
         return user.id();
     }
