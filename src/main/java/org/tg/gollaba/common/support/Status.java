@@ -22,6 +22,9 @@ public enum Status {
     NOT_ACCEPTABLE("허용하지 않는 요청입니다."),
     UNKNOWN("정의 되지 않은 상태입니다."),
 
+    //user
+    EMAIL_EXISTED("이미 가입한 이메일 입니다."),
+
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
     POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다."),
