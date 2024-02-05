@@ -19,8 +19,10 @@ public enum Status {
     INVALID_PARAMETER("파라미터가 올바르지 않습니다."),
     EMPTY_TOKEN("토큰이 없습니다."),
     INVALID_TOKEN("토큰이 유효하지 않습니다."),
+    NOT_EXISTS_REFRESH_TOKEN("리프레시 토큰이 DB에 존재하지 않습니다."),
     NOT_ACCEPTABLE("허용하지 않는 요청입니다."),
     UNKNOWN("정의 되지 않은 상태입니다."),
+    FAIL_TO_UPLOAD("파일 업로드에 실패했습니다."),
 
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
@@ -34,9 +36,7 @@ public enum Status {
     INVALID_SINGLE_VOTING_ITEM_SIZE("단일 선택 투표에는 1개의 항목만 선택할 수 있습니다."),
     INVALID_VOTING_ITEM("투표 항목이 올바르지 않습니다."),
     VOTING_NOT_FOUND("투표 이력을 찾을 수 없습니다."),
-
-    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다.")
-    ;
+    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다.");
 
     private final String message;
 

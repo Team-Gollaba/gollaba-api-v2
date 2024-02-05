@@ -20,7 +20,7 @@ class VoteControllerTest extends ControllerTestContext {
     @Test
     void success() {
         given()
-            .body(requestBody()) //바디 추가
+            .body(requestBody())
             .when()
             .post("/v2/voting")
             .then()
