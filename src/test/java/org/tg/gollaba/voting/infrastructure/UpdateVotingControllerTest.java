@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
 
+import java.util.Optional;
+import java.util.Set;
+
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
 
 class UpdateVotingControllerTest extends ControllerTestContext {
@@ -20,6 +22,7 @@ class UpdateVotingControllerTest extends ControllerTestContext {
     @Test
     void success() {
         given()
+            .body(requestBody())
             .when()
             .put("/v2/voting/{votingId}", 1L)
             .then()
@@ -30,6 +33,10 @@ class UpdateVotingControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    requestFields(
+                        fieldWithPath("voterName").type(STRING).description("투표자 이름"),
+                        fieldWithPath("pollItemIds").type(ARRAY).description("투표 항목 ID")
+                    ),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(NULL).description("응답 데이터")
@@ -38,5 +45,12 @@ class UpdateVotingControllerTest extends ControllerTestContext {
                 )
             )
             .status(HttpStatus.OK);
+    }
+
+    private UpdateVotingController.Request requestBody() {
+        return new UpdateVotingController.Request(
+            Optional.of("voterName"),
+            Optional.of(Set.of(1L, 2L))
+        );
     }
 }

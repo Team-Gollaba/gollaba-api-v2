@@ -1,5 +1,9 @@
 package org.tg.gollaba.common.web;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.tg.gollaba.common.support.Status;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -14,7 +18,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
@@ -47,15 +53,33 @@ public class CommonObjectMapper extends ObjectMapper {
     private static class CustomModule extends SimpleModule {
         public CustomModule() {
             addSerializer(
+                LocalTime.class,
+                new LocalTimeSerializer(
+                    DateTimeFormatter.ofPattern("HH:mm")
+                )
+            );
+            addSerializer(
                 ZonedDateTime.class,
                 new ZonedDateTimeSerializer(
                     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
                 )
             );
-            addSerializer(
+            addDeserializer(
+                LocalDate.class,
+                new LocalDateDeserializer(
+                    DateTimeFormatter.ISO_DATE
+                )
+            );
+            addDeserializer(
+                LocalTime.class,
+                new LocalTimeDeserializer(
+                    DateTimeFormatter.ofPattern("HH:mm")
+                )
+            );
+            addDeserializer(
                 LocalDateTime.class,
-                new LocalDateTimeSerializer(
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                new LocalDateTimeDeserializer(
+                    DateTimeFormatter.ISO_DATE_TIME
                 )
             );
             addDeserializer(

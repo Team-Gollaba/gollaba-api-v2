@@ -1,0 +1,60 @@
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:domain;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS gguge\;
+    username: sa
+    password:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 'test-client-id'
+            client-secret: 'test-client-secret'
+            redirect-uri: 'test-redirect-uri'
+            admin-key: 'test-admin-key'
+          naver:
+            client-id: 'test-client-id'
+            client-secret: 'test-client-secret'
+            redirect-uri: 'test-redirect-uri'
+        provider:
+          kakao:
+            authorization-uri: 'test-authorization-uri'
+            token-uri: 'test-token-uri'
+            user-info-uri: 'test-user-info-uri'
+          naver:
+            authorization-uri: 'test-authorization-uri'
+            token-uri: 'test-token-uri'
+            user-info-uri: 'test-user-info-uri'
+
+security:
+  aes:
+    encrypt-key: 'test-encrypt-key'
+  jwt:
+    secret-key: 'test-secret-key'
+    access-expiration-time: 7200000
+    refresh-expiration-time: 2592000000
+  hash-ids:
+    salt: 'test-salt'
+    min-length: 10
+
+cloud:
+  aws:
+    credentials:
+      accessKey: 'test-access-key'
+      secretKey: 'test-secret-key'
+    s3:
+      bucket: 'test-bucket'
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
