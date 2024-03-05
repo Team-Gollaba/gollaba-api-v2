@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @Import(ControllerTestContext.ControllerTestConfig.class)
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTestContext {
 
@@ -76,7 +76,8 @@ public class ControllerTestContext {
 
     protected enum Tags {
         POLL("투표"),
-        VOTING("투표 참여");
+        VOTING("투표 참여"),
+        USER("유저");
 
         private final String tagName;
 

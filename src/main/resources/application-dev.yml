@@ -9,3 +9,14 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  api-docs:
+    enabled: false
+    path: /api-docs/gollaba
+  swagger-ui:
+    url: /api-docs/gollaba/main.json
+    path: /v2/api-docs
