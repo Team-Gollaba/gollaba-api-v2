@@ -20,7 +20,6 @@ import org.tg.gollaba.user.domain.User;
 
 import java.io.IOException;
 
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.ACCESS_TOKEN;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 import static org.tg.gollaba.auth.repository.AuthorizationRequestRepositoryImpl.OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME;
 import static org.tg.gollaba.auth.repository.AuthorizationRequestRepositoryImpl.REDIRECT_URI_PARAM_COOKIE_NAME;
@@ -31,8 +30,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final CookieHandler cookieHandler;
-    @Value("${security.jwt.access-expiration-time}")
-    private long accessExpirationTime;
     @Value("${security.jwt.refresh-expiration-time}")
     private long refreshExpirationTime;
 
@@ -52,21 +49,21 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
-        var user = userRepository.findByEmailAndProviderId(oAuth2UserInfo.email(), oAuth2UserInfo.providerId()).orElseThrow();
-        var issuedToken = tokenProvider.issue(user.id());
-
-        addJwtTokenCookie(request, response, issuedToken);
-
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + redirectUrl);
             return;
         }
 
+        var user = userRepository.findByEmailAndProviderId(oAuth2UserInfo.email(), oAuth2UserInfo.providerId()).orElseThrow();
+        var issuedToken = tokenProvider.issue(user.id());
         var targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+            .queryParam("accessToken", issuedToken.accessToken())
             .queryParam("protectHash", "v")
             .build()
             .toUriString();
+
         clearAuthenticationAttributes(request, response);
+        addJwtRefreshTokenCookie(request, response, issuedToken);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -100,19 +97,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             .toUriString();
     }
 
-    private void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
+    private void clearAuthenticationAttributes(HttpServletRequest request,
+                                               HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
         cookieHandler.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         cookieHandler.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
         cookieHandler.deleteCookie(request, response, "JSESSIONID");
     }
 
-    private void addJwtTokenCookie(HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   TokenProvider.IssuedToken issuedToken) {
-        cookieHandler.deleteCookie(request, response, ACCESS_TOKEN);
+    private void addJwtRefreshTokenCookie(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          TokenProvider.IssuedToken issuedToken) {
         cookieHandler.deleteCookie(request, response, REFRESH_TOKEN);
-        cookieHandler.addSecuredCookie(response, ACCESS_TOKEN, issuedToken.accessToken(), (int) accessExpirationTime / 1000);
         cookieHandler.addSecuredCookie(response, REFRESH_TOKEN, issuedToken.refreshToken(), (int) refreshExpirationTime / 1000);
     }
 }

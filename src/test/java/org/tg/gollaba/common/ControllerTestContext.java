@@ -77,7 +77,8 @@ public class ControllerTestContext {
     protected enum Tags {
         POLL("투표"),
         VOTING("투표 참여"),
-        USER("유저");
+        USER("유저"),
+        AUTHORIZATION("인가");
 
         private final String tagName;
 

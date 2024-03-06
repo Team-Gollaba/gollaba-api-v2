@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.component.CookieHandler;
-import org.tg.gollaba.auth.component.TokenProvider;
 import org.tg.gollaba.auth.service.RenewTokenService;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
@@ -20,23 +19,19 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.REFRESH_TOKEN;
 
 @RestController
-@RequestMapping("/api/auth/renew-token")
+@RequestMapping("/v2/auth/renew-token")
 @RequiredArgsConstructor
 public class RenewTokenController {
     private final RenewTokenService renewTokenService;
-    private final CookieHandler cookieHandler;
-    @Value("${security.jwt.access-expiration-time}")
-    private long accessExpirationTime;
 
     @PostMapping
-    ApiResponse<Void> renew(@CookieValue(name = "refresh_token") String refreshToken,
-                            HttpServletRequest request,
-                            HttpServletResponse response) {
+    ApiResponse<Response> renew(@CookieValue(name = REFRESH_TOKEN) String refreshToken) {
         validate(refreshToken);
-        var accessToken = renewTokenService.renew(refreshToken);
-
-        addJwtTokenCookie(request, response, accessToken);
-        return ApiResponse.success();
+        return ApiResponse.success(
+            new Response(
+                renewTokenService.renew(refreshToken)
+            )
+        );
     }
 
     private void validate(String refreshToken) {
@@ -45,11 +40,8 @@ public class RenewTokenController {
         }
     }
 
-    private void addJwtTokenCookie(HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   String accessToken) {
-        var cookieMaxAge = (int) accessExpirationTime / 1000;
-        cookieHandler.deleteCookie(request, response, ACCESS_TOKEN);
-        cookieHandler.addSecuredCookie(response, ACCESS_TOKEN, accessToken, cookieMaxAge);
+    record Response(
+        String accessToken
+    ) {
     }
 }

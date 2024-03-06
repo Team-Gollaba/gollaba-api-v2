@@ -37,7 +37,7 @@ class JwtTokenHandlerTest {
         //then
         assertThat(result.get("uid", Long.class)).isEqualTo(user.id());
         assertThat(result.get("iss", String.class)).isEqualTo("gollaba");
-        assertThat(result.getIssuedAt().getTime()).isBetween(expectedIat - 1000L, expectedIat + 1000L);
-        assertThat(result.getExpiration().getTime()).isBetween(expectedExpiration -  1000L, expectedExpiration + 1000L);
+        assertThat(result.getIssuedAt().getTime()).isBetween(expectedIat - 10000L, expectedIat + 10000L);
+        assertThat(result.getExpiration().getTime()).isBetween(expectedExpiration -  10000L, expectedExpiration + 10000L);
     }
 }

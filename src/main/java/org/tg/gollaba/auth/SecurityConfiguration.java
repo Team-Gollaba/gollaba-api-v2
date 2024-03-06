@@ -89,8 +89,9 @@ public class SecurityConfiguration {
         var corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.setAllowedOrigins(List.of(
-            "http://127.0.0.1:5500",
-            "http://127.0.0.1:3000"
+            "http://localhost:5500",
+            "http://localhost:3000",
+            "https://gollaba-application-deploy.vercel.app"
         ));
         corsConfiguration.setAllowedHeaders(
             List.of(
@@ -135,6 +136,7 @@ public class SecurityConfiguration {
             .requestMatchers(HttpMethod.GET, "/v2/api-docs").permitAll()
             .requestMatchers(HttpMethod.GET, "/v2/swagger-ui/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/v2/auth/renew-token").permitAll()
             .anyRequest().authenticated();
     }
 

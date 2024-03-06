@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.tg.gollaba.common.entity.BaseEntity;
+import org.tg.gollaba.common.exception.BadRequestException;
+import org.tg.gollaba.common.support.Status;
+import org.tg.gollaba.common.support.StringUtils;
+import org.tg.gollaba.common.support.ValidationUtils;
 
 @Entity
 @Getter
@@ -57,9 +61,33 @@ public class User extends BaseEntity {
         this.roleType = roleType;
         this.providerType = providerType;
         this.providerId = providerId;
+        validate();
+    }
+
+    private void validate() {
+        if (providerType != null && providerId == null
+            || providerType == null && providerId != null) {
+            throw new IllegalArgumentException("providerType, providerId 둘 다 필요합니다.");
+        }
+
+        if (providerType == null && password == null) {
+            throw new IllegalArgumentException("password 는 필수입니다.");
+        }
+
+        if (!ValidationUtils.isValidEmail(email)) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
+        }
+
+        if (StringUtils.hasText(profileImageUrl) &&
+            !ValidationUtils.isValidUrl(profileImageUrl)) {
+            throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
+        }
     }
 
     public void updateBackgroundImageUrl(String backgroundImageUrl) {
+        if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
+            throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
+        }
         this.backgroundImageUrl = backgroundImageUrl;
     }
 
