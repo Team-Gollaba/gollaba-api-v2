@@ -26,8 +26,7 @@ class JwtTokenHandlerTest {
     @Test
     void parseToken() {
         //given
-        var user = new UserFixture().build();
-        var token = jwtTokenHandler.createAccessToken(user);
+        var token = jwtTokenHandler.createAccessToken(1L);
         var expectedIat = Timestamp.valueOf(LocalDateTime.now()).getTime();
         var expectedExpiration = expectedIat + TEST_ACCESS_EXPIRATION_TIME;
 
@@ -35,7 +34,7 @@ class JwtTokenHandlerTest {
         var result = jwtTokenHandler.parseToken(token);
 
         //then
-        assertThat(result.get("uid", Long.class)).isEqualTo(user.id());
+        assertThat(result.get("uid", Long.class)).isEqualTo(1L);
         assertThat(result.get("iss", String.class)).isEqualTo("gollaba");
         assertThat(result.getIssuedAt().getTime()).isBetween(expectedIat - 10000L, expectedIat + 10000L);
         assertThat(result.getExpiration().getTime()).isBetween(expectedExpiration -  10000L, expectedExpiration + 10000L);

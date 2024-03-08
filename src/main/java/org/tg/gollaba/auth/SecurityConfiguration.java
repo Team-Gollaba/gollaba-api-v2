@@ -126,18 +126,19 @@ public class SecurityConfiguration {
 
     private Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> authorize() {
         return auth -> auth
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/v2/users").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api-docs/gollaba").permitAll()
-            .requestMatchers(HttpMethod.GET, "/test").permitAll()
-            .requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/login/oauth2/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/v2/api-docs").permitAll()
-            .requestMatchers(HttpMethod.GET, "/v2/swagger-ui/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/v2/auth/renew-token").permitAll()
-            .anyRequest().authenticated();
+//            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/v2/users").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/api-docs/gollaba").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/test").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/login/oauth2/**").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/login/oauth2/**").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/v2/api-docs").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/v2/swagger-ui/**").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/v2/auth/renew-token").permitAll()
+//            .requestMatchers(HttpMethod.POST, "/v2/auth/make-token").permitAll()
+            .anyRequest().permitAll();
     }
 
     private static class AuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {

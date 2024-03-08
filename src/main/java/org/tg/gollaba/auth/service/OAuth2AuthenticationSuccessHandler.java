@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.tg.gollaba.auth.component.CookieHandler;
+import org.tg.gollaba.auth.component.JwtTokenProvider;
 import org.tg.gollaba.auth.component.TokenProvider;
 import org.tg.gollaba.auth.vo.OAuthUserInfo;
 import org.tg.gollaba.user.repository.UserRepository;
@@ -107,7 +108,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private void addJwtRefreshTokenCookie(HttpServletRequest request,
                                           HttpServletResponse response,
-                                          TokenProvider.IssuedToken issuedToken) {
+                                          JwtTokenProvider.IssuedToken issuedToken) {
         cookieHandler.deleteCookie(request, response, REFRESH_TOKEN);
         cookieHandler.addSecuredCookie(response, REFRESH_TOKEN, issuedToken.refreshToken(), (int) refreshExpirationTime / 1000);
     }

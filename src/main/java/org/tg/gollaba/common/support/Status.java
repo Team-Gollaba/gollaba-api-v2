@@ -15,7 +15,7 @@ public enum Status {
     ERROR("에러"),
     FAIL("요청을 처리할 수 없습니다."),
     NOT_FOUND("리소스를 찾을 수 없습니다."),
-    UNAUTHORIZED("인증되지 않았습니다."),
+    UNAUTHORIZED("인증 정보가 부족합니다. 인증 정보를 확인해주세요."),
     INVALID_PARAMETER("파라미터가 올바르지 않습니다."),
     EMPTY_TOKEN("토큰이 없습니다."),
     INVALID_TOKEN("토큰이 유효하지 않습니다."),

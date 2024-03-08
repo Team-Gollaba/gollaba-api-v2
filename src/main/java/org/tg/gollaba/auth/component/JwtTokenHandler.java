@@ -10,8 +10,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
-public class JwtTokenHandler {
-
+public class JwtTokenHandler implements TokenHandler {
     private final String secretKey;
     private final long accessExpirationTime;
     private final long refreshExpirationTime;
@@ -24,12 +23,13 @@ public class JwtTokenHandler {
         this.refreshExpirationTime = refreshExpirationTime;
     }
 
-    public String createAccessToken(User user) {
+    @Override
+    public String createAccessToken(Long userId) {
         var now = new Date();
         var expirationTime = new Date(now.getTime() + accessExpirationTime);
 
         return Jwts.builder()
-            .claim("uid", user.id())
+            .claim("uid", userId)
             .setIssuer("gollaba")
             .setIssuedAt(now)
             .setExpiration(expirationTime)
@@ -37,6 +37,7 @@ public class JwtTokenHandler {
             .compact();
     }
 
+    @Override
     public String createRefreshToken() {
         var now = new Date();
         var expirationTime = new Date(now.getTime() + refreshExpirationTime);
@@ -49,6 +50,7 @@ public class JwtTokenHandler {
             .compact();
     }
 
+    @Override
     public Claims parseToken(String token) {
         return Jwts.parser()
             .setSigningKey(secretKey)
@@ -56,6 +58,7 @@ public class JwtTokenHandler {
             .getBody();
     }
 
+    @Override
     public boolean isValidToken(String token) {
         var result = false;
 

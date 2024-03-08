@@ -1,5 +1,6 @@
 package org.tg.gollaba.common.exception;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.tg.gollaba.common.web.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -22,6 +23,23 @@ import java.util.stream.Collectors;
 public class CommonExceptionHandler {
     public static final String USER_4XX_MESSAGE = "잘못된 요청입니다.";
     public static final String USER_5XX_MESSAGE = "예상치 못한 오류가 발생하였습니다. 관리자에게 문의해주세요";
+
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ApiResponse<Void> unAuthorizedException(UnAuthorizedException e,
+                                                   HttpServletRequest request) {
+        log.warn("[{}] 인증 정보가 없는 요청이 발생하였습니다.", request.getRequestURI());
+        return ApiResponse.fail(e.message());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ApiResponse<Void> accessDeniedException(AccessDeniedException e,
+                                                  HttpServletRequest request) {
+        log.warn("[{}] 권한이 없는 요청이 발생하였습니다.", request.getRequestURI());
+        return ApiResponse.fail("권한이 부족합니다.");
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ApplicationException.class)
