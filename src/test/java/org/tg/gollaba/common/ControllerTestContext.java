@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -64,6 +65,18 @@ public class ControllerTestContext {
 
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,
                                                                       Class<T> enumClass) {
+        return descriptor.description(
+            "%s : %s".formatted(
+                descriptor.getDescription(),
+                Arrays.stream(enumClass.getEnumConstants())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "))
+            )
+        );
+    }
+
+    protected <T extends Enum<?>> FieldDescriptor enumDescription(FieldDescriptor descriptor,
+                                                                  Class<T> enumClass) {
         return descriptor.description(
             "%s : %s".formatted(
                 descriptor.getDescription(),
