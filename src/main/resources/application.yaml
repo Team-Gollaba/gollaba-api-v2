@@ -101,3 +101,5 @@ application:
       location: "poll-items"
     profile-images:
       location: "profile-images"
+    background-images:
+      location: "background-images"

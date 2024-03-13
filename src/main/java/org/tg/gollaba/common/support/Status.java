@@ -36,7 +36,11 @@ public enum Status {
     INVALID_SINGLE_VOTING_ITEM_SIZE("단일 선택 투표에는 1개의 항목만 선택할 수 있습니다."),
     INVALID_VOTING_ITEM("투표 항목이 올바르지 않습니다."),
     VOTING_NOT_FOUND("투표 이력을 찾을 수 없습니다."),
-    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다.");
+    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다."),
+
+    //user
+    INCONSISTENCY_PASSWORD("일치하지 않는 비밀번호입니다."),
+    USER_NOT_FOUND("존재하지 않는 회원입니다.");
 
     private final String message;
 

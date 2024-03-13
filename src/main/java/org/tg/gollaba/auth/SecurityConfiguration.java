@@ -126,6 +126,7 @@ public class SecurityConfiguration {
 
     private Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> authorize() {
         return auth -> auth
+//            .requestMatchers(HttpMethod.POST, "/v2/users/update").hasAuthority("ROLE_USER")
 //            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 //            .requestMatchers(HttpMethod.POST, "/v2/users").permitAll()
 //            .requestMatchers(HttpMethod.POST, "/api-docs/gollaba").permitAll()
