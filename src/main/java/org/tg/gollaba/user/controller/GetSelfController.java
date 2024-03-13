@@ -14,7 +14,7 @@ import org.tg.gollaba.common.web.ApiResponse;
 public class GetSelfController {
 
     @PreAuthorize("hasAnyAuthority('USER')")
-    @GetMapping //userId 여기서 받아옴
+    @GetMapping
     ApiResponse<Void> getMe(AuthenticatedUser user) {
         return ApiResponse.success();
     }

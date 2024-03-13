@@ -19,8 +19,7 @@ public class TestTokenController {
         var accessToken = jwtTokenHandler.createAccessToken(request.userId());
 
         return ApiResponse.success(accessToken);
-    } //테스트시 여기서 유저 아이디 입력하면 토큰 발급함 << 이거쓰기
-    //ㄴ> Auth 어쩌구 헤더 값에 Barer 토큰넣기
+    }
 
     record Request(
         Long userId

@@ -82,19 +82,24 @@ public class User extends BaseEntity {
         }
     }
 
-    public void update(String name,
-                       String profileImageUrl,
-                       String backgroundImageUrl){
-        if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
-            throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
+    public void update(String profileImageUrl,
+                       String backgroundImageUrl,
+                       String name){
+        if (profileImageUrl != null) {
+            if (!ValidationUtils.isValidUrl(profileImageUrl)) {
+                throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
+            }
+            this.profileImageUrl = profileImageUrl;
         }
-        if (!ValidationUtils.isValidUrl(profileImageUrl)) {
-            throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
+
+        if (backgroundImageUrl != null) {
+            if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
+                throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
+            }
+            this.backgroundImageUrl = backgroundImageUrl;
         }
 
         this.name = name;
-        this.profileImageUrl = profileImageUrl;
-        this.backgroundImageUrl = backgroundImageUrl;
     }
 
     public enum RoleType {

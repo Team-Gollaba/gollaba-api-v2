@@ -1,30 +1,21 @@
 package org.tg.gollaba.user.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
-import org.tg.gollaba.auth.component.JwtTokenHandler;
-import org.tg.gollaba.auth.controller.TestTokenController;
-import org.tg.gollaba.auth.vo.AuthenticatedUser;
-import org.tg.gollaba.user.component.FileUploaderImpl;
+import org.tg.gollaba.user.component.FileUploader;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.domain.UserFixture;
 import org.tg.gollaba.user.repository.UserRepository;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,7 +31,7 @@ class UpdateUserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private FileUploaderImpl fileUploader;
+    private FileUploader fileUploader;
 
 
     @Test
@@ -48,23 +39,22 @@ class UpdateUserServiceTest {
         //given
         var mockImageFile = Mockito.mock(MultipartFile.class);
         var user = new UserFixture().build();
-        var authenticatedUser = new AuthenticatedUser(user.id(),
-                                                      user.name(),
-                                                      user.email());
 
         var requirement = new UpdateUserService.Requirement(
+            1L,
             "updateName",
             Optional.of(mockImageFile),
             Optional.of(mockImageFile)
         );
-        given(userRepository.findByEmail(user.email())).willReturn(Optional.of(user));
-        given(fileUploader.uploadProfileImage(any(), any())).willReturn("https://updated-url-1.com/test.png");
-        given(fileUploader.uploadBackgroundImage(any(), any())).willReturn("https://updated-url-2.com/test.png");
+        given(userRepository.findById(requirement.userId())).willReturn(Optional.of(user));
+        given(fileUploader.uploadProfileImage(any(), eq(mockImageFile))).willReturn("https://updated-url-1.com/test.png");
+        given(fileUploader.uploadBackgroundImage(any(), eq(mockImageFile))).willReturn("https://updated-url-2.com/test.png");
 
         //when
-        service.update(requirement, authenticatedUser);
+        var throwable = catchThrowable(() -> service.update(requirement));
 
         //then
+        assertThat(throwable).isNull();
         verify(userRepository, times(1)).save(any(User.class));
 
         var argumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -72,12 +62,7 @@ class UpdateUserServiceTest {
 
         var capturedUser = argumentCaptor.getValue();
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
-        assertThat(capturedUser.profileImageUrl()).isEqualTo("https://updated-url-1.com/test.png");
-        assertThat(capturedUser.backgroundImageUrl()).isEqualTo("https://updated-url-2.com/test.png");
-    }
-
-    private FileUploaderImpl fileUploader(String fileName) {
-        FileUploaderImpl mockFileUploader = Mockito.mock(FileUploaderImpl.class);
-        return mockFileUploader;
+        assertThat(capturedUser.profileImageUrl()).isNotNull().isEqualTo("https://updated-url-1.com/test.png");
+        assertThat(capturedUser.backgroundImageUrl()).isNotNull().isEqualTo("https://updated-url-2.com/test.png");
     }
 }

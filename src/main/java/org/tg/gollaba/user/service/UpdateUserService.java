@@ -4,53 +4,56 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
-import org.tg.gollaba.user.component.FileUploaderImpl;
+import org.tg.gollaba.user.component.FileUploader;
 import org.tg.gollaba.user.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateUserService {
     private final UserRepository userRepository;
-    private final FileUploaderImpl fileUploader;
+    private final FileUploader fileUploader;
 
     @Transactional
-    public void update(Requirement requirement, AuthenticatedUser authenticatedUser) {
-        var user = userRepository.findByEmail(authenticatedUser.email())
-            .orElseThrow(() -> new BadRequestException(Status.USER_NOT_FOUND));
+    public void update(Requirement requirement) {
+        var user = userRepository.findById(requirement.userId())
+                .orElseThrow(() -> new BadRequestException(Status.USER_NOT_FOUND));
+
+        var profileUrl  = requirement.profileImage()
+            .map(file -> {
+                var timestamp = String.valueOf(System.currentTimeMillis());
+                return fileUploader.uploadProfileImage(requirement.userId()
+                    + "-" + UUID.randomUUID()
+                    + "-" + timestamp,
+                    file);
+            })
+            .orElse(null);
+
+            var backgroundUrl  = requirement.backgroundImage()
+            .map(file -> {
+                var timestamp = String.valueOf(System.currentTimeMillis());
+                return fileUploader.uploadBackgroundImage(requirement.userId()
+                    + "-" + UUID.randomUUID()
+                    + "-" + timestamp,
+                    file);
+            })
+            .orElse(null);
 
         user.update(
-            requirement.name,
-            profileUpload(requirement),
-            backgroundImageUpload(requirement)
+            profileUrl,
+            backgroundUrl,
+            requirement.name()
         );
 
         userRepository.save(user);
     }
 
-    private String profileUpload(Requirement requirement){
-        var profileFileName = requirement.profileImage
-            .map(MultipartFile::getOriginalFilename).orElse(null);
-
-        return requirement.profileImage
-            .map(file -> fileUploader. //여기서 에러터짐
-                uploadProfileImage(profileFileName, file)).orElse(null);
-    }
-
-    private String backgroundImageUpload(Requirement requirement){
-        var backgroundFileName = requirement.backgroundImage
-            .map(MultipartFile::getOriginalFilename).orElse(null);
-
-        return requirement.backgroundImage
-            .map(file -> fileUploader.
-                uploadBackgroundImage(backgroundFileName, file)).orElse(null);
-    }
-
     public record Requirement(
+        Long userId,
         String name,
 
         Optional<MultipartFile> profileImage,
