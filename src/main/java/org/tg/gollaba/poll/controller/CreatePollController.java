@@ -23,7 +23,7 @@ public class CreatePollController {
     private final CreatePollService service;
 
     @PostMapping
-    public ApiResponse<Response> create(@Valid Request request) {
+    public ApiResponse<Response> create(@Valid @RequestBody Request request) {
         var pollId = service.create(request.toRequirement());
 
         return ApiResponse.success(
