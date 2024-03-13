@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.tg.gollaba.common.entity.BaseEntity;
-import org.tg.gollaba.common.exception.BadRequestException;
-import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.support.StringUtils;
 import org.tg.gollaba.common.support.ValidationUtils;
 
@@ -84,11 +82,22 @@ public class User extends BaseEntity {
         }
     }
 
-    public void updateBackgroundImageUrl(String backgroundImageUrl) {
-        if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
-            throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
-        }
-        this.backgroundImageUrl = backgroundImageUrl;
+    public void update(String name){
+        this.name = name;
+    }
+
+    public void changeProfileImage(String profileImageUrl){
+            if (!ValidationUtils.isValidUrl(profileImageUrl)) {
+                throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
+            }
+            this.profileImageUrl = profileImageUrl;
+    }
+
+    public void changeBackgroundImage(String backgroundImageUrl){
+            if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
+                throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
+            }
+            this.backgroundImageUrl = backgroundImageUrl;
     }
 
     public enum RoleType {

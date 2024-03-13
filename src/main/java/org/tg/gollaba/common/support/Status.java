@@ -43,7 +43,8 @@ public enum Status {
     INVALID_FAVORITE_OPERATION("좋아요를 요청한 사용자가 아닙니다."),
 
     //user
-    USER_NOT_FOUND("존재하지 않는 회원입니다.");;
+    INCONSISTENCY_PASSWORD("일치하지 않는 비밀번호입니다."),
+    USER_NOT_FOUND("존재하지 않는 회원입니다.");
 
     private final String message;
 

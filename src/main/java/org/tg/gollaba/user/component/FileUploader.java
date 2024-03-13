@@ -6,4 +6,7 @@ public interface FileUploader {
 
     String uploadProfileImage(String fileName,
                               MultipartFile multipartFile);
+
+    String uploadBackgroundImage(String fileName,
+                                 MultipartFile multipartFile);
 }

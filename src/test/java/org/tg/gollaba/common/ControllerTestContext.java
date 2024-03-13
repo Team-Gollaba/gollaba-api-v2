@@ -10,6 +10,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -21,12 +22,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
+import org.tg.gollaba.auth.vo.AuthenticatedUser;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -41,12 +46,18 @@ public class ControllerTestContext {
     @Autowired
     private WebApplicationContext context;
 
+    @MockBean
+    AuthenticationHandlerMethodArgumentResolver authenticationHandlerMethodArgumentResolver;
+
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(print())
             .build();
+
+        when(authenticationHandlerMethodArgumentResolver.resolveArgument(any(), any(), any(), any()))
+            .thenReturn(new AuthenticatedUser(1L, "test", "test@test.com"));
     }
 
     protected MockMvcRequestSpecification given() {
