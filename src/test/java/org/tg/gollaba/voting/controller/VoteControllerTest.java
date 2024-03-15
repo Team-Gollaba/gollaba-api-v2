@@ -11,7 +11,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class VoteControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.VOTING.tagName();
@@ -31,6 +31,8 @@ class VoteControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     requestFields(
                         fieldWithPath("pollId").type(NUMBER).description("투표 ID"),
                         fieldWithPath("pollItemIds").type(ARRAY).description("투표 항목 ID"),

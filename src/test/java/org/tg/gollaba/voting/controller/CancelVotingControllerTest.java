@@ -9,7 +9,7 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class CancelVotingControllerTest extends ControllerTestContext {
 
@@ -29,6 +29,8 @@ class CancelVotingControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(NULL).description("응답 데이터")

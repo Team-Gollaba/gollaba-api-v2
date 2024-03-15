@@ -10,9 +10,8 @@ import java.util.Optional;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class CreateUserControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.USER.tagName();
@@ -32,6 +31,8 @@ class CreateUserControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     requestFields(
                         fieldWithPath("email").type(STRING).description("이메일"),
                         fieldWithPath("name").type(STRING).description("이름"),

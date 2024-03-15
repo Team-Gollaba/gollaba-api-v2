@@ -22,7 +22,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetPollListControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
@@ -53,6 +53,8 @@ class GetPollListControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
                         parameterWithName("size").description("페이지 크기"),

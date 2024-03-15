@@ -3,6 +3,7 @@ package org.tg.gollaba.user.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.tg.gollaba.common.ControllerTestContext;
@@ -16,10 +17,10 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class UpdateUserControllerTest extends ControllerTestContext{
@@ -32,39 +33,47 @@ class UpdateUserControllerTest extends ControllerTestContext{
     private ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(username = "test", roles = "USER")
+    @WithMockUser(username = "test", authorities = "USER")
     void success() throws Exception{
-        var tokenResponse = mockMvc.perform(post("/v2/auth/make-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"userId\": 1}"))
-            .andExpect(status().isOk())
-            .andReturn().getResponse()
-            .getContentAsString();
-
-        var accessToken = objectMapper.readTree(tokenResponse)
-                                             .get("data")
-                                             .textValue();
-
         given()
-            .header("Authorization", "Bearer " + accessToken)
-            .body(requestBody())
+            .header(HttpHeaders.AUTHORIZATION, "JWT token")
+            .formParam("name", "testName")
             .when()
-            .post("/v2/users/update")
+            .put("/v2/users")
             .then()
             .log().all()
             .apply(
                 document(
                     identifier(),
                     new ResourceSnippetParametersBuilder()
+                        .summary(DESCRIPTION)
                         .tag(TAG)
-                        .description(DESCRIPTION),
+                        .description("""
+                         로그인 진행 시 액세스 토큰과 리프레시 토큰을 전달합니다.
+                                                                         
+                         액세스 토큰의 구조는 아래와 같습니다.
+                                                                         
+                         ```json
+                        {
+                          "sub": "2",
+                          "role": "ROLE_USER",
+                         "type": "access",
+                          "exp": 1695633312
+                        }
+                         ```
+                         
+                         | 항목 | description                                               |
+                         |------|-----------------------------------------------------------|
+                         | sub  | 유저의 ID(PK)                                             |
+                         | role | 권한(이메일 인증 시 ROLE_USER / 인증 안한 경우 ROLE_PENDING) |
+                         | exp  | 유효기간                                                  |
+                         | type | 토큰의 종류(access, refresh, email-verfication 등이 존재)   |
+                          
+                         """),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     requestHeaders(
-                        headerWithName("Authorization").description("Bearer 토큰")
-                    ),
-                    requestFields(
-                        fieldWithPath("name").type(STRING).description("이름"),
-                        fieldWithPath("profileImage").type(OBJECT).optional().description("프로필 이미지 파일"),
-                        fieldWithPath("backgroundImage").type(OBJECT).optional().description("백그라운드 이미지 파일")
+                        headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰")
                     ),
                     responseFields(
                         fieldsWithBasic(
@@ -74,13 +83,5 @@ class UpdateUserControllerTest extends ControllerTestContext{
                 )
             )
             .status(HttpStatus.OK);
-    }
-
-    private UpdateUserController.Request requestBody() {
-        return new UpdateUserController.Request(
-            "name",
-            Optional.ofNullable(null),
-            Optional.ofNullable(null)
-        );
     }
 }

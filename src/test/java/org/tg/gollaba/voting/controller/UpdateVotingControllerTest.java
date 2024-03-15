@@ -11,7 +11,7 @@ import java.util.Set;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class UpdateVotingControllerTest extends ControllerTestContext {
 
@@ -32,6 +32,8 @@ class UpdateVotingControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     requestFields(
                         fieldWithPath("voterName").type(STRING).description("투표자 이름"),
                         fieldWithPath("pollItemIds").type(ARRAY).description("투표 항목 ID")
