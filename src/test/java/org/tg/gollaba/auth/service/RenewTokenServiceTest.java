@@ -1,13 +1,12 @@
 package org.tg.gollaba.auth.service;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.tg.gollaba.auth.component.JwtTokenHandler;
-import org.tg.gollaba.auth.component.TokenProvider;
+import org.tg.gollaba.auth.component.JwtTokenProvider;
 import org.tg.gollaba.auth.domain.UserTokenFixture;
 import org.tg.gollaba.auth.repository.UserTokenRepository;
 import org.tg.gollaba.common.exception.BadRequestException;
@@ -26,7 +25,7 @@ class RenewTokenServiceTest {
     @Mock
     private JwtTokenHandler jwtTokenHandler;
     @Mock
-    private TokenProvider tokenProvider;
+    private JwtTokenProvider tokenProvider;
     @Mock
     private UserTokenRepository userTokenRepository;
 
@@ -35,7 +34,7 @@ class RenewTokenServiceTest {
         //given
         var refreshToken = "refreshToken";
         var userToken = new UserTokenFixture().build();
-        var issuedToken = new TokenProvider.IssuedToken("accessToken", "refreshToken");
+        var issuedToken = new JwtTokenProvider.IssuedToken("accessToken", "refreshToken");
         given(userTokenRepository.findByRefreshToken(refreshToken))
             .willReturn(Optional.of(userToken));
         given(tokenProvider.issue(userToken.userId()))

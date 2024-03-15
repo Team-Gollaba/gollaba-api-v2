@@ -27,14 +27,15 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
         var redirectUri = cookieHandler.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse(("/"));
+            .map(Cookie::getValue)
+            .orElse(("/"));
 
        log.error("oauth authentication fail", exception);
 
         var targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
-                .queryParam("error", exception.getLocalizedMessage())
-                .build().toUriString();
+            .queryParam("error", exception.getLocalizedMessage())
+            .build()
+            .toUriString();
 
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

@@ -43,7 +43,7 @@ class CreateUserServiceTest {
             "test@test.com",
             "test",
             Optional.empty(),
-            Optional.of("testImageUrl"),
+            Optional.of("https://www.test.com/test.jpg"),
             Optional.of(User.ProviderType.KAKAO),
             Optional.of("testProviderId")
         );
@@ -66,7 +66,7 @@ class CreateUserServiceTest {
         assertThat(capturedUser.email()).isEqualTo(requirement.email());
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
         assertThat(capturedUser.password()).isEqualTo("testPassword");
-        assertThat(capturedUser.profileImageUrl()).isEqualTo("testImageUrl");
+        assertThat(capturedUser.profileImageUrl()).isEqualTo("https://www.test.com/test.jpg");
         assertThat(capturedUser.backgroundImageUrl()).isNull();
         assertThat(capturedUser.roleType()).isEqualTo(User.RoleType.USER);
         assertThat(capturedUser.providerType()).isEqualTo(User.ProviderType.KAKAO);

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
-import org.tg.gollaba.auth.component.CookieHandler;
+import org.tg.gollaba.auth.component.CookieHandlerImpl;
 
 @Component
 @RequiredArgsConstructor
@@ -16,12 +16,12 @@ public class AuthorizationRequestRepositoryImpl implements AuthorizationRequestR
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME  = "redirect_uri";
     private static final int cookieExpireSeconds = 180;
-    private final CookieHandler cookieHandler;
+    private final CookieHandlerImpl cookieHandlerImpl;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-        return cookieHandler.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                .map(cookie -> cookieHandler.deserialize(cookie, OAuth2AuthorizationRequest.class))
+        return cookieHandlerImpl.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+                .map(cookie -> cookieHandlerImpl.deserialize(cookie, OAuth2AuthorizationRequest.class))
                 .orElse(null);
     }
 
@@ -30,16 +30,16 @@ public class AuthorizationRequestRepositoryImpl implements AuthorizationRequestR
                                          HttpServletRequest request,
                                          HttpServletResponse response) {
         if (authorizationRequest == null) {
-            cookieHandler.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
-            cookieHandler.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
+            cookieHandlerImpl.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
+            cookieHandlerImpl.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
             return;
         }
 
-        cookieHandler.addSecuredCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, cookieHandler.serialize(authorizationRequest), cookieExpireSeconds);
+        cookieHandlerImpl.addSecuredCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, cookieHandlerImpl.serialize(authorizationRequest), cookieExpireSeconds);
         var redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
 
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
-            cookieHandler.addSecuredCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
+            cookieHandlerImpl.addSecuredCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
         }
     }
 

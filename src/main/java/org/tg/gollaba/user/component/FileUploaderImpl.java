@@ -21,4 +21,14 @@ public class FileUploaderImpl implements FileUploader {
             multipartFile
         );
     }
+
+    @Override
+    public String uploadBackgroundImage(String fileName,
+                                        MultipartFile multipartFile){
+        return s3FileUploader.upload(
+            s3Locations.backgroundImages().location(),
+            fileName,
+            multipartFile
+        );
+    }
 }
