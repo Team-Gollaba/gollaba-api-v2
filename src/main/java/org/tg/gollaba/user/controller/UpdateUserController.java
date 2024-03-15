@@ -16,15 +16,13 @@ import java.util.Optional;
 @RequestMapping("/v2/users")
 @RequiredArgsConstructor
 public class UpdateUserController {
-
     private final UpdateUserService service;
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ApiResponse<Void> update(AuthenticatedUser authenticatedUser,
+    public ApiResponse<Void> update(AuthenticatedUser user,
                                     @Valid Request request){
-
-       service.update(request.toRequirement(authenticatedUser.id()));
+       service.update(request.toRequirement(user.id()));
 
         return ApiResponse.success();
     }

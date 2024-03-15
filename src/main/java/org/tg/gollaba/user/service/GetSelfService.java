@@ -35,6 +35,7 @@ public class GetSelfService {
         User.ProviderType providerType,
         String profileImageUrl,
         String backgroundImageUrl
-    ){}
+    ){
+    }
 }
 

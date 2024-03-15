@@ -13,8 +13,10 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -74,6 +78,10 @@ public class ControllerTestContext {
         return "%s-%s".formatted(identifier(), affix);
     }
 
+    protected HeaderDescriptor authorizationHeader() {
+        return headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰");
+    }
+
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,
                                                                       Class<T> enumClass) {
         return descriptor.description(
@@ -102,6 +110,7 @@ public class ControllerTestContext {
         POLL("투표"),
         VOTING("투표 참여"),
         USER("유저"),
+        FAVORITES("좋아요"),
         AUTHORIZATION("인가");
 
         private final String tagName;

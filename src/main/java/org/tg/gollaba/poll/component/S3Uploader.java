@@ -44,7 +44,6 @@ public class S3Uploader implements FileUploader {
 
         amazonS3Client.putObject(
             new PutObjectRequest(bucket, dirName, inputStream, objMeta)
-                .withCannedAcl(CannedAccessControlList.PublicRead)
         );
         return amazonS3Client.getUrl(bucket, dirName).toString();
     }

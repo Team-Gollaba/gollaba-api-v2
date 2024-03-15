@@ -1,5 +1,9 @@
 package org.tg.gollaba.common;
 
+import io.restassured.http.Header;
+import org.springframework.http.HttpHeaders;
+import org.springframework.restdocs.headers.HeaderDocumentation;
+import org.springframework.restdocs.headers.RequestHeadersSnippet;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
@@ -10,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
@@ -22,11 +27,17 @@ public interface ApiDocumentUtils {
         return Preprocessors.preprocessResponse(prettyPrint());
     }
 
-//    private static RequestHeadersSnippet requestHeaderWithAuth(String headerName, String description) {
-//        return HeaderDocumentation.requestHeaders(
-//            List.of(headerWithName(headerName).description(description))
-//        );
-//    }
+    static RequestHeadersSnippet requestHeaderWithAuthorization() {
+        return HeaderDocumentation.requestHeaders(
+            List.of(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("JWT token")
+            )
+        );
+    }
+
+    static Header authHeader() {
+        return new Header(HttpHeaders.AUTHORIZATION, "JWT token");
+    }
 
     static List<FieldDescriptor> fieldsWithBasic(FieldDescriptor... fieldDescriptors) {
         return Stream.concat(

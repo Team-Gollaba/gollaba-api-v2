@@ -19,8 +19,7 @@ public class DeleteFavoritesController {
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping
     ApiResponse<Void> delete(AuthenticatedUser user,
-                             @Valid @PathVariable @NotNull(message = "favoriteId 는 필수값입니다.")
-                                                    Long favoritesId) {
+                             @PathVariable Long favoritesId) {
         service.delete(user.id(), favoritesId);
 
         return ApiResponse.success();

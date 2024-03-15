@@ -23,7 +23,7 @@ public class CreatePollController {
     private final CreatePollService service;
 
     @PostMapping
-    public ApiResponse<Response> create(@Valid @RequestBody Request request) {
+    public ApiResponse<Response> create(@Valid Request request) {
         var pollId = service.create(request.toRequirement());
 
         return ApiResponse.success(
@@ -43,7 +43,7 @@ public class CreatePollController {
         private Poll.PollResponseType responseType;
         @NotNull(message = "투표 유형을 선택해주세요.")
         private Poll.PollType pollType;
-        private LocalDateTime endedAt;
+        private LocalDateTime endAt;
         @NotEmpty(message = "투표 항목을 입력해주세요.")
         @Valid
         private List<Item> items;
@@ -56,7 +56,7 @@ public class CreatePollController {
                 creatorName,
                 responseType,
                 pollType,
-                Optional.ofNullable(endedAt),
+                Optional.ofNullable(endAt),
                 items.stream()
                     .map(Item::toItem)
                     .toList()
@@ -81,7 +81,7 @@ public class CreatePollController {
     }
 
     record Response(
-        Long pollId
+        Long id
     ) {
     }
 }

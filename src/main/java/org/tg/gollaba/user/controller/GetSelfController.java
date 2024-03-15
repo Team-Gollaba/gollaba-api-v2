@@ -20,15 +20,6 @@ public class GetSelfController {
     ApiResponse<GetSelfService.UserDetails> getMe(AuthenticatedUser user) {
         var userDetails = service.get(user.id());
 
-        return ApiResponse.success(
-            new GetSelfService.UserDetails(
-                userDetails.name(),
-                userDetails.email(),
-                userDetails.roleType(),
-                userDetails.providerType(),
-                userDetails.profileImageUrl(),
-                userDetails.backgroundImageUrl()
-            )
-        );
+        return ApiResponse.success(userDetails);
     }
 }

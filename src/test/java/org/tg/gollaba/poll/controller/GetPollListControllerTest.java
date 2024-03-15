@@ -22,7 +22,7 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
+import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetPollListControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
@@ -53,10 +53,12 @@ class GetPollListControllerTest extends ControllerTestContext {
                     new ResourceSnippetParametersBuilder()
                         .tag(TAG)
                         .description(DESCRIPTION),
+                    preprocessRequest(),
+                    preprocessResponse(),
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
                         parameterWithName("size").description("페이지 크기"),
-                        parameterWithName("sort").optional().description("정렬 조건: createAt, endedAt"),
+                        parameterWithName("sort").optional().description("정렬 조건: createAt, endAt"),
                         enumDescription(
                             parameterWithName("pollType").optional().description("투표 타입"),
                             Poll.PollType.class
@@ -80,16 +82,16 @@ class GetPollListControllerTest extends ControllerTestContext {
                             fieldWithPath("data.items[].id").type(NUMBER).description("투표 ID"),
                             fieldWithPath("data.items[].title").type(STRING).description("투표 제목"),
                             fieldWithPath("data.items[].creatorName").type(STRING).description("투표 생성자"),
+                            fieldWithPath("data.items[].endedAt").type(STRING).description("마감 시간"),
+                            fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
                             enumDescription(
                                 fieldWithPath("data.items[].responseType").type(STRING).description("응답 타입"),
                                 Poll.PollResponseType.class
-                            ),
+                                ),
                             enumDescription(
                                 fieldWithPath("data.items[].pollType").type(STRING).description("투표 타입"),
                                 Poll.PollType.class
-                            ),
-                            fieldWithPath("data.items[].endedAt").type(STRING).description("마감 시간"),
-                            fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
+                                ),
                             fieldWithPath("data.items[].items").type(ARRAY).description("투표 항목"),
                             fieldWithPath("data.items[].items[].id").type(NUMBER).description("투표 항목 ID"),
                             fieldWithPath("data.items[].items[].description").type(STRING).description("투표 항목 설명"),

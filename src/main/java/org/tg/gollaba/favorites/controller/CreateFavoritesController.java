@@ -23,7 +23,7 @@ public class CreateFavoritesController {
     @PostMapping
     ApiResponse<Void> create(AuthenticatedUser user,
                              @Valid @RequestBody Request request) {
-        service.create(user.id(), request.pollId);
+        service.create(user.id(), request.pollId());
         return ApiResponse.success();
     }
 

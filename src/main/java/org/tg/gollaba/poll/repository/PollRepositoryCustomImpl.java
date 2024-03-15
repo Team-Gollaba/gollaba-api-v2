@@ -41,7 +41,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .stream()
             .map(order -> switch (order.getProperty()) {
                 case "createdAt" -> createColumnOrder(poll.createdAt, order);
-                case "endedAt" -> createColumnOrder(poll.endedAt, order);
+                case "endAt" -> createColumnOrder(poll.endedAt, order);
                 default -> throw new IllegalArgumentException("존재하지 않는 컬럼입니다.");
             })
             .toArray(OrderSpecifier[]::new);
