@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 class UserTest {
@@ -27,7 +28,7 @@ class UserTest {
             );
 
             // then
-            Assertions.assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("providerType, providerId 둘 다 필요합니다.");
         }
 
@@ -45,7 +46,7 @@ class UserTest {
             );
 
             // then
-            Assertions.assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("password 는 필수입니다.");
         }
 
@@ -63,7 +64,7 @@ class UserTest {
             );
 
             // then
-            Assertions.assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이메일 형식이 올바르지 않습니다.");
         }
 
@@ -81,8 +82,42 @@ class UserTest {
             );
 
             // then
-            Assertions.assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("프로필 이미지 URL 형식이 올바르지 않습니다.");
+        }
+    }
+
+    @DisplayName("유저 정보 변경시 검증 테스트")
+    @Nested
+    class updateTest {
+        @Test
+        void 프로필_이미지_URL_형식이_아니면_에러(){
+            // given
+            var user = new UserFixture().build();
+
+            // when
+            var throwable = catchThrowable(() ->
+                user.changeProfileImage("profileImage")
+            );
+
+            // then
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("프로필 이미지 URL 형식이 올바르지 않습니다.");
+        }
+
+        @Test
+        void 배경_이미지_URL_형식이_아니면_에러(){
+            // given
+            var user = new UserFixture().build();
+
+            // when
+            var throwable = catchThrowable(() ->
+                user.changeBackgroundImage("backgroundImage")
+            );
+
+            // then
+            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("배경 이미지 URL 형식이 올바르지 않습니다.");
         }
     }
 }
