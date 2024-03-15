@@ -15,6 +15,7 @@ import org.tg.gollaba.common.entity.BaseEntityForOnlyCreatedAt;
 public class Favorites extends BaseEntityForOnlyCreatedAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "favorites_id")
     private Long id;
 
     @Column(nullable = false)
