@@ -29,8 +29,8 @@ class PollTest {
             Poll.PollType.ANONYMOUS,
             null,
             List.of(
-                new PollItem("description1", "imageUrl"),
-                new PollItem("description2", "imageUrl")
+                new PollItem("description1"),
+                new PollItem("description2")
             )
         );
 
@@ -43,7 +43,7 @@ class PollTest {
     void whenItemSizeLessThanTwo_thenException() {
         //given
         var pollItems = List.of(
-            new PollItem("description1", "imageUrl")
+            new PollItem("description1")
         );
 
         //when

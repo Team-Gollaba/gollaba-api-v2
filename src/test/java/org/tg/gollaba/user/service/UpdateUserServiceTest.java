@@ -14,8 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,8 +46,8 @@ class UpdateUserServiceTest {
             Optional.of(mockImageFile)
         );
         given(userRepository.findById(requirement.userId())).willReturn(Optional.of(user));
-        given(fileUploader.uploadProfileImage(any(), eq(mockImageFile))).willReturn("https://updated-url-1.com/test.png");
-        given(fileUploader.uploadBackgroundImage(any(), eq(mockImageFile))).willReturn("https://updated-url-2.com/test.png");
+        given(fileUploader.uploadProfileImage(anyLong(), eq(mockImageFile))).willReturn("https://updated-url-1.com/test.png");
+        given(fileUploader.uploadBackgroundImage(anyLong(), eq(mockImageFile))).willReturn("https://updated-url-2.com/test.png");
 
         //when
         var throwable = catchThrowable(() -> service.update(requirement));

@@ -25,34 +25,19 @@ public class UpdateUserService {
                 .orElseThrow(() -> new BadRequestException(Status.USER_NOT_FOUND));
 
         requirement.profileImage()
-            .ifPresent(profileImage -> {
-                var url = uploadProfileImage(profileImage, user);
+            .ifPresent(image -> {
+                var url = fileUploader.uploadProfileImage(user.id(), image);
                 user.changeProfileImage(url);
             });
 
         requirement.backgroundImage()
-            .ifPresent(backgroundImage -> {
-                var url = uploadBackgroundImage(backgroundImage, user);
+            .ifPresent(image -> {
+                var url = fileUploader.uploadBackgroundImage(user.id(), image);
                 user.changeBackgroundImage(url);
             });
 
         user.update(requirement.name());
-
         userRepository.save(user);
-    }
-
-    private String uploadProfileImage(MultipartFile profileImage, User user){
-        return fileUploader.uploadProfileImage(
-            user.id() + "-" + UUID.randomUUID(),
-            profileImage
-        );
-    }
-
-    private String uploadBackgroundImage(MultipartFile backgroundImage, User user){
-        return fileUploader.uploadBackgroundImage(
-            user.id() + "-" + UUID.randomUUID(),
-            backgroundImage
-        );
     }
 
     public record Requirement(

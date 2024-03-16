@@ -108,11 +108,6 @@ clean {
     delete file(generated)
 }
 
-//openAPI 작성 자동화를 위해 패키징 전에 openapi3 테스크 선실행을 유발
-bootJar{
-    dependsOn(':openapi3')
-}
-
 openapi3 {
     def outputPath = 'src/main/resources/static/api-docs/gollaba'
     mkdir(outputPath)
