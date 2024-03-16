@@ -70,7 +70,7 @@ class CreatePollServiceTest {
         assertThat(savedPoll.creatorName()).isEqualTo(requirement.creatorName());
         assertThat(savedPoll.responseType()).isEqualTo(requirement.responseType());
         assertThat(savedPoll.pollType()).isEqualTo(requirement.pollType());
-        assertThat(savedPoll.endedAt()).isEqualTo(requirement.endedAt().orElseThrow());
+        assertThat(savedPoll.endAt()).isEqualTo(requirement.endAt().orElseThrow());
         assertThat(savedPoll.items().size()).isEqualTo(2);
         assertThat(savedPoll.items().get(0).description()).isEqualTo(requirement.items().get(0).description());
         assertThat(savedPoll.items().get(1).description()).isEqualTo(requirement.items().get(1).description());
@@ -107,7 +107,7 @@ class CreatePollServiceTest {
         private String creatorName = "creatorName";
         private Poll.PollResponseType responseType = Poll.PollResponseType.SINGLE;
         private Poll.PollType pollType = Poll.PollType.ANONYMOUS;
-        private Optional<LocalDateTime> endedAt = Optional.of(LocalDateTime.now().plusWeeks(2));
+        private Optional<LocalDateTime> endAt = Optional.of(LocalDateTime.now().plusWeeks(2));
         private List<Item> items = List.of(
             new Item("description1", null),
             new Item("description2", null)
@@ -121,7 +121,7 @@ class CreatePollServiceTest {
                 creatorName,
                 responseType,
                 pollType,
-                endedAt,
+                endAt,
                 items
             );
         }

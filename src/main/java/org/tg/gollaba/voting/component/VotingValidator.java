@@ -31,7 +31,7 @@ public class VotingValidator {
     }
 
     private void checkPollEndTime(Poll poll) {
-        if (now().isAfter(poll.endedAt())) {
+        if (now().isAfter(poll.endAt())) {
             throw new InvalidVotingException(POLL_IS_CLOSED);
         }
     }

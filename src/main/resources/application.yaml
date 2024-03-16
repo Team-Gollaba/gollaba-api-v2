@@ -82,6 +82,7 @@ security:
   hash-ids:
     salt: ${HASH_IDS_SALT}
     min-length: ${HASH_IDS_MIN_LENGTH}
+    admin-key: ${HASH_IDS_ADMIN_KEY}
 
 cloud:
   aws:

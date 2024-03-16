@@ -2,8 +2,6 @@ package org.tg.gollaba.poll.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.poll.controller.serializer.HashIdSerializer;
@@ -12,46 +10,32 @@ import org.tg.gollaba.poll.repository.PollRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class GetPollListService {
+public class GetPollDetailsService {
     private final PollRepository pollRepository;
 
     @Transactional(readOnly = true)
-    public Page<PollSummary> get(Requirement requirement) {
-        return pollRepository.findPollList(requirement);
+    public PollDetails get(long pollId) {
+        return pollRepository.findPollDetails(pollId);
     }
 
-    public record Requirement(
-        Optional<OptionGroup> optionGroup,
-        Optional<String> query,
-        Optional<Boolean> isActive,
-        Optional<Poll.PollType> pollType,
-        Pageable pageable
-    ) {
-    }
-
-    public enum OptionGroup {
-        TITLE
-    }
-
-    public record PollSummary(
+    public record PollDetails(
         Long id,
         String title,
         String creatorName,
         Poll.PollResponseType responseType,
         Poll.PollType pollType,
         LocalDateTime endAt,
-        Integer readCount,
+        Integer totalVoteCount,
         List<PollItem> items
     ) {
         public record PollItem(
             Long id,
             String description,
             String imageUrl,
-            Integer voteCount
+            Integer votingCount
         ) {
         }
     }

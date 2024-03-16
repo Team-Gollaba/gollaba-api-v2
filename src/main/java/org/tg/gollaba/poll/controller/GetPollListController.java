@@ -1,5 +1,6 @@
 package org.tg.gollaba.poll.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,9 +14,12 @@ import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.support.StringUtils;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.PageResponse;
+import org.tg.gollaba.poll.component.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -25,19 +29,29 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 @RequiredArgsConstructor
 public class GetPollListController {
     private final GetPollListService service;
+    private final ObjectMapper objectMapper;
+    private final HashIdHandler hashIdHandler;
 
     @GetMapping
-    ApiResponse<PageResponse<GetPollListService.PollSummary>> get(@SortDefaults(
-                                                                    @SortDefault(sort = "createdAt", direction = DESC)
-                                                                 )
-                                                                  @PageableDefault Pageable pageable,
-                                                                  Request request) {
+    ApiResponse<PageResponse<List<Map<String, Object>>>> get(@SortDefaults(
+                                                                @SortDefault(sort = "createdAt", direction = DESC)
+                                                             )
+                                                             @PageableDefault Pageable pageable,
+                                                             Request request) {
         request.validate();
         var requirement = createRequirement(request, pageable);
-        var result = service.get(requirement);
+        var pageResult = service.get(requirement);
+        List<Map<String, Object>> response = objectMapper.convertValue(pageResult.getContent(), List.class);
+        response.forEach(m -> m.put("id", hashIdHandler.encode(Long.parseLong(m.get("id").toString()))));
 
         return ApiResponse.success(
-            PageResponse.from(result)
+            new PageResponse(
+                response,
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages()
+            )
         );
     }
 

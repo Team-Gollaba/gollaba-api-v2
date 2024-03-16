@@ -37,7 +37,7 @@ class VotingValidatorTest {
     void checkPollEndTime() {
         //given
         var poll = new PollFixture()
-            .setEndedAt(LocalDateTime.now().minusDays(1))
+            .setEndAt(LocalDateTime.now().minusDays(1))
             .build();
         var voting = new VotingFixture().build();
         given(pollRepository.findById(eq(voting.pollId())))

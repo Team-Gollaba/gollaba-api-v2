@@ -16,7 +16,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class DeleteFavoritesControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.FAVORITES.tagName();
-    private static final String DESCRIPTION = Tags.FAVORITES.descriptionWith("좋아요 삭제");
+    private static final String DESCRIPTION = Tags.FAVORITES.descriptionWith("삭제");
 
     @Test
     @WithMockUser(authorities = "USER")

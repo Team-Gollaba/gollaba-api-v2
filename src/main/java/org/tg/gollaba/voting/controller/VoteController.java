@@ -5,7 +5,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.voting.service.VoteService;
 
@@ -17,6 +19,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class VoteController {
     private final VoteService service;
+
+    @PostMapping(headers = HttpHeaders.AUTHORIZATION)
+    public ApiResponse<Void> create(AuthenticatedUser user,
+                                    @RequestBody @Valid Request request,
+                                    HttpServletRequest httpServletRequest) {
+        var requirement = createRequirement(
+            request,
+            httpServletRequest
+        );
+
+        service.vote(requirement);
+
+        return ApiResponse.success();
+    }
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid Request request,

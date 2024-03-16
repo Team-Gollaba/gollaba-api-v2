@@ -23,7 +23,7 @@ public class PollFixture implements TestFixture<Poll> {
     private String creatorName = "John Doe";
     private PollResponseType responseType = PollResponseType.MULTIPLE;
     private PollType pollType = PollType.ANONYMOUS;
-    private LocalDateTime endedAt = LocalDateTime.now().plusWeeks(1).with(LocalTime.MAX);
+    private LocalDateTime endAt = LocalDateTime.now().plusWeeks(1).with(LocalTime.MAX);
     private Integer readCount = 0;
     private List<PollItem> items = new ArrayList<>(){{
         add(new PollItemFixture().setDescription("Option A").build());

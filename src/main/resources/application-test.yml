@@ -45,6 +45,7 @@ security:
   hash-ids:
     salt: 'test-salt'
     min-length: 10
+    admin-key: 'test'
 
 cloud:
   aws:

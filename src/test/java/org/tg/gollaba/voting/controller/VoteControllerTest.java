@@ -15,7 +15,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class VoteControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.VOTING.tagName();
-    private static final String DESCRIPTION = Tags.VOTING.descriptionWith("투표 참여");
+    private static final String DESCRIPTION = Tags.VOTING.descriptionWith("참여");
 
     @Test
     void success() {

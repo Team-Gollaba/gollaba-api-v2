@@ -42,7 +42,7 @@ public class CreatePollService {
             requirement.creatorName(),
             requirement.responseType(),
             requirement.pollType(),
-            requirement.endedAt()
+            requirement.endAt()
                 .orElse(null),
             items
         );
@@ -75,7 +75,7 @@ public class CreatePollService {
         String creatorName,
         Poll.PollResponseType responseType,
         Poll.PollType pollType,
-        Optional<LocalDateTime> endedAt,
+        Optional<LocalDateTime> endAt,
         List<Item> items
     ) {
         public record Item(
