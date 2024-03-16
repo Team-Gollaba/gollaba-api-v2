@@ -14,7 +14,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class CreateFavoritesControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.FAVORITES.tagName();
-    private static final String DESCRIPTION = Tags.FAVORITES.descriptionWith("좋아요 생성");
+    private static final String DESCRIPTION = Tags.FAVORITES.descriptionWith("생성");
 
     @Test
     @WithMockUser(authorities = "USER")

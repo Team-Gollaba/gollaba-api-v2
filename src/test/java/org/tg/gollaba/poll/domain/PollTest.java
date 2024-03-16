@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 class PollTest {
 
-    @DisplayName("endedAt이 null이면 기본값은 현재시간 + 일주일이다.")
+    @DisplayName("endAt이 null이면 기본값은 현재시간 + 일주일이다.")
     @Test
     void setEndDateTest() {
         //given
@@ -35,7 +35,7 @@ class PollTest {
         );
 
         //then
-        assertThat(result.endedAt()).isEqualTo(expected);
+        assertThat(result.endAt()).isEqualTo(expected);
     }
     
     @DisplayName("투표 항목이 2개 미만이면 예외를 뱉는다.")

@@ -25,7 +25,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class CreatePollControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
-    private static final String DESCRIPTION = Tags.POLL.descriptionWith("투표 생성");
+    private static final String DESCRIPTION = Tags.POLL.descriptionWith("생성");
     @Autowired
     private CreatePollService service;
 

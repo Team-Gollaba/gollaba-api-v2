@@ -25,7 +25,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetSelfControllerTest extends ControllerTestContext {
     private static final String TAG = ControllerTestContext.Tags.USER.tagName();
-    private static final String DESCRIPTION = ControllerTestContext.Tags.USER.descriptionWith("회원 수정");
+    private static final String DESCRIPTION = ControllerTestContext.Tags.USER.descriptionWith("본인 조회");
     @Autowired
     private GetSelfService service;
 

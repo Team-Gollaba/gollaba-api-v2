@@ -26,7 +26,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetPollListControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
-    private static final String DESCRIPTION = Tags.POLL.descriptionWith("투표 목록 조회");
+    private static final String DESCRIPTION = Tags.POLL.descriptionWith("목록 조회");
     @Autowired
     private GetPollListService getPollListService;
 
@@ -79,10 +79,10 @@ class GetPollListControllerTest extends ControllerTestContext {
                             fieldWithPath("data.totalPage").type(NUMBER).description("전체 페이지 수"),
                             fieldWithPath("data.empty").type(BOOLEAN).description("비어있는지 여부"),
                             fieldWithPath("data.items").type(ARRAY).description("투표 목록"),
-                            fieldWithPath("data.items[].id").type(NUMBER).description("투표 ID"),
+                            fieldWithPath("data.items[].id").type(STRING).description("투표 hash ID"),
                             fieldWithPath("data.items[].title").type(STRING).description("투표 제목"),
                             fieldWithPath("data.items[].creatorName").type(STRING).description("투표 생성자"),
-                            fieldWithPath("data.items[].endedAt").type(STRING).description("마감 시간"),
+                            fieldWithPath("data.items[].endAt").type(STRING).description("마감 시간"),
                             fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
                             enumDescription(
                                 fieldWithPath("data.items[].responseType").type(STRING).description("응답 타입"),

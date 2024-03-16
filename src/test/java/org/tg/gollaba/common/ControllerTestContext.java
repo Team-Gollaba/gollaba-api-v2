@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
+import org.tg.gollaba.poll.component.HashIdHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -49,6 +50,8 @@ public class ControllerTestContext {
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private HashIdHandler hashIdHandler;
 
     @MockBean
     AuthenticationHandlerMethodArgumentResolver authenticationHandlerMethodArgumentResolver;
@@ -80,6 +83,10 @@ public class ControllerTestContext {
 
     protected HeaderDescriptor authorizationHeader() {
         return headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰");
+    }
+
+    protected String testHashId() {
+        return hashIdHandler.encode(1L);
     }
 
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,

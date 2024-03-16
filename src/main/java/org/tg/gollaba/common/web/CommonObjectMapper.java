@@ -55,7 +55,7 @@ public class CommonObjectMapper extends ObjectMapper {
             addSerializer(
                 LocalTime.class,
                 new LocalTimeSerializer(
-                    DateTimeFormatter.ofPattern("HH:mm")
+                    DateTimeFormatter.ofPattern("HH:mm:ss")
                 )
             );
             addSerializer(
@@ -67,19 +67,13 @@ public class CommonObjectMapper extends ObjectMapper {
             addDeserializer(
                 LocalDate.class,
                 new LocalDateDeserializer(
-                    DateTimeFormatter.ISO_DATE
-                )
-            );
-            addDeserializer(
-                LocalTime.class,
-                new LocalTimeDeserializer(
-                    DateTimeFormatter.ofPattern("HH:mm")
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 )
             );
             addDeserializer(
                 LocalDateTime.class,
                 new LocalDateTimeDeserializer(
-                    DateTimeFormatter.ISO_DATE_TIME
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
                 )
             );
             addDeserializer(
