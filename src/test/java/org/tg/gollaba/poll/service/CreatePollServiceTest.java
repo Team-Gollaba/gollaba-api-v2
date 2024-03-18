@@ -65,7 +65,7 @@ class CreatePollServiceTest {
         var argumentCaptor = ArgumentCaptor.forClass(Poll.class);
         verify(pollRepository).save(argumentCaptor.capture());
         var savedPoll = argumentCaptor.getValue();
-        assertThat(savedPoll.userId()).isEqualTo(requirement.userId());
+        assertThat(savedPoll.userId()).isEqualTo(requirement.userId().orElseThrow());
         assertThat(savedPoll.title()).isEqualTo(requirement.title());
         assertThat(savedPoll.creatorName()).isEqualTo(requirement.creatorName());
         assertThat(savedPoll.responseType()).isEqualTo(requirement.responseType());
@@ -116,7 +116,7 @@ class CreatePollServiceTest {
         @Override
         public CreatePollService.Requirement build() {
             return new CreatePollService.Requirement(
-                userId,
+                Optional.of(userId),
                 title,
                 creatorName,
                 responseType,

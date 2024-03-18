@@ -15,7 +15,7 @@ import java.util.Set;
 public class UpdateVotingController {
     private final UpdateVotingService service;
 
-    @PutMapping
+    @PutMapping //TODO user 받기
     public ApiResponse<Void> update(@PathVariable Long votingId,
                                     @RequestBody @Valid Request request) {
         var requirement = createRequirement(

@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.poll.service.CreatePollService;
 import org.tg.gollaba.poll.domain.Poll;
@@ -22,9 +24,19 @@ import java.util.Optional;
 public class CreatePollController {
     private final CreatePollService service;
 
+    @PostMapping(headers = HttpHeaders.AUTHORIZATION)
+    public ApiResponse<Response> create(AuthenticatedUser user,
+                                        @Valid Request request) {
+        var pollId = service.create(request.toRequirement(Optional.ofNullable(user.id())));
+
+        return ApiResponse.success(
+            new Response(pollId)
+        );
+    }
+
     @PostMapping
     public ApiResponse<Response> create(@Valid Request request) {
-        var pollId = service.create(request.toRequirement());
+        var pollId = service.create(request.toRequirement(Optional.empty()));
 
         return ApiResponse.success(
             new Response(pollId)
@@ -48,10 +60,10 @@ public class CreatePollController {
         @Valid
         private List<Item> items;
 
-        public CreatePollService.Requirement toRequirement() {
+        public CreatePollService.Requirement toRequirement(Optional<Long> userId) {
 
             return new CreatePollService.Requirement(
-                null, //TODO: userId 추가
+                userId,
                 title,
                 creatorName,
                 responseType,

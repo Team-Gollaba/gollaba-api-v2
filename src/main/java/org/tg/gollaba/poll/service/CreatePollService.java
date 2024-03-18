@@ -37,7 +37,8 @@ public class CreatePollService {
     private Poll createPoll(Requirement requirement,
                             List<PollItem> items) {
         return new Poll(
-            requirement.userId(),
+            requirement.userId()
+                .orElse(null),
             requirement.title(),
             requirement.creatorName(),
             requirement.responseType(),
@@ -70,7 +71,7 @@ public class CreatePollService {
     }
 
     public record Requirement(
-        Long userId,
+        Optional<Long> userId,
         String title,
         String creatorName,
         Poll.PollResponseType responseType,
