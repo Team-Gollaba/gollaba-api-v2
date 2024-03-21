@@ -18,9 +18,11 @@ import org.tg.gollaba.voting.domain.QVotingItem;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
@@ -107,6 +109,12 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.pollItemId),
                 tuple -> tuple.get(votingItem.count())
             ));
+        var votingCountMap = pollItemIds.stream()
+            .collect(toMap(
+                identity(),
+                pollItemId -> votingCountByPollItemId.getOrDefault(pollItemId, 0L)
+            ));
+
         var totalVotingCount = votingCountByPollItemId
             .values()
             .stream()
@@ -127,7 +135,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     item.id(),
                     item.description(),
                     item.imageUrl(),
-                    votingCountByPollItemId.get(item.id()).intValue()
+                    votingCountMap.get(item.id()).intValue()
                 ))
                 .toList()
         );
