@@ -6,8 +6,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tg.gollaba.favorites.domain.Favorites;
+import org.tg.gollaba.favorites.domain.FavoritesFixture;
 import org.tg.gollaba.favorites.repository.FavoritesRepository;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -28,8 +32,8 @@ class CreateFavoritesServiceTest {
         //given
         var userId = 1L;
         var pollId = 1L;
-        given(favoritesRepository.existsByUserIdAndPollId(userId, pollId))
-            .willReturn(false);
+        given(favoritesRepository.findByUserIdAndPollId(userId, pollId))
+            .willReturn(Optional.empty());
 
         //when
         var throwable = catchThrowable(() -> service.create(userId, pollId));
@@ -46,13 +50,12 @@ class CreateFavoritesServiceTest {
     @Test
     void 이미_존재하면_스킵() {
         //given
-        var userId = 1L;
-        var pollId = 1L;
-        given(favoritesRepository.existsByUserIdAndPollId(userId, pollId))
-            .willReturn(true);
+        var favorites = new FavoritesFixture().build();
+        given(favoritesRepository.findByUserIdAndPollId(favorites.userId(), favorites.pollId()))
+            .willReturn(Optional.of(favorites));
 
         //when
-        var throwable = catchThrowable(() -> service.create(userId, pollId));
+        var throwable = catchThrowable(() -> service.create(favorites.userId(), favorites.pollId()));
 
         //then
         assertThat(throwable).isNull();

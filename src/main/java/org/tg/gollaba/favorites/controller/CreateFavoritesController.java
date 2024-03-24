@@ -12,24 +12,34 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.favorites.service.CreateFavoritesService;
+import org.tg.gollaba.poll.component.HashIdHandler;
 
 @RestController
 @RequestMapping("/v2/favorites")
 @RequiredArgsConstructor
 public class CreateFavoritesController {
     private final CreateFavoritesService service;
+    private final HashIdHandler hashIdHandler;
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping
-    ApiResponse<Void> create(AuthenticatedUser user,
+    ApiResponse<Response> create(AuthenticatedUser user,
                              @Valid @RequestBody Request request) {
-        service.create(user.id(), request.pollId());
-        return ApiResponse.success();
+        var pollId = hashIdHandler.decode(request.pollHashId());
+
+        return ApiResponse.success(
+            new Response(service.create(user.id(), pollId))
+        );
     }
 
     record Request(
         @NotNull(message = "pollId 는 필수값입니다.")
-        Long pollId
+        String pollHashId
+    ) {
+    }
+
+    record Response(
+        Long id
     ) {
     }
 }

@@ -12,12 +12,15 @@ public class CreateFavoritesService {
     private final FavoritesRepository favoritesRepository;
 
     @Transactional
-    public void create(Long userId, Long pollId) {
-        if (favoritesRepository.existsByUserIdAndPollId(userId, pollId)) {
-            return;
-        }
+    public Long create(Long userId, Long pollId) {
+        return favoritesRepository.findByUserIdAndPollId(userId, pollId)
+            .map(Favorites::id)
+            .orElseGet(() -> createFavorites(userId, pollId).id());
+    }
 
+    private Favorites createFavorites(Long userId, Long pollId) {
         var favorites = new Favorites(userId, pollId);
-        favoritesRepository.save(favorites);
+
+        return favoritesRepository.save(favorites);
     }
 }
