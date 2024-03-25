@@ -3,13 +3,12 @@ package org.tg.gollaba.poll.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
 import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.service.GetPollListService;
+import org.tg.gollaba.poll.service.GetMyPollsService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
@@ -25,27 +24,26 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
-class GetPollListControllerTest extends ControllerTestContext {
+class GetMyPollsControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
-    private static final String DESCRIPTION = Tags.POLL.descriptionWith("목록 조회");
+    private static final String DESCRIPTION = Tags.POLL.descriptionWith("특정 유저가 생성한 투표 전체 조회");
+
     @Autowired
-    private GetPollListService getPollListService;
+    private GetMyPollsService getMyPollsService;
 
     @Test
-    void success() {
-        when(getPollListService.get(any()))
+    @WithMockUser(authorities = "USER")
+    void success(){
+        when(getMyPollsService.get(any(), any(Pageable.class)))
             .thenReturn(mockResult());
 
         given()
-            .param("optionGroup", "TITLE")
-            .param("query", "query")
-            .param("isActive", true)
-            .param("pollType", "NAMED")
-            .param("page", 0)
-            .param("size", 10)
-            .param("sort", "createdAt,desc")
+            .header(authHeader())
+            .queryParams("page", 0)
+            .queryParams("size", 10)
+            .queryParams("sort", "createdAt,desc")
             .when()
-            .get("/v2/polls")
+            .get("/v2/polls/me")
             .then()
             .log().all()
             .apply(
@@ -59,18 +57,9 @@ class GetPollListControllerTest extends ControllerTestContext {
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
                         parameterWithName("size").description("페이지 크기"),
-                        parameterWithName("sort").optional().description("정렬 조건: createAt, endAt"),
-                        enumDescription(
-                            parameterWithName("pollType").optional().description("투표 타입"),
-                            Poll.PollType.class
-                        ),
-                        enumDescription(
-                            parameterWithName("optionGroup").optional().description("옵션 그룹: TITLE"),
-                            GetPollListService.OptionGroup.class
-                        ),
-                        parameterWithName("query").optional().description("검색어"),
-                        parameterWithName("isActive").optional().description("활성화 여부")
+                        parameterWithName("sort").optional().description("정렬 조건: createAt, endAt")
                     ),
+                    requestHeaderWithAuthorization(),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
@@ -85,20 +74,20 @@ class GetPollListControllerTest extends ControllerTestContext {
                             fieldWithPath("data.items[].creatorName").type(STRING).description("투표 생성자"),
                             fieldWithPath("data.items[].endAt").type(STRING).description("마감 시간"),
                             fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
-                            fieldWithPath("data.items[].totalVotingCount").type(NUMBER).description("총 투표수"),
+                            fieldWithPath("data.items[].totalVotingCount").type(NUMBER).description("총 투표 수"),
                             enumDescription(
                                 fieldWithPath("data.items[].responseType").type(STRING).description("응답 타입"),
                                 Poll.PollResponseType.class
-                                ),
+                            ),
                             enumDescription(
                                 fieldWithPath("data.items[].pollType").type(STRING).description("투표 타입"),
                                 Poll.PollType.class
-                                ),
+                            ),
                             fieldWithPath("data.items[].items").type(ARRAY).description("투표 항목"),
                             fieldWithPath("data.items[].items[].id").type(NUMBER).description("투표 항목 ID"),
                             fieldWithPath("data.items[].items[].description").type(STRING).description("투표 항목 설명"),
                             fieldWithPath("data.items[].items[].imageUrl").type(STRING).description("투표 항목 이미지 URL"),
-                            fieldWithPath("data.items[].items[].votingCount").type(NUMBER).description("투표 항목 투표수")
+                            fieldWithPath("data.items[].items[].voteCount").type(NUMBER).description("투표 항목 투표수")
                         )
                     )
                 )
@@ -106,28 +95,36 @@ class GetPollListControllerTest extends ControllerTestContext {
             .status(HttpStatus.OK);
     }
 
-    private PageImpl<PollSummary> mockResult() {
-        return new PageImpl<>(
-            List.of(
-                new PollSummary(
-                    1L,
-                    "title",
-                    "creatorName",
-                    Poll.PollResponseType.SINGLE,
-                    Poll.PollType.NAMED,
-                    LocalDateTime.now(),
-                    0,
-                    0,
-                    List.of(
-                        new PollSummary.PollItem(
-                            1L,
-                            "description",
-                            "imageUrl",
-                            0
-                        )
+    private Page<PollSummary> mockResult() {
+        List<PollSummary> pollSummaries = List.of(
+            new PollSummary(
+                1L,
+                "title",
+                "creatorName",
+                Poll.PollResponseType.SINGLE,
+                Poll.PollType.NAMED,
+                LocalDateTime.now(),
+                0,
+                0,
+                List.of(
+                    new PollSummary.PollItem(
+                        1L,
+                        "description",
+                        "imageUrl",
+                        0
+                    ),
+                    new PollSummary.PollItem(
+                        2L,
+                        "description",
+                        "imageUrl",
+                        0
                     )
                 )
-            ),
+            )
+        );
+
+        return new PageImpl<>(
+            pollSummaries,
             PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt")),
             1
         );
