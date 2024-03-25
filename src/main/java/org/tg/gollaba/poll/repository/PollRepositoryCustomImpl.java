@@ -17,6 +17,7 @@ import org.tg.gollaba.voting.domain.QVoting;
 import org.tg.gollaba.voting.domain.QVotingItem;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -162,5 +163,40 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     .toList()
             ))
             .toList();
+    }
+
+    @Override
+    public Map<Long, Long> findVoteCounts(Long id) {
+        var pollEntity = queryFactory
+            .selectFrom(poll)
+            .where(poll.id.eq(id))
+            .fetchOne();
+
+        if (pollEntity == null) {
+            throw new BadRequestException(Status.POLL_NOT_FOUND);
+        }
+
+        var pollItemIds = pollEntity.items()
+            .stream()
+            .map(PollItem::id)
+            .toList();
+        var votingCountByPollItemId = queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count())
+            ));
+        var votingCountMap = pollItemIds.stream()
+            .collect(toMap(
+                identity(),
+                pollItemId -> votingCountByPollItemId.getOrDefault(pollItemId, 0L)
+            ));
+
+        return votingCountMap;
     }
 }
