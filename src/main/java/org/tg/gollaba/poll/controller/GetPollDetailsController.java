@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.common.web.CommonObjectMapper;
 import org.tg.gollaba.poll.component.HashIdHandler;
 import org.tg.gollaba.poll.controller.aspect.UseHashId;
 import org.tg.gollaba.poll.service.GetPollDetailsService;

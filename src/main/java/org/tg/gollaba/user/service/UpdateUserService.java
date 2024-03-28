@@ -7,11 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.user.component.FileUploader;
-import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.repository.UserRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

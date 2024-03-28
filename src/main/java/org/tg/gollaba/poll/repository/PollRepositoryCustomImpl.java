@@ -10,15 +10,11 @@ import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollItem;
-import org.tg.gollaba.poll.domain.QPollItem;
 import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
-import org.tg.gollaba.voting.domain.QVoting;
-import org.tg.gollaba.voting.domain.QVotingItem;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
@@ -26,7 +22,6 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
-import static org.tg.gollaba.poll.domain.QPollItem.pollItem;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
 @RequiredArgsConstructor

@@ -3,19 +3,14 @@ package org.tg.gollaba.poll.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tg.gollaba.common.exception.BadRequestException;
-import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.web.AdminUtilController;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.poll.component.HashIdHandler;
-
-import static org.tg.gollaba.common.support.Status.INVALID_PARAMETER;
 
 @RestController
 @RequestMapping("/v2/hash")

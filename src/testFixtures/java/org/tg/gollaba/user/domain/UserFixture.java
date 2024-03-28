@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.tg.gollaba.common.FixtureReflectionUtils;
 import org.tg.gollaba.common.TestFixture;
-import org.tg.gollaba.poll.domain.Poll;
 
 @Getter
 @Setter

@@ -11,8 +11,8 @@ import org.tg.gollaba.voting.repository.VotingRepository;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CancelVotingServiceTest {

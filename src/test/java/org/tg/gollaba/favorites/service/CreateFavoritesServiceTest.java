@@ -6,7 +6,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.tg.gollaba.favorites.domain.Favorites;
 import org.tg.gollaba.favorites.domain.FavoritesFixture;
 import org.tg.gollaba.favorites.repository.FavoritesRepository;
