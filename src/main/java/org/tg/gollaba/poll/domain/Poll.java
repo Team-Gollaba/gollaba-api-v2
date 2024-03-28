@@ -100,6 +100,10 @@ public class Poll extends BaseEntity {
           .toList();
     }
 
+    public void increaseReadCount(){
+        this.readCount += 1;
+    }
+
     public enum PollResponseType {
         SINGLE,
         MULTIPLE

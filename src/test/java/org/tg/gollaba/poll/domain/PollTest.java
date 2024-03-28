@@ -61,4 +61,18 @@ class PollTest {
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("조회수를 올린다.")
+    @Test
+    void whenIncreaseReadCount(){
+        //given
+        var poll = new PollFixture()
+            .setReadCount(0)
+            .build();
+
+        //when
+        poll.increaseReadCount();
+
+        //then
+        assertThat(poll.readCount()).isEqualTo(1);
+    }
 }
