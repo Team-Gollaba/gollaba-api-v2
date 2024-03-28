@@ -3,7 +3,6 @@ package org.tg.gollaba.poll.component;
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.tg.gollaba.common.exception.ServerException;
 import org.tg.gollaba.common.support.Status;
 

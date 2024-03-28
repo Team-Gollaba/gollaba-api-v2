@@ -7,14 +7,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.tg.gollaba.favorites.domain.FavoritesFixture;
 import org.tg.gollaba.favorites.repository.FavoritesRepository;
-import org.tg.gollaba.user.domain.UserFixture;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteFavoritesServiceTest {

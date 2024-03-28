@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.auth.component.JwtTokenHandler;
-import org.tg.gollaba.auth.component.JwtTokenProvider;
 import org.tg.gollaba.auth.component.TokenProvider;
 import org.tg.gollaba.auth.repository.UserTokenRepository;
 import org.tg.gollaba.common.exception.BadRequestException;

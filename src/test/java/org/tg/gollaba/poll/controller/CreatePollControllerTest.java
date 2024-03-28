@@ -8,13 +8,9 @@ import org.springframework.http.MediaType;
 import org.tg.gollaba.common.ControllerTestContext;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.CreatePollService;
-import org.tg.gollaba.user.controller.CreateUserController;
-import org.tg.gollaba.user.domain.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,7 +67,7 @@ class CreatePollControllerTest extends ControllerTestContext {
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                            fieldWithPath("data.id").type(NUMBER).description("생성된 투표 ID")
+                            fieldWithPath("data.id").type(STRING).description("생성된 투표 ID")
                         )
                     )
                 )

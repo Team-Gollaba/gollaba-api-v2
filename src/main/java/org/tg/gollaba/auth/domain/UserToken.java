@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.tg.gollaba.common.entity.BaseEntityForOnlyCreatedAt;
-import org.tg.gollaba.user.domain.User;
 
 @Entity
 @Getter

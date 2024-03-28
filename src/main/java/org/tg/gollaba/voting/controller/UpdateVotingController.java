@@ -28,7 +28,7 @@ public class UpdateVotingController {
     }
 
     private UpdateVotingService.Requirement createRequirement(Request request,
-                                                                     Long votingId) {
+                                                              Long votingId) {
         return new UpdateVotingService.Requirement(
             votingId,
             request.voterName(),

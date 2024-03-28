@@ -1,10 +1,8 @@
 package org.tg.gollaba.poll.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tg.gollaba.poll.controller.serializer.HashIdSerializer;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.repository.PollRepository;
 
