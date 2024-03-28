@@ -32,8 +32,14 @@ class CreateFavoritesServiceTest {
         //given
         var userId = 1L;
         var pollId = 1L;
+        var favorites = new FavoritesFixture()
+            .setUserId(userId)
+            .setPollId(pollId)
+            .build();
         given(favoritesRepository.findByUserIdAndPollId(userId, pollId))
             .willReturn(Optional.empty());
+        given(favoritesRepository.save(any()))
+            .willReturn(favorites);
 
         //when
         var throwable = catchThrowable(() -> service.create(userId, pollId));
@@ -42,9 +48,9 @@ class CreateFavoritesServiceTest {
         assertThat(throwable).isNull();
         var argumentCaptor = ArgumentCaptor.forClass(Favorites.class);
         verify(favoritesRepository).save(argumentCaptor.capture());
-        var favorites = argumentCaptor.getValue();
-        assertThat(favorites.userId()).isEqualTo(userId);
-        assertThat(favorites.pollId()).isEqualTo(pollId);
+        var capturedFavorites = argumentCaptor.getValue();
+        assertThat(capturedFavorites.userId()).isEqualTo(userId);
+        assertThat(capturedFavorites.pollId()).isEqualTo(pollId);
     }
 
     @Test

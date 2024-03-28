@@ -11,6 +11,5 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
 
     Optional<Favorites> findByUserIdAndPollId(Long userId, Long pollId);
 
-    boolean existsByUserId(Long userId);
     List<Favorites> findAllByUserId(Long userId);
 }

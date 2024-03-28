@@ -20,22 +20,23 @@ import static org.mockito.BDDMockito.given;
 class DeleteFavoritesServiceTest {
     @InjectMocks
     private DeleteFavoritesService service;
-
     @Mock
     private FavoritesRepository favoritesRepository;
 
     @Test
     void success() {
         //given
-        var user = new UserFixture().build();
-        var favorites = new FavoritesFixture().build();
-        given(favoritesRepository.findById(favorites.id()))
+        var userId = 1L;
+        var pollId = 1L;
+        var favorites = new FavoritesFixture()
+            .setUserId(userId)
+            .setPollId(pollId)
+            .build();
+        given(favoritesRepository.findByUserIdAndPollId(userId, pollId))
             .willReturn(Optional.of(favorites));
-        given(favoritesRepository.existsByUserId(user.id()))
-            .willReturn(true);
 
         //when
-        var throwable = catchThrowable(() -> service.delete(user.id(), favorites.id()));
+        var throwable = catchThrowable(() -> service.delete(userId, pollId));
 
         //then
         assertThat(throwable).isNull();
@@ -43,23 +44,16 @@ class DeleteFavoritesServiceTest {
     }
 
     @Test
-    void Poll에_좋아요를_요청한_사용자가_아니면_에러(){
+    void 이미_삭제됐거나_없으면_삭제안함(){
         //given
-        var user = new UserFixture()
-            .setId(1L)
-            .build();
-        var favorites = new FavoritesFixture()
-            .setUserId(2L)
-            .build();
-        given(favoritesRepository.findById(favorites.id()))
-            .willReturn(Optional.of(favorites));
-        given(favoritesRepository.existsByUserId(user.id()))
-            .willReturn(false);
+        given(favoritesRepository.findByUserIdAndPollId(any(), any()))
+            .willReturn(Optional.empty());
 
         //when
-        var throwable = catchThrowable(() -> service.delete(user.id(), favorites.id()));
+        var throwable = catchThrowable(() -> service.delete(1L, 1L));
 
         //then
-        assertThat(throwable).isNotNull();
+        assertThat(throwable).isNull();
+        verify(favoritesRepository, never()).delete(any());
     }
 }

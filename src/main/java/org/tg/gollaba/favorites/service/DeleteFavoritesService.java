@@ -14,14 +14,8 @@ public class DeleteFavoritesService {
     private final FavoritesRepository favoritesRepository;
 
     @Transactional
-    public void delete(Long userId, Long favoritesId){
-        var favorites = favoritesRepository.findById(favoritesId)
-            .orElseThrow(() -> new BadRequestException(FAVORITE_NOT_FOUND));
-
-        if(!favoritesRepository.existsByUserId(userId)){
-            throw new BadRequestException(INVALID_FAVORITE_OPERATION);
-        }
-
-        favoritesRepository.delete(favorites);
+    public void delete(Long userId, Long pollId){
+        favoritesRepository.findByUserIdAndPollId(userId, pollId)
+            .ifPresent(favoritesRepository::delete);
     }
 }

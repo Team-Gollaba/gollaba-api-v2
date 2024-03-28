@@ -2,15 +2,14 @@ package org.tg.gollaba.favorites.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
 
+import java.util.Map;
+
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.JsonFieldType.NULL;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
@@ -23,8 +22,9 @@ class DeleteFavoritesControllerTest extends ControllerTestContext {
     void success() {
         given()
             .header(authHeader())
+            .body(Map.of("pollHashId", testHashId()))
             .when()
-            .delete("/v2/favorites/{favoritesId}", 1L)
+            .delete("/v2/favorites", 1L)
             .then()
             .log().all()
             .apply(
@@ -36,6 +36,9 @@ class DeleteFavoritesControllerTest extends ControllerTestContext {
                     preprocessRequest(),
                     preprocessResponse(),
                     requestHeaderWithAuthorization(),
+                    requestFields(
+                        fieldWithPath("pollHashId").type("String").description("해시 아이디")
+                    ),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(NULL).description("응답 데이터")
