@@ -46,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private Authentication generateAuthentication(HttpServletRequest request, Long userId) {
         var user = userRepository.findById(userId).orElseThrow();
-        var authentication = new UsernamePasswordAuthenticationToken(user, null, List.of(() -> user.roleType().name()));
+        var authentication = new UsernamePasswordAuthenticationToken(user, user.password(), List.of(() -> user.roleType().name()));
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         return authentication;

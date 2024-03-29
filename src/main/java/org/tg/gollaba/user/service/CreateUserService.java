@@ -5,14 +5,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.user.component.UserValidator;
-import org.tg.gollaba.user.component.FileUploader;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.repository.UserRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

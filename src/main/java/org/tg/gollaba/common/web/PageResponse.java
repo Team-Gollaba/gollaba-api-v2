@@ -27,7 +27,7 @@ public record PageResponse<T>(
     public static <T> PageResponse<T> from(Page<T> page) {
         return new PageResponse<>(
             page.getContent(),
-            page.getNumber() + 1,
+            page.getNumber(),
             page.getSize(),
             page.getTotalElements(),
             page.getTotalPages()
@@ -35,11 +35,11 @@ public record PageResponse<T>(
     }
 
     public static <T> PageResponse<T> single(T value) {
-        return new PageResponse<>(List.of(value), 1, 1, 1L);
+        return new PageResponse<>(List.of(value), 0, 1, 1L);
     }
 
     public static <T> PageResponse<T> empty(Class<T> clazz) {
-        return new PageResponse<>(Collections.emptyList(), 1, 1, 0L);
+        return new PageResponse<>(Collections.emptyList(), 0, 1, 0L);
     }
 
     public boolean isEmpty() {

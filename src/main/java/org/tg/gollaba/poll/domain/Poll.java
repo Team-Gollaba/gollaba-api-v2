@@ -41,7 +41,7 @@ public class Poll extends BaseEntity {
     private PollType pollType;
 
     @Column(nullable = false)
-    private LocalDateTime endedAt;
+    private LocalDateTime endAt;
 
     @Column(nullable = false)
     private Integer readCount;
@@ -56,7 +56,7 @@ public class Poll extends BaseEntity {
                 String creatorName,
                 PollResponseType responseType,
                 PollType pollType,
-                LocalDateTime endedAt,
+                LocalDateTime endAt,
                 List<PollItem> items) {
         this.userId = userId;
         this.title = title;
@@ -64,7 +64,7 @@ public class Poll extends BaseEntity {
         this.responseType = responseType;
         this.pollType = pollType;
         setItems(items);
-        setEndedAt(endedAt);
+        setEndAt(endAt);
         this.readCount = 0;
     }
 
@@ -76,15 +76,15 @@ public class Poll extends BaseEntity {
         this.items = items;
     }
 
-    private void setEndedAt(LocalDateTime endedAt) {
-        if (endedAt == null) {
-            this.endedAt = LocalDateTime.now()
+    private void setEndAt(LocalDateTime endAt) {
+        if (endAt == null) {
+            this.endAt = LocalDateTime.now()
                 .plusWeeks(1)
                 .with(LocalTime.MAX);
             return;
         }
 
-        this.endedAt = endedAt;
+        this.endAt = endAt;
     }
 
     public PollItem getItem(long itemId) {
@@ -98,6 +98,10 @@ public class Poll extends BaseEntity {
         return items.stream()
           .filter(item -> itemIds.contains(item.id()))
           .toList();
+    }
+
+    public void increaseReadCount(){
+        this.readCount += 1;
     }
 
     public enum PollResponseType {

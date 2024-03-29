@@ -42,6 +42,7 @@ dependencies {
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'com.h2database:h2'
 
     // configuration-processor
@@ -69,6 +70,7 @@ dependencies {
     testImplementation 'io.rest-assured:spring-mock-mvc'
     testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.17.1'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -79,6 +81,12 @@ dependencies {
     // S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.396'
+
+    // validator
+    implementation 'commons-validator:commons-validator:1.7'
+
+    // hashIds
+    implementation 'org.hashids:hashids:1.0.3'
 }
 
 tasks.named('test') {
@@ -101,11 +109,6 @@ sourceSets {
 // gradle clean 시에 QClass 디렉토리 삭제
 clean {
     delete file(generated)
-}
-
-//openAPI 작성 자동화를 위해 패키징 전에 openapi3 테스크 선실행을 유발
-bootJar{
-    dependsOn(':openapi3')
 }
 
 openapi3 {

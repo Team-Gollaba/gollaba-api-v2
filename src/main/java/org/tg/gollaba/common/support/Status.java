@@ -15,7 +15,7 @@ public enum Status {
     ERROR("에러"),
     FAIL("요청을 처리할 수 없습니다."),
     NOT_FOUND("리소스를 찾을 수 없습니다."),
-    UNAUTHORIZED("인증되지 않았습니다."),
+    UNAUTHORIZED("인증 정보가 부족합니다. 인증 정보를 확인해주세요."),
     INVALID_PARAMETER("파라미터가 올바르지 않습니다."),
     EMPTY_TOKEN("토큰이 없습니다."),
     INVALID_TOKEN("토큰이 유효하지 않습니다."),
@@ -23,6 +23,7 @@ public enum Status {
     NOT_ACCEPTABLE("허용하지 않는 요청입니다."),
     UNKNOWN("정의 되지 않은 상태입니다."),
     FAIL_TO_UPLOAD("파일 업로드에 실패했습니다."),
+    FAIL_TO_DECODE_HASH_ID("해시 아이디를 디코딩하는데 실패했습니다."),
 
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
@@ -36,7 +37,15 @@ public enum Status {
     INVALID_SINGLE_VOTING_ITEM_SIZE("단일 선택 투표에는 1개의 항목만 선택할 수 있습니다."),
     INVALID_VOTING_ITEM("투표 항목이 올바르지 않습니다."),
     VOTING_NOT_FOUND("투표 이력을 찾을 수 없습니다."),
-    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다.");
+    IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다."),
+
+    //favorites
+    FAVORITE_NOT_FOUND("좋아요 이력을 찾을 수 없습니다."),
+    INVALID_FAVORITE_OPERATION("좋아요를 요청한 사용자가 아닙니다."),
+
+    //user
+    INCONSISTENCY_PASSWORD("일치하지 않는 비밀번호입니다."),
+    USER_NOT_FOUND("존재하지 않는 회원입니다.");
 
     private final String message;
 

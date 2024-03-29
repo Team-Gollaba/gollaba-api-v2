@@ -10,22 +10,32 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.headers.HeaderDescriptor;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
+import org.tg.gollaba.auth.vo.AuthenticatedUser;
+import org.tg.gollaba.poll.component.HashIdHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -39,6 +49,11 @@ public class ControllerTestContext {
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private HashIdHandler hashIdHandler;
+
+    @MockBean
+    AuthenticationHandlerMethodArgumentResolver authenticationHandlerMethodArgumentResolver;
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation) {
@@ -46,6 +61,9 @@ public class ControllerTestContext {
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(print())
             .build();
+
+        when(authenticationHandlerMethodArgumentResolver.resolveArgument(any(), any(), any(), any()))
+            .thenReturn(new AuthenticatedUser(1L, "test", "test@test.com"));
     }
 
     protected MockMvcRequestSpecification given() {
@@ -62,8 +80,28 @@ public class ControllerTestContext {
         return "%s-%s".formatted(identifier(), affix);
     }
 
+    protected HeaderDescriptor authorizationHeader() {
+        return headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰");
+    }
+
+    protected String testHashId() {
+        return hashIdHandler.encode(1L);
+    }
+
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,
                                                                       Class<T> enumClass) {
+        return descriptor.description(
+            "%s : %s".formatted(
+                descriptor.getDescription(),
+                Arrays.stream(enumClass.getEnumConstants())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "))
+            )
+        );
+    }
+
+    protected <T extends Enum<?>> FieldDescriptor enumDescription(FieldDescriptor descriptor,
+                                                                  Class<T> enumClass) {
         return descriptor.description(
             "%s : %s".formatted(
                 descriptor.getDescription(),
@@ -77,7 +115,9 @@ public class ControllerTestContext {
     protected enum Tags {
         POLL("투표"),
         VOTING("투표 참여"),
-        USER("유저");
+        USER("유저"),
+        FAVORITES("좋아요"),
+        AUTHORIZATION("인가");
 
         private final String tagName;
 
