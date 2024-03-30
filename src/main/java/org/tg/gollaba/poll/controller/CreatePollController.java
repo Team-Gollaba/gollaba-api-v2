@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.CreatePollService;
 import org.tg.gollaba.poll.domain.Poll;
 

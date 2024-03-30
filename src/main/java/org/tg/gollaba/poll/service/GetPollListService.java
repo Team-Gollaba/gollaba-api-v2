@@ -43,13 +43,14 @@ public class GetPollListService {
         Poll.PollType pollType,
         LocalDateTime endAt,
         Integer readCount,
+        Integer totalVotingCount,
         List<PollItem> items
     ) {
         public record PollItem(
             Long id,
             String description,
             String imageUrl,
-            Integer voteCount
+            Integer votingCount
         ) {
         }
     }

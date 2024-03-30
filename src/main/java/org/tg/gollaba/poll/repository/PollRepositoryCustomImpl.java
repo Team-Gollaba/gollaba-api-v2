@@ -9,19 +9,22 @@ import org.springframework.data.domain.PageImpl;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.domain.PollItem;
 import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
-import static java.util.function.Function.identity;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
+import static org.tg.gollaba.voting.domain.QVoting.voting;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
 @RequiredArgsConstructor
@@ -70,9 +73,11 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
+        var pollIds = polls.stream().map(Poll::id).toList();
+        var votingCountMapByPollId = votingCountMapByPollId(pollIds);
 
         return new PageImpl<>(
-            convert(polls),
+            convert(polls, votingCountMapByPollId),
             pageable,
             totalCount
         );
@@ -89,31 +94,10 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             throw new BadRequestException(Status.POLL_NOT_FOUND);
         }
 
-        var pollItemIds = pollEntity.items()
+        var votingCountMap = votingCountMap(pollEntity.id());
+        var totalVotingCount = votingCountMap.values()
             .stream()
-            .map(PollItem::id)
-            .toList();
-        var votingCountByPollItemId = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count())
-            ));
-        var votingCountMap = pollItemIds.stream()
-            .collect(toMap(
-                identity(),
-                pollItemId -> votingCountByPollItemId.getOrDefault(pollItemId, 0L)
-            ));
-
-        var totalVotingCount = votingCountByPollItemId
-            .values()
-            .stream()
-            .mapToInt(Long::intValue)
+            .mapToInt(Integer::intValue)
             .sum();
 
         return new GetPollDetailsService.PollDetails(
@@ -130,32 +114,68 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     item.id(),
                     item.description(),
                     item.imageUrl(),
-                    votingCountMap.get(item.id()).intValue()
+                    votingCountMap.get(item.id())
                 ))
                 .toList()
         );
     }
 
-    private List<GetPollListService.PollSummary> convert(List<Poll> polls) {
+    private Map<Long, Map<Long, Integer>> votingCountMapByPollId(List<Long> pollIds) {
+        return queryFactory
+            .select(voting.pollId, votingItem.pollItemId, votingItem.count())
+            .from(voting)
+            .join(voting.items, votingItem)
+            .where(voting.pollId.in(pollIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    t -> t.get(voting.pollId),
+                    Collectors.toMap(
+                        t -> t.get(votingItem.pollItemId),
+                        t -> Optional.ofNullable(t.get(votingItem.count()))
+                            .map(Long::intValue)
+                            .orElse(0)
+                    )
+                )
+            );
+    }
+
+    private Map<Long, Integer> votingCountMap(long pollId) {
+        return votingCountMapByPollId(List.of(pollId))
+            .get(pollId);
+    }
+
+    private List<GetPollListService.PollSummary> convert(List<Poll> polls,
+                                                         Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
         return polls.stream()
-            .map(poll -> new GetPollListService.PollSummary(
-                poll.id(),
-                poll.title(),
-                poll.creatorName(),
-                poll.responseType(),
-                poll.pollType(),
-                poll.endAt(),
-                poll.readCount(),
-                poll.items()
+            .map(poll -> {
+                var votingCountMap = votingCountMapByPollId.getOrDefault(poll.id(), emptyMap());
+                var totalVotingCount = votingCountMap.values()
                     .stream()
-                    .map(item -> new GetPollListService.PollSummary.PollItem(
-                        item.id(),
-                        item.description(),
-                        item.imageUrl(),
-                        0 // TODO: 투표 수 조회 구현 할지 말지 정하기
-                    ))
-                    .toList()
-            ))
+                    .mapToInt(Integer::intValue)
+                    .sum();
+                return new GetPollListService.PollSummary(
+                    poll.id(),
+                    poll.title(),
+                    poll.creatorName(),
+                    poll.responseType(),
+                    poll.pollType(),
+                    poll.endAt(),
+                    poll.readCount(),
+                    totalVotingCount,
+                    poll.items()
+                        .stream()
+                        .map(item -> new GetPollListService.PollSummary.PollItem(
+                            item.id(),
+                            item.description(),
+                            item.imageUrl(),
+                            votingCountMap.getOrDefault(item.id(), 0)
+                        ))
+                        .toList()
+                );
+            })
             .toList();
     }
 }

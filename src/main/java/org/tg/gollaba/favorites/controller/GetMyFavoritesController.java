@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.favorites.service.GetMyFavoritesService;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 
 import java.util.List;
 

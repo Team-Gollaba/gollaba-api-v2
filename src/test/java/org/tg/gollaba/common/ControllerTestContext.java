@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

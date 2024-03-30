@@ -32,7 +32,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
 
         given()
             .when()
-            .get("/v2/polls/{pollId}", testHashId())
+            .get("/v2/polls/{pollHashId}", testHashId())
             .then()
             .log().all()
             .apply(
@@ -52,7 +52,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
                             fieldWithPath("data.responseType").type(STRING).description("투표 응답 타입"),
                             fieldWithPath("data.pollType").type(STRING).description("투표 타입"),
                             fieldWithPath("data.endAt").type(STRING).description("투표 종료 시간"),
-                            fieldWithPath("data.totalVoteCount").type(NUMBER).description("총 투표 수"),
+                            fieldWithPath("data.totalVotingCount").type(NUMBER).description("총 투표 수"),
                             fieldWithPath("data.items").type(ARRAY).description("투표 항목 목록"),
                             fieldWithPath("data.items[].id").type(NUMBER).description("투표 항목 ID"),
                             fieldWithPath("data.items[].description").type(STRING).description("투표 항목 설명"),
