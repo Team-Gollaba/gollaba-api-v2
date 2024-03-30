@@ -1,25 +1,28 @@
 package org.tg.gollaba.poll.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import org.tg.gollaba.common.exception.BadRequestException;
-import org.tg.gollaba.common.support.Status;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.poll.controller.aspect.UseHashId;
+import org.tg.gollaba.common.web.HashIdController;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.IncreaseReadCountService;
 
 @RestController
-@RequestMapping("/v2/polls/{pollId}/read")
-@RequiredArgsConstructor
-public class IncreaseReadCountController {
+@RequestMapping("/v2/polls/{pollHashId}/read")
+public class IncreaseReadCountController extends HashIdController {
     private final IncreaseReadCountService service;
 
-    @UseHashId
+    public IncreaseReadCountController(HashIdHandler hashIdHandler,
+                                       IncreaseReadCountService service) {
+        super(hashIdHandler);
+        this.service = service;
+    }
+
     @PostMapping
-    ApiResponse<Void> get(@PathVariable Object pollId) {
-        if (!(pollId instanceof Long id)) {
-            throw new BadRequestException(Status.INVALID_PARAMETER, "잘못된 pollId 입니다.");
-        }
+    ApiResponse<Void> get(@PathVariable String pollHashId) {
+        var id = getPollId(pollHashId);
 
         service.increase(id);
 
