@@ -104,3 +104,6 @@ application:
       location: "profile-images"
     background-images:
       location: "background-images"
+  discord:
+    webhook:
+      url: ${DISCORD_WEBHOOK_URL}

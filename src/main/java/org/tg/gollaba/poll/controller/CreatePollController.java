@@ -2,10 +2,7 @@ package org.tg.gollaba.poll.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +49,7 @@ public class CreatePollController {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     static class Request {
         @NotBlank(message = "제목을 입력해주세요.")
         private String title;
@@ -84,6 +82,7 @@ public class CreatePollController {
         @Getter
         @Setter
         @NoArgsConstructor
+        @ToString
         static class Item {
             @NotBlank(message = "투표 항목은 비어있을 수 없습니다.")
             private String description;
