@@ -26,7 +26,7 @@ public class GetMyFavoritesController {
     ApiResponse<List<String>> get(AuthenticatedUser user) {
         var favoritesList = service.get(user.id());
         var response =favoritesList.stream()
-            .map(FavoritesSummary::id)
+            .map(FavoritesSummary::pollId)
             .map(hashIdHandler::encode)
             .toList();
 
