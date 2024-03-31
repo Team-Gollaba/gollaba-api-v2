@@ -114,7 +114,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     item.id(),
                     item.description(),
                     item.imageUrl(),
-                    votingCountMap.get(item.id())
+                    votingCountMap.getOrDefault(item.id(), 0)
                 ))
                 .toList()
         );
@@ -143,8 +143,10 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     private Map<Long, Integer> votingCountMap(long pollId) {
-        return votingCountMapByPollId(List.of(pollId))
+        var result = votingCountMapByPollId(List.of(pollId))
             .get(pollId);
+
+        return result == null ? Collections.emptyMap() : result;
     }
 
     private List<GetPollListService.PollSummary> convert(List<Poll> polls,
