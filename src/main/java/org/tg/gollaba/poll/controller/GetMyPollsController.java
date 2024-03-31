@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.common.web.PageResponse;
-import org.tg.gollaba.poll.component.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetMyPollsService;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,7 +54,7 @@ public class GetMyPollsController {
         );
     }
 
-    private Page<PagePollSummary> convertPollId(Page<GetMyPollsService.PollSummary> pollSummaries,
+    private Page<PagePollSummary> convertPollId(Page<PollSummary> pollSummaries,
                                                 HashIdHandler hashIdHandler) {
         List<PagePollSummary> hashedPollSummary = pollSummaries.getContent()
             .stream()
@@ -92,14 +93,14 @@ public class GetMyPollsController {
             String imageUrl,
             Integer voteCount
         ) {
-            private static List<PollItem> to(List<GetMyPollsService.PollSummary.PollItem> pollItems) {
+            private static List<PollItem> to(List<PollSummary.PollItem> pollItems) {
 
                 return pollItems.stream()
                     .map(pollItem -> new PollItem(
                         pollItem.id(),
                         pollItem.description(),
                         pollItem.imageUrl(),
-                        pollItem.voteCount()
+                        pollItem.votingCount()
                     ))
                     .collect(Collectors.toList());
             }

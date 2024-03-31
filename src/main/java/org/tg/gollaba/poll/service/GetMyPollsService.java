@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollItem;
 import org.tg.gollaba.poll.repository.PollRepository;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,50 +22,40 @@ public class GetMyPollsService {
     @Transactional(readOnly = true)
     public Page<PollSummary> get(Long userId, Pageable pageable){
         Page<Poll> createdPolls = pollRepository.findAllByUserId(userId, pageable);
+        var pollIds = createdPolls.getContent().stream()
+            .map(Poll::id)
+            .toList();
 
-        return createdPolls.map(createdPoll -> {
-            var voteCounts = pollRepository.findVoteCounts(createdPoll.id());
+        var voteCounts = pollRepository.findPollItemIdsAndVoteCounts(pollIds);
 
-            return new PollSummary(
-                createdPoll.id(),
-                createdPoll.title(),
-                createdPoll.creatorName(),
-                createdPoll.responseType(),
-                createdPoll.pollType(),
-                createdPoll.endAt(),
-                createdPoll.readCount(),
-                convertPollItemsSummary(createdPoll.items(), voteCounts)
-            );
-        });
+        return createdPolls.map(createdPoll -> new PollSummary(
+            createdPoll.id(),
+            createdPoll.title(),
+            createdPoll.creatorName(),
+            createdPoll.responseType(),
+            createdPoll.pollType(),
+            createdPoll.endAt(),
+            createdPoll.readCount(),
+            0,
+            convertPollItemsSummary(createdPoll.items(), voteCounts)
+        ));
     }
 
-    private List<PollSummary.PollItem> convertPollItemsSummary(List<PollItem> pollItems, Map<Long, Long> voteCounts) {
+    private List<PollSummary.PollItem> convertPollItemsSummary(List<PollItem> pollItems,
+                                                               Map<Long, Map<Long, Integer>> voteCountsByPollItems) {
         return pollItems.stream()
-            .map(item -> new PollSummary.PollItem(
-                item.id(),
-                item.description(),
-                item.imageUrl(),
-                voteCounts.getOrDefault(item.id(), 0L).intValue()
-            ))
-            .collect(Collectors.toList());
-    }
-
-        public record PollSummary(
-        Long id,
-        String title,
-        String creatorName,
-        Poll.PollResponseType responseType,
-        Poll.PollType pollType,
-        LocalDateTime endAt,
-        Integer readCount,
-        List<PollItem> items
-    ) {
-        public record PollItem(
-            Long id,
-            String description,
-            String imageUrl,
-            Integer voteCount
-        ) {
-        }
+            .flatMap(item -> voteCountsByPollItems.values().stream()
+                .filter(voteCountByPollItem -> voteCountByPollItem.containsKey(item.id()))
+                .map(voteCountByPollItem -> {
+                    var votingCount = voteCountByPollItem.get(item.id());
+                    return new PollSummary.PollItem(
+                        item.id(),
+                        item.description(),
+                        item.imageUrl(),
+                        votingCount
+                    );
+                })
+            )
+            .toList();
     }
 }

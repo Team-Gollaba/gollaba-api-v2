@@ -16,6 +16,7 @@ import org.tg.gollaba.common.web.PageResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +71,7 @@ public class GetPollListController extends HashIdController {
         );
     }
 
-    private PollSummaryResponse convertToResponse(GetPollListService.PollSummary pollSummary) {
+    private PollSummaryResponse convertToResponse(PollSummary pollSummary) {
         return new PollSummaryResponse(
             createHashId(pollSummary.id()),
             pollSummary.title(),

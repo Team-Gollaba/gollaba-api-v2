@@ -7,18 +7,15 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
-import org.tg.gollaba.poll.component.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetMyPollsService;
-
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -26,7 +23,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
-import static org.tg.gollaba.poll.service.GetMyPollsService.*;
 
 class GetMyPollsControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
@@ -38,7 +34,7 @@ class GetMyPollsControllerTest extends ControllerTestContext {
     @Test
     @WithMockUser(authorities = "USER")
     void success(){
-        when(getMyPollsService.get(anyLong(), any(Pageable.class)))
+        when(getMyPollsService.get(any(), any(Pageable.class)))
             .thenReturn(mockResult());
 
         given()
@@ -108,6 +104,7 @@ class GetMyPollsControllerTest extends ControllerTestContext {
                 Poll.PollType.NAMED,
                 LocalDateTime.now(),
                 0,
+                0,
                 List.of(
                     new PollSummary.PollItem(
                         1L,
@@ -125,7 +122,10 @@ class GetMyPollsControllerTest extends ControllerTestContext {
             )
         );
 
-        return new PageImpl<>(pollSummaries, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"))
-            , 1);
+        return new PageImpl<>(
+            pollSummaries,
+            PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt")),
+            1
+        );
     }
 }
