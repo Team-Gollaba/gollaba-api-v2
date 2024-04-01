@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -105,10 +106,10 @@ class GetPollListControllerTest extends ControllerTestContext {
             .status(HttpStatus.OK);
     }
 
-    private PageImpl<GetPollListService.PollSummary> mockResult() {
+    private PageImpl<PollSummary> mockResult() {
         return new PageImpl<>(
             List.of(
-                new GetPollListService.PollSummary(
+                new PollSummary(
                     1L,
                     "title",
                     "creatorName",
@@ -118,7 +119,7 @@ class GetPollListControllerTest extends ControllerTestContext {
                     0,
                     0,
                     List.of(
-                        new GetPollListService.PollSummary.PollItem(
+                        new PollSummary.PollItem(
                             1L,
                             "description",
                             "imageUrl",
