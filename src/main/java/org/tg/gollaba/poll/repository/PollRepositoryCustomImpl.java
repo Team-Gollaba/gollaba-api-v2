@@ -185,7 +185,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     @Override
-    public Page<PollSummary> findMyPolls(Long userId, Pageable pageable) {
+    public Page<PollSummary> findPollItemIdsAndVoteCounts(Long userId, Pageable pageable) {
         var totalCount = queryFactory
             .select(poll.countDistinct())
             .from(poll)

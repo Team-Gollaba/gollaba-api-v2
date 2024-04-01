@@ -12,5 +12,5 @@ public interface PollRepositoryCustom {
 
     GetPollDetailsService.PollDetails findPollDetails(Long id);
 
-    Page<PollSummary> findMyPolls(Long userId, Pageable pageable);
+    Page<PollSummary> findPollItemIdsAndVoteCounts(Long userId, Pageable pageable);
 }
