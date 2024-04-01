@@ -66,6 +66,7 @@ public class GetMyPollsController {
                 pollSummary.pollType(),
                 pollSummary.endAt(),
                 pollSummary.readCount(),
+                pollSummary.totalVotingCount(),
                 PagePollSummary.PollItem.to(pollSummary.items())
             ))
             .collect(Collectors.toList());
@@ -85,6 +86,7 @@ public class GetMyPollsController {
         Poll.PollType pollType,
         LocalDateTime endAt,
         Integer readCount,
+        Integer totalVotingCount,
         List<PagePollSummary.PollItem> items
     ) {
         public record PollItem(

@@ -1,7 +1,6 @@
 package org.tg.gollaba.poll.vo;
 
 import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.service.GetPollListService;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.poll.domain.Poll;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
-import static java.util.function.Function.identity;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
@@ -185,10 +185,22 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     @Override
-    public Map<Long, Map<Long, Integer>> findPollItemIdsAndVoteCounts(List<Long> ids) {
+    public Page<PollSummary> findPollItemIdsAndVoteCounts(Long userId, Pageable pageable) {
+        var totalCount = queryFactory
+            .select(poll.countDistinct())
+            .from(poll)
+            .where(poll.userId.eq(userId))
+            .fetchOne();
+
+        if (totalCount == null || totalCount == 0) {
+            return Page.empty();
+        }
+
         var polls = queryFactory
             .selectFrom(poll)
-            .where(poll.id.in(ids))
+            .where(poll.userId.eq(userId))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .fetch();
 
         if (polls.isEmpty()) {
@@ -213,21 +225,24 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.count()).intValue()
             ));
 
-        return combine(
+        var response = combine(
             polls,
-            pollItemIds,
             votingCountByItems
+        );
+
+        return new PageImpl<>(
+            convert(polls, response),
+            pageable,
+            totalCount
         );
     }
 
-    public Map<Long, Map<Long, Integer>> combine(List<Poll> polls,
-                                                 List<Long> pollItemIds,
+    private Map<Long, Map<Long, Integer>> combine(List<Poll> polls,
                                                  Map<Long, Integer> votingCountByItems) {
         return polls.stream()
             .collect(toMap(
                 Poll::id,
                 poll -> poll.items().stream()
-                    .filter(item -> pollItemIds.contains(item.id()))
                     .collect(toMap(
                         PollItem::id,
                         item -> votingCountByItems.getOrDefault(item.id(), 0)

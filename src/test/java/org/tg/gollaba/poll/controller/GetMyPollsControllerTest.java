@@ -74,6 +74,7 @@ class GetMyPollsControllerTest extends ControllerTestContext {
                             fieldWithPath("data.items[].creatorName").type(STRING).description("투표 생성자"),
                             fieldWithPath("data.items[].endAt").type(STRING).description("마감 시간"),
                             fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
+                            fieldWithPath("data.items[].totalVotingCount").type(NUMBER).description("총 투표 수"),
                             enumDescription(
                                 fieldWithPath("data.items[].responseType").type(STRING).description("응답 타입"),
                                 Poll.PollResponseType.class
