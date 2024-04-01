@@ -7,9 +7,9 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
-import org.tg.gollaba.poll.component.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetMyPollsService;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ class GetMyPollsControllerTest extends ControllerTestContext {
     @Test
     @WithMockUser(authorities = "USER")
     void success(){
-        when(getMyPollsService.get(anyLong(), any(Pageable.class)))
+        when(getMyPollsService.get(any(), any(Pageable.class)))
             .thenReturn(mockResult());
 
         given()
@@ -109,6 +109,7 @@ class GetMyPollsControllerTest extends ControllerTestContext {
                 Poll.PollType.NAMED,
                 LocalDateTime.now(),
                 0,
+                1,
                 List.of(
                     new PollSummary.PollItem(
                         1L,
