@@ -16,7 +16,7 @@ public class GetMyPollsService {
 
     @Transactional(readOnly = true)
     public Page<PollSummary> get(Long userId, Pageable pageable){
-        var pollSummaries = pollRepository.findPollItemIdsAndVoteCounts(userId, pageable);
+        var pollSummaries = pollRepository.findMyPolls(userId, pageable);
 
         return pollSummaries;
     }
