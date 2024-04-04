@@ -7,8 +7,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static java.time.LocalDateTime.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PollTest {
 
@@ -16,7 +20,7 @@ class PollTest {
     @Test
     void setEndDateTest() {
         //given
-        var expected = LocalDateTime.now()
+        var expected = now()
             .plusWeeks(1)
             .with(LocalTime.MAX);
 
@@ -74,5 +78,36 @@ class PollTest {
 
         //then
         assertThat(poll.readCount()).isEqualTo(1);
+    }
+
+    @DisplayName("Poll 정보를 업데이트한다")
+    @Test //도메인 테스트라 test객체 X
+    void update(){
+        //given
+        var poll = new PollFixture().build();
+        var changePollItems = List.of(
+            new PollItem(
+                "changeDescription"
+            )
+        );
+
+        //when
+        poll.update(
+            "changeTitle",
+            LocalDateTime.now().plusMinutes(60),
+            changePollItems
+        );
+
+        //then
+        //endAt이 null이 아님
+        //poll의 endAt보다 현재 시간이 30분이 넘음
+        //title이 null이 아님
+        //title의 값이 changeTitle이 됨
+        //items의 description이 변경됨
+        assertNotNull(poll.endAt());
+        assertTrue(now().plusMinutes(30).isAfter(poll.endAt())); //TODO 여기서 에러 얘는 또 머야 ㅠㅠㅠㅠㅠ
+        assertNotNull(poll.title());
+        assertEquals("changeTitle", poll.title());
+        assertEquals("changeDescription", poll.items().get(0).description());
     }
 }

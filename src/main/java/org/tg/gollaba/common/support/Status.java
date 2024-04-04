@@ -28,6 +28,9 @@ public enum Status {
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
     POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다."),
+    INVALID_PARAMS("수정사항을 입력해주세요."),
+    //"투표 유효기간을 현재 시간보다 30분 미만으로 설정할 수 없습니다." TODO 이건 어케하지?
+
 
     //voting
     POLL_IS_CLOSED("투표가 종료되었습니다."),

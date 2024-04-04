@@ -1,6 +1,7 @@
 package org.tg.gollaba.poll.domain;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +36,20 @@ class PollItemTest {
             // then
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("[PollItem][changeImageUrl] 유효하지 않은 URL 입니다.");
+        }
+
+        @Test
+        void null이_아니라면_항목의_설명값을_변경한다(){
+            //given
+            var poll = new PollFixture().build();
+            var pollItem = poll.items().get(0);
+            String changeInfo = "test";
+
+            //when
+            pollItem.changeDescription(changeInfo);
+
+            //then
+            assertThat(pollItem.description()).isEqualTo(changeInfo);
         }
     }
 

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.time.LocalDateTime.*;
+
 @Entity
 @Getter
 @Accessors(fluent = true)
@@ -78,7 +80,7 @@ public class Poll extends BaseEntity {
 
     private void setEndAt(LocalDateTime endAt) {
         if (endAt == null) {
-            this.endAt = LocalDateTime.now()
+            this.endAt = now()
                 .plusWeeks(1)
                 .with(LocalTime.MAX);
             return;
@@ -98,6 +100,20 @@ public class Poll extends BaseEntity {
         return items.stream()
           .filter(item -> itemIds.contains(item.id()))
           .toList();
+    }
+
+    public void update(String title, LocalDateTime endAt, List<PollItem> items){
+        if(endAt != null){
+            if (now().plusMinutes(30).isAfter(endAt)) {
+                throw new IllegalArgumentException("투표 유효기간은 현재 시간보다 30분 이상이어야 합니다.");
+            }
+            this.endAt = endAt;
+        }
+
+        if(title != null){
+            this.title = title;
+        }
+        this.items = items;
     }
 
     public void increaseReadCount(){
