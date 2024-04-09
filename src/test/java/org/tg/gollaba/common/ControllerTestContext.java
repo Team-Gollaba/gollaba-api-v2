@@ -11,6 +11,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
@@ -33,8 +34,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -51,19 +51,18 @@ public class ControllerTestContext {
     private WebApplicationContext context;
     @Autowired
     private HashIdHandler hashIdHandler;
-
-    @MockBean
+    @SpyBean
     AuthenticationHandlerMethodArgumentResolver authenticationHandlerMethodArgumentResolver;
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation) {
+        doReturn(new AuthenticatedUser(1L, "test", "test@test.com"))
+            .when(authenticationHandlerMethodArgumentResolver).resolveArgument(any(), any(), any(), any());
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(print())
             .build();
-
-        when(authenticationHandlerMethodArgumentResolver.resolveArgument(any(), any(), any(), any()))
-            .thenReturn(new AuthenticatedUser(1L, "test", "test@test.com"));
     }
 
     protected MockMvcRequestSpecification given() {
