@@ -5,17 +5,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.tg.gollaba.common.exception.ErrorNotificationSender;
+import org.tg.gollaba.stats.repository.PollDailyStatsRepository;
+import org.tg.gollaba.stats.repository.PollStatsRepository;
 
 @Disabled
 @SpringBootTest
 @ActiveProfiles("local")
 public class SampleTest {
     @Autowired
-    ErrorNotificationSender errorNotificationSender;
+    PollStatsRepository pollStatsRepository;
+    @Autowired
+    PollDailyStatsRepository pollDailyStatsRepository;
 
     @Test
     void test() {
-        errorNotificationSender.send("test", new RuntimeException("test"));
+        pollDailyStatsRepository.createAllDailyStats();
     }
 }

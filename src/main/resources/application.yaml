@@ -107,3 +107,6 @@ application:
   discord:
     webhook:
       url: ${DISCORD_WEBHOOK_URL}
+
+scheduler:
+  pool-size: 2

@@ -24,6 +24,7 @@ public enum Status {
     UNKNOWN("정의 되지 않은 상태입니다."),
     FAIL_TO_UPLOAD("파일 업로드에 실패했습니다."),
     INVALID_POLL_HASH_ID("올바르지 않은 투표 ID 입니다."),
+    FAIL_TO_SQL("SQL 처리에 실패했습니다."),
 
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
