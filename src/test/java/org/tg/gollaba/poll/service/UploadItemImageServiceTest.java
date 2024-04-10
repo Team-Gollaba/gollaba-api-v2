@@ -15,11 +15,10 @@ import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.poll.component.FileUploader;
 import org.tg.gollaba.poll.domain.PollFixture;
 import org.tg.gollaba.poll.repository.PollRepository;
-import org.tg.gollaba.voting.service.UpdateVotingService;
 
 import java.util.Optional;
-import java.util.Set;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -46,7 +45,7 @@ class UploadItemImageServiceTest{
             .willReturn(Optional.of(poll));
 
         //when
-        var throwable = Assertions.catchThrowable(() -> service.upload(requirement));
+        var throwable = catchThrowable(() -> service.upload(requirement));
 
         //then
         assertThat(throwable).isNull();

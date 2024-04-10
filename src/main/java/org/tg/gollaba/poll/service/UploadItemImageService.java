@@ -18,7 +18,7 @@ public class UploadItemImageService {
     @Transactional
     public String upload(Requirement requirement){
         var poll = pollRepository.findMyPoll(requirement.pollId(), requirement.userId())
-            .orElseThrow(() -> new BadRequestException(Status.POLL_NOT_FOUND));;
+            .orElseThrow(() -> new BadRequestException(Status.POLL_NOT_FOUND));
 
         var item = poll.getItem(requirement.itemId());
         var imageUrl = fileUploader.uploadPollItemImage(
