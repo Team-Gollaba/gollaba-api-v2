@@ -1,6 +1,5 @@
 package org.tg.gollaba.voting.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,10 +13,8 @@ import org.tg.gollaba.voting.repository.VotingRepository;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CheckVotingServiceTest {
@@ -36,7 +33,7 @@ class CheckVotingServiceTest {
             "0.0.0.0",
             Optional.of(2L)
         );
-        given(votingRepository.existsByPollIdAndUserId(requirement.pollId(), requirement.userId().get()))
+        given(votingRepository.existsActiveVotingBy(requirement.pollId(), requirement.userId().get()))
             .willReturn(false);
 
         // when
@@ -72,7 +69,7 @@ class CheckVotingServiceTest {
             "0.0.0.0",
             Optional.of(2L)
         );
-        given(votingRepository.existsByPollIdAndUserId(requirement.pollId(), requirement.userId().get()))
+        given(votingRepository.existsActiveVotingBy(requirement.pollId(), requirement.userId().get()))
             .willReturn(true);
 
         // when

@@ -38,7 +38,7 @@ public class CheckVotingService {
 
     private boolean existsByUserId(Optional<Long> userId, Long pollId) {
         return userId
-            .map(id -> votingRepository.existsByPollIdAndUserId(pollId, id))
+            .map(id -> votingRepository.existsActiveVotingBy(pollId, id))
             .orElse(false);
     }
 

@@ -29,7 +29,7 @@ class CheckVotingControllerTest extends ControllerTestContext {
         when(service.check(any())).thenReturn(true);
 
         given()
-            .header(HttpHeaders.AUTHORIZATION, "JWT token")
+            .header(authHeader())
             .body(requestBody())
             .when()
             .post("/v2/voting/check")

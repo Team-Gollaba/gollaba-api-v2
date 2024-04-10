@@ -45,7 +45,7 @@ public class VoteService {
 
         if (requirement.userId().isPresent()) {
             var userId = requirement.userId().get();
-            var isAlreadyVoting = votingRepository.existsByPollIdAndUserId(requirement.pollId(), userId);
+            var isAlreadyVoting = votingRepository.existsActiveVotingBy(requirement.pollId(), userId);
 
             if (isAlreadyVoting) {
                 throw new BadRequestException(ALREADY_VOTING);
