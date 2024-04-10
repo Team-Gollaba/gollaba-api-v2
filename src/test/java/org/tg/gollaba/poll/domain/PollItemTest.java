@@ -36,6 +36,19 @@ class PollItemTest {
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("[PollItem][changeImageUrl] 유효하지 않은 URL 입니다.");
         }
+
+        @Test
+        void 투표_항목_설명_변경(){
+            //given
+            var poll = new PollFixture().build();
+            var pollItem = poll.items().get(0);
+
+            //when
+            pollItem.changeDescription("updateDescription");
+
+            //then
+            assertThat(pollItem.description()).isEqualTo("updateDescription");
+        }
     }
 
 }
