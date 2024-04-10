@@ -17,14 +17,14 @@ import org.tg.gollaba.common.web.HashIdHandler;
 public class GetHashIdController extends AdminUtilController {
     private final HashIdHandler hashIdHandler;
 
-    public GetHashIdController(@Value("{security.admin-key}") String adminKey,
+    public GetHashIdController(@Value("${security.admin-key}") String adminKey,
                                HashIdHandler hashIdHandler) {
         super(adminKey);
         this.hashIdHandler = hashIdHandler;
     }
 
     @GetMapping
-    ApiResponse<String> get(@Valid @RequestBody Request request) {
+    ApiResponse<String> get(@Valid Request request) {
         validate(request.adminKey());
 
         return ApiResponse.success(
