@@ -14,7 +14,9 @@ import org.tg.gollaba.poll.domain.PollItem;
 import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
+import org.tg.gollaba.stats.domain.PollDailyStats;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +26,11 @@ import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
+import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
 import static org.tg.gollaba.voting.domain.QVoting.voting;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
@@ -263,23 +267,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .where(poll.id.in(pollIds))
             .fetch();
 
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
+        var votingCountByItems = votingCountByItems(polls);
 
         var response = combine(
             polls,
@@ -291,5 +279,64 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             pageable,
             totalCount
         );
+    }
+
+    @Override
+    public Page<PollSummary> getPollsDailyPopularSummary(List<PollDailyStats> pollDailyStatsList, Pageable pageable) {
+        long totalCount = pollDailyStatsList.size();
+
+        if (totalCount == 0) {
+            return Page.empty();
+        }
+
+        var pollIds = pollDailyStatsList.stream()
+            .map(PollDailyStats::getPollId)
+            .collect(toList());
+
+        var polls = queryFactory
+            .selectFrom(poll)
+            .innerJoin(pollDailyStats)
+            .on(poll.id.eq(pollDailyStats.pollId)
+                .and(pollDailyStats.date.eq(LocalDate.now())))
+            .where(poll.id.in(pollIds))
+            .orderBy(
+                pollDailyStats.voteCount.desc(),
+                pollDailyStats.readCount.desc(),
+                pollDailyStats.favoritesCount.desc(),
+                poll.id.desc())
+            .fetch();
+
+        var votingCountByItems = votingCountByItems(polls);
+
+        var response = combine(
+            polls,
+            votingCountByItems
+        );
+
+        return new PageImpl<>(
+            convert(polls, response),
+            pageable,
+            totalCount
+        );
+    }
+
+    private Map<Long, Integer> votingCountByItems(List<Poll> polls){
+        var pollItemIds = polls.stream()
+            .flatMap(poll -> poll.items().stream())
+            .map(PollItem::id)
+            .distinct()
+            .toList();
+
+        return queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count()).intValue()
+            ));
     }
 }
