@@ -249,4 +249,47 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     ))
             ));
     }
+
+    @Override
+    public Page<PollSummary> getPollsSummary(List<Long> pollIds, Pageable pageable) {
+        long totalCount = pollIds.size();
+
+        if (totalCount == 0) {
+            return Page.empty();
+        }
+
+        var polls = queryFactory
+            .selectFrom(poll)
+            .where(poll.id.in(pollIds))
+            .fetch();
+
+        var pollItemIds = polls.stream()
+            .flatMap(poll -> poll.items().stream())
+            .map(PollItem::id)
+            .distinct()
+            .toList();
+
+        var votingCountByItems = queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count()).intValue()
+            ));
+
+        var response = combine(
+            polls,
+            votingCountByItems
+        );
+
+        return new PageImpl<>(
+            convert(polls, response),
+            pageable,
+            totalCount
+        );
+    }
 }
