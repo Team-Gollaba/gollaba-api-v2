@@ -14,6 +14,7 @@ import org.tg.gollaba.poll.domain.PollItem;
 import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
+import org.tg.gollaba.stats.domain.QPollStats;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
+import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
 import static org.tg.gollaba.voting.domain.QVoting.voting;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
@@ -248,5 +250,45 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                         item -> votingCountByItems.getOrDefault(item.id(), 0)
                     ))
             ));
+    }
+
+    @Override
+    public List<PollSummary> findTopPolls(int limit) {
+        var polls = queryFactory
+            .selectFrom(poll)
+            .join(pollStats).on(pollStats.pollId.eq(poll.id))
+            .orderBy(
+                pollStats.totalVoteCount.desc(),
+                pollStats.totalReadCount.desc(),
+                pollStats.totalFavoritesCount.desc(),
+                pollStats.pollId.desc()
+            )
+            .limit(limit)
+            .fetch();
+
+        var pollItemIds = polls.stream()
+            .flatMap(poll -> poll.items().stream())
+            .map(PollItem::id)
+            .distinct()
+            .toList();
+
+        var votingCountByItems = queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count()).intValue()
+            ));
+
+        var response = combine(
+            polls,
+            votingCountByItems
+        );
+
+        return convert(polls, response);
     }
 }
