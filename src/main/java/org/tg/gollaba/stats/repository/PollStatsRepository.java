@@ -15,7 +15,7 @@ public interface PollStatsRepository extends JpaRepository<PollStats, Long>, Pol
     Optional<PollStats> findByPollId(Long pollId);
 
     @Query("""
-        SELECT ps
+        SELECT ps.pollId
         FROM PollStats ps
         ORDER BY
             ps.totalVoteCount DESC,
@@ -23,6 +23,6 @@ public interface PollStatsRepository extends JpaRepository<PollStats, Long>, Pol
             ps.totalFavoritesCount DESC,
             ps.pollId DESC
     """)
-    List<PollStats> findTopPolls(Pageable pageable);
+    List<Long> findTopPollIds(Pageable pageable);
 
 }
