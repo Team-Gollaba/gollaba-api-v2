@@ -37,7 +37,7 @@ public class GetPollListController extends HashIdController {
     }
 
     @GetMapping
-    ApiResponse<PageResponse<PollSummaryResponse>> get(@SortDefaults(
+    ApiResponse<PageResponse<PollSummary>> get(@SortDefaults(
                                                                 @SortDefault(sort = "createdAt", direction = DESC)
                                                              )
                                                              @PageableDefault Pageable pageable,
@@ -45,18 +45,9 @@ public class GetPollListController extends HashIdController {
         request.validate();
         var requirement = createRequirement(request, pageable);
         var pageResult = service.get(requirement);
-        var resultItems = pageResult.stream()
-            .map(this::convertToResponse)
-            .toList();
 
         return ApiResponse.success(
-            new PageResponse<>(
-                resultItems,
-                pageResult.getNumber(),
-                pageResult.getSize(),
-                pageResult.getTotalElements(),
-                pageResult.getTotalPages()
-            )
+            PageResponse.from(pageResult)
         );
     }
 
@@ -71,26 +62,26 @@ public class GetPollListController extends HashIdController {
         );
     }
 
-    private PollSummaryResponse convertToResponse(PollSummary pollSummary) {
-        return new PollSummaryResponse(
-            createHashId(pollSummary.id()),
-            pollSummary.title(),
-            pollSummary.creatorName(),
-            pollSummary.responseType(),
-            pollSummary.pollType(),
-            pollSummary.endAt(),
-            pollSummary.readCount(),
-            pollSummary.totalVotingCount(),
-            pollSummary.items().stream()
-                .map(item -> new PollSummaryResponse.PollItem(
-                    item.id(),
-                    item.description(),
-                    item.imageUrl(),
-                    item.votingCount()
-                ))
-                .toList()
-        );
-    }
+//    private PollSummaryResponse convertToResponse(PollSummary pollSummary) {
+//        return new PollSummaryResponse(
+//            createHashId(pollSummary.id()),
+//            pollSummary.title(),
+//            pollSummary.creatorName(),
+//            pollSummary.responseType(),
+//            pollSummary.pollType(),
+//            pollSummary.endAt(),
+//            pollSummary.readCount(),
+//            pollSummary.totalVotingCount(),
+//            pollSummary.items().stream()
+//                .map(item -> new PollSummaryResponse.PollItem(
+//                    item.id(),
+//                    item.description(),
+//                    item.imageUrl(),
+//                    item.votingCount()
+//                ))
+//                .toList()
+//        );
+//    }
 
     record Request(
         Optional<GetPollListService.OptionGroup> optionGroup,
@@ -110,23 +101,23 @@ public class GetPollListController extends HashIdController {
         }
     }
 
-    record PollSummaryResponse(
-        String id,
-        String title,
-        String creatorName,
-        Poll.PollResponseType responseType,
-        Poll.PollType pollType,
-        LocalDateTime endAt,
-        Integer readCount,
-        Integer totalVotingCount,
-        List<PollItem> items
-    ) {
-        record PollItem(
-            Long id,
-            String description,
-            String imageUrl,
-            Integer votingCount
-        ) {
-        }
-    }
+//    record PollSummaryResponse(
+//        String id,
+//        String title,
+//        String creatorName,
+//        Poll.PollResponseType responseType,
+//        Poll.PollType pollType,
+//        LocalDateTime endAt,
+//        Integer readCount,
+//        Integer totalVotingCount,
+//        List<PollItem> items
+//    ) {
+//        record PollItem(
+//            Long id,
+//            String description,
+//            String imageUrl,
+//            Integer votingCount
+//        ) {
+//        }
+//    }
 }

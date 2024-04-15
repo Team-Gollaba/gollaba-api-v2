@@ -3,18 +3,18 @@ package org.tg.gollaba.poll.controller.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.tg.gollaba.common.web.HashIdHandler;
+import org.tg.gollaba.config.ApplicationContextProvider;
 
 import java.io.IOException;
 
-@Component
-@NoArgsConstructor
 public class HashIdSerializer extends JsonSerializer<Long> {
-    @Autowired(required = true)
-    private HashIdHandler hashIdHandler;
+    private final HashIdHandler hashIdHandler;
+
+    public HashIdSerializer() {
+        this.hashIdHandler = ApplicationContextProvider.getApplicationContext()
+            .getBean(HashIdHandler.class);
+    }
 
     @Override
     public void serialize(Long value,
