@@ -6,6 +6,8 @@ import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
+import java.util.List;
+
 public interface PollRepositoryCustom {
 
     Page<PollSummary> findPollList(GetPollListService.Requirement requirement);
@@ -13,4 +15,6 @@ public interface PollRepositoryCustom {
     GetPollDetailsService.PollDetails findPollDetails(Long id);
 
     Page<PollSummary> findMyPolls(Long userId, Pageable pageable);
+
+    Page<PollSummary> getPollsSummary(List<Long> pollIds, Pageable pageable);
 }
