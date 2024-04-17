@@ -3,18 +3,17 @@ package org.tg.gollaba.poll.controller;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
 import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.service.GetTopPollsService;
+import org.tg.gollaba.poll.service.GetTrendingPollsService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -24,12 +23,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
-class GetTopPollsControllerTest extends ControllerTestContext {
+class GetTrendingPollsControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.POLL.tagName();
-    private static final String DESCRIPTION = Tags.POLL.descriptionWith("전체 top10 투표 조회");
+    private static final String DESCRIPTION = Tags.POLL.descriptionWith("일일 인기 투표 조회");
 
     @Autowired
-    private GetTopPollsService service;
+    private GetTrendingPollsService service;
 
     @Test
     void success(){
@@ -40,7 +39,7 @@ class GetTopPollsControllerTest extends ControllerTestContext {
             .header(authHeader())
             .queryParams("limit", 10)
             .when()
-            .get("/v2/polls/top")
+            .get("/v2/polls/trending")
             .then()
             .log().all()
             .apply(

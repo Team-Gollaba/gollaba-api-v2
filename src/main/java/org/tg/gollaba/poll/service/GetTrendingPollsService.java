@@ -10,11 +10,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GetTopPollsService {
+public class GetTrendingPollsService {
     private final PollRepository pollRepository;
 
     @Transactional(readOnly = true)
     public List<PollSummary> get(int limit){
-    return pollRepository.findTopPolls(limit);
+        return pollRepository.findTrendingPolls(limit);
     }
 }

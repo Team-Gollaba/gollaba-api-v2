@@ -18,9 +18,6 @@ import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -61,27 +58,6 @@ public class GetPollListController extends HashIdController {
             pageable
         );
     }
-
-//    private PollSummaryResponse convertToResponse(PollSummary pollSummary) {
-//        return new PollSummaryResponse(
-//            createHashId(pollSummary.id()),
-//            pollSummary.title(),
-//            pollSummary.creatorName(),
-//            pollSummary.responseType(),
-//            pollSummary.pollType(),
-//            pollSummary.endAt(),
-//            pollSummary.readCount(),
-//            pollSummary.totalVotingCount(),
-//            pollSummary.items().stream()
-//                .map(item -> new PollSummaryResponse.PollItem(
-//                    item.id(),
-//                    item.description(),
-//                    item.imageUrl(),
-//                    item.votingCount()
-//                ))
-//                .toList()
-//        );
-//    }
 
     record Request(
         Optional<GetPollListService.OptionGroup> optionGroup,
