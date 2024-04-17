@@ -37,7 +37,6 @@ class GetTopPollsControllerTest extends ControllerTestContext {
             .thenReturn(mockResult());
 
         given()
-            .header(authHeader())
             .queryParams("limit", 10)
             .when()
             .get("/v2/polls/top")
@@ -54,7 +53,6 @@ class GetTopPollsControllerTest extends ControllerTestContext {
                     queryParameters(
                         parameterWithName("limit").description("")
                     ),
-                    requestHeaderWithAuthorization(),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(ARRAY).description("응답 데이터"),
