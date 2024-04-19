@@ -333,4 +333,58 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
 
         return convert(polls, response);
     }
+
+    @Override
+    public Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable){
+        var pollIds = queryFactory
+            .select(voting.pollId)
+            .from(voting)
+            .where(voting.userId.eq(userId))
+            .fetch();
+
+        var totalCount = pollIds.size();
+
+        if (totalCount == 0) {
+            return Page.empty();
+        }
+
+        var polls = queryFactory
+            .selectFrom(poll)
+            .where(poll.id.in(pollIds))
+            .fetch();
+
+        if (polls.isEmpty()) {
+            throw new BadRequestException(Status.POLL_NOT_FOUND);
+        }
+
+        var pollItemIds = polls.stream()
+            .flatMap(poll -> poll.items().stream())
+            .map(PollItem::id)
+            .distinct()
+            .toList();
+
+
+        var votingCountByItems = queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count()).intValue()
+            ));
+
+        var response = combine(
+            polls,
+            votingCountByItems
+        );
+
+        return new PageImpl<>(
+            convert(polls, response),
+            pageable,
+            totalCount
+        );
+    }
 }
