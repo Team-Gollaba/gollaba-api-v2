@@ -29,25 +29,16 @@ class UpdateUserServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private FileUploader fileUploader;
-
-
     @Test
     void success() {
         //given
-        var mockImageFile = Mockito.mock(MultipartFile.class);
         var user = new UserFixture().build();
 
         var requirement = new UpdateUserService.Requirement(
             1L,
-            "updateName",
-            Optional.of(mockImageFile),
-            Optional.of(mockImageFile)
+            "updateName"
         );
         given(userRepository.findById(requirement.userId())).willReturn(Optional.of(user));
-        given(fileUploader.uploadProfileImage(anyLong(), eq(mockImageFile))).willReturn("https://updated-url-1.com/test.png");
-        given(fileUploader.uploadBackgroundImage(anyLong(), eq(mockImageFile))).willReturn("https://updated-url-2.com/test.png");
 
         //when
         var throwable = catchThrowable(() -> service.update(requirement));
@@ -61,7 +52,5 @@ class UpdateUserServiceTest {
 
         var capturedUser = argumentCaptor.getValue();
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
-        assertThat(capturedUser.profileImageUrl()).isEqualTo("https://updated-url-1.com/test.png");
-        assertThat(capturedUser.backgroundImageUrl()).isEqualTo("https://updated-url-2.com/test.png");
     }
 }

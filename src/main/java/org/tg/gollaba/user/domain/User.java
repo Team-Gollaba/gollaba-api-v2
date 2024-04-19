@@ -83,6 +83,7 @@ public class User extends BaseEntity {
     }
 
     public void update(String name){
+        assert name != null;
         this.name = name;
     }
 
@@ -91,13 +92,6 @@ public class User extends BaseEntity {
                 throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
             }
             this.profileImageUrl = profileImageUrl;
-    }
-
-    public void changeBackgroundImage(String backgroundImageUrl){
-            if (!ValidationUtils.isValidUrl(backgroundImageUrl)) {
-                throw new IllegalArgumentException("배경 이미지 URL 형식이 올바르지 않습니다.");
-            }
-            this.backgroundImageUrl = backgroundImageUrl;
     }
 
     public enum RoleType {

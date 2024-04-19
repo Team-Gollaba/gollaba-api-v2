@@ -5,12 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.user.service.UpdateUserService;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v2/users")
@@ -21,7 +18,7 @@ public class UpdateUserController {
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
     public ApiResponse<Void> update(AuthenticatedUser user,
-                                    @Valid Request request){
+                                    @Valid @RequestBody Request request){
        service.update(request.toRequirement(user.id()));
 
         return ApiResponse.success();
@@ -29,16 +26,12 @@ public class UpdateUserController {
 
     record Request(
         @NotBlank(message = "이름은 필수값입니다.")
-        String name,
-        Optional<MultipartFile> profileImage,
-        Optional<MultipartFile> backgroundImage
+        String name
     ){
         public UpdateUserService.Requirement toRequirement(Long userId) {
             return new UpdateUserService.Requirement(
                 userId,
-                name,
-                profileImage,
-                backgroundImage
+                name
             );
         }
     }
