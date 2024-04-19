@@ -34,78 +34,21 @@ public class GetMyPollsController {
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    public ApiResponse<PageResponse<PagePollSummary>> get(AuthenticatedUser user,
+    public ApiResponse<PageResponse<PollSummary>> get(AuthenticatedUser user,
                                                       @SortDefault.SortDefaults(
                                                           @SortDefault(sort = "createdAt", direction = DESC)
                                                       )
                                                       @PageableDefault Pageable pageable) {
         var pollSummaries = service.get(user.id(), pageable);
 
-        var pollSummaryPage = convertPollId(pollSummaries, hashIdHandler);
-
         return ApiResponse.success(
             new PageResponse<>(
-                pollSummaryPage.getContent(),
-                pollSummaryPage.getNumber(),
-                pollSummaryPage.getSize(),
-                pollSummaryPage.getTotalElements(),
-                pollSummaryPage.getTotalPages()
+                pollSummaries.getContent(),
+                pollSummaries.getNumber(),
+                pollSummaries.getSize(),
+                pollSummaries.getTotalElements(),
+                pollSummaries.getTotalPages()
             )
         );
-    }
-
-    private Page<PagePollSummary> convertPollId(Page<PollSummary> pollSummaries,
-                                                HashIdHandler hashIdHandler) {
-        List<PagePollSummary> hashedPollSummary = pollSummaries.getContent()
-            .stream()
-            .map(pollSummary -> new PagePollSummary(
-                hashIdHandler.encode(pollSummary.id()),
-                pollSummary.title(),
-                pollSummary.creatorName(),
-                pollSummary.responseType(),
-                pollSummary.pollType(),
-                pollSummary.endAt(),
-                pollSummary.readCount(),
-                pollSummary.totalVotingCount(),
-                PagePollSummary.PollItem.to(pollSummary.items())
-            ))
-            .collect(Collectors.toList());
-
-        return new PageImpl<>(
-            hashedPollSummary,
-            pollSummaries.getPageable(),
-            pollSummaries.getTotalElements()
-        );
-    }
-
-    public record PagePollSummary(
-        String id,
-        String title,
-        String creatorName,
-        Poll.PollResponseType responseType,
-        Poll.PollType pollType,
-        LocalDateTime endAt,
-        Integer readCount,
-        Integer totalVotingCount,
-        List<PagePollSummary.PollItem> items
-    ) {
-        public record PollItem(
-            Long id,
-            String description,
-            String imageUrl,
-            Integer voteCount
-        ) {
-            private static List<PollItem> to(List<PollSummary.PollItem> pollItems) {
-
-                return pollItems.stream()
-                    .map(pollItem -> new PollItem(
-                        pollItem.id(),
-                        pollItem.description(),
-                        pollItem.imageUrl(),
-                        pollItem.votingCount()
-                    ))
-                    .collect(Collectors.toList());
-            }
-        }
     }
 }
