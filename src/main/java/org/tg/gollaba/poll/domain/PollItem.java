@@ -34,4 +34,10 @@ public class PollItem extends BaseEntity {
 
         this.imageUrl = imageUrl;
     }
+
+    public void changeDescription(String description){
+        assert description != null;
+
+        this.description = description;
+    }
 }
