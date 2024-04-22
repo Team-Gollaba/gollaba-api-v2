@@ -26,7 +26,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class ChangeProfileControllerTest extends ControllerTestContext {
     private static final String TAG = ControllerTestContext.Tags.USER.tagName();
-    private static final String DESCRIPTION = ControllerTestContext.Tags.USER.descriptionWith("유저 이미지 업로드");
+    private static final String DESCRIPTION = ControllerTestContext.Tags.USER.descriptionWith("유저 프로필 변경");
 
     @Autowired
     private ObjectMapper objectMapper;

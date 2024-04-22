@@ -25,8 +25,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetMyVotingPollsControllerTest extends ControllerTestContext {
-    private static final String TAG = Tags.VOTING.tagName();
-    private static final String DESCRIPTION = Tags.VOTING.descriptionWith("특정 유저가 생성한 투표 전체 조회");
+    private static final String TAG = Tags.POLL.tagName();
+    private static final String DESCRIPTION = Tags.POLL.descriptionWith("특정 유저가 참여한 투표 전체 조회");
 
     @Autowired
     private GetMyVotingPollsService getMyVotingPollsService;
