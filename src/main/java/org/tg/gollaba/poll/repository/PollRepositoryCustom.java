@@ -19,4 +19,6 @@ public interface PollRepositoryCustom {
     List<PollSummary> findTopPolls(int limit);
 
     List<PollSummary> findTrendingPolls(int limit);
+
+    Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable);
 }
