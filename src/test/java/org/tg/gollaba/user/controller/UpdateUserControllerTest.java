@@ -1,21 +1,19 @@
 package org.tg.gollaba.user.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
+import org.tg.gollaba.user.controller.UpdateUserController.Request;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.NULL;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class UpdateUserControllerTest extends ControllerTestContext{
@@ -24,16 +22,12 @@ class UpdateUserControllerTest extends ControllerTestContext{
 
     private static final String DESCRIPTION = ControllerTestContext.Tags.USER.descriptionWith("회원 수정");
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Test
     @WithMockUser(authorities = "USER")
-    void success() throws Exception{
+    void success(){
         given()
-            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .header(HttpHeaders.AUTHORIZATION, "JWT token")
-            .formParam("name", "testName")
+            .body(requestBody())
             .when()
             .put("/v2/users")
             .then()
@@ -42,21 +36,15 @@ class UpdateUserControllerTest extends ControllerTestContext{
                 document(
                     identifier(),
                     new ResourceSnippetParametersBuilder()
-                        .summary(DESCRIPTION)
                         .tag(TAG)
-                        .description(
-                            """
-                            | 항목 | description |
-                            |------|-------------|
-                            | name | type: String, 설명: 이름        |
-                            | profileImage | type: MultipartFile, 설명: 프로필 이미지 |
-                            | backgroundImage | type: MultipartFile, 설명: 배경 이미지 |  
-                            """
-                        ),
+                        .description(DESCRIPTION),
                     preprocessRequest(),
                     preprocessResponse(),
                     requestHeaders(
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰")
+                    ),
+                    requestFields(
+                        fieldWithPath("name").type(STRING).description("변경할 이름")
                     ),
                     responseFields(
                         fieldsWithBasic(
@@ -66,5 +54,10 @@ class UpdateUserControllerTest extends ControllerTestContext{
                 )
             )
             .status(HttpStatus.OK);
+    }
+    private Request requestBody(){
+        return new Request(
+            "updatedName"
+        );
     }
 }

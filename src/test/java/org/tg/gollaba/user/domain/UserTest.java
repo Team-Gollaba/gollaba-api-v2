@@ -103,20 +103,5 @@ class UserTest {
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("프로필 이미지 URL 형식이 올바르지 않습니다.");
         }
-
-        @Test
-        void 배경_이미지_URL_형식이_아니면_에러(){
-            // given
-            var user = new UserFixture().build();
-
-            // when
-            var throwable = catchThrowable(() ->
-                user.changeBackgroundImage("backgroundImage")
-            );
-
-            // then
-            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("배경 이미지 URL 형식이 올바르지 않습니다.");
-        }
     }
 }
