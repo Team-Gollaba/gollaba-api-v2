@@ -1,0 +1,21 @@
+name: backend-build-dev
+on:
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  back-end-build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - name: SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          timeout: 40s
+          script: |
+            cd /home/ec2-user/gollaba-deploy
+            ./deploy-dev.sh
