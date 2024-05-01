@@ -26,7 +26,7 @@ class CreatePollControllerTest extends ControllerTestContext {
     private CreatePollService service;
 
     @Test
-    void success() {
+    void success() throws Exception{
         when(service.create(any()))
             .thenReturn(1L);
 
@@ -40,6 +40,7 @@ class CreatePollControllerTest extends ControllerTestContext {
                 "endAt", LocalDateTime.now().toString(),
                 "items[0].description", "testDescription"
             ))
+            .multiPart("image", imageFile())
             .when()
             .post("/v2/polls")
             .then()

@@ -2,7 +2,6 @@ package org.tg.gollaba.poll.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
@@ -14,6 +13,7 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -27,7 +27,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
 
     @Test
     void success() {
-        BDDMockito.when(getPollDetailsService.get(anyLong()))
+        when(getPollDetailsService.get(anyLong()))
             .thenReturn(mockResult());
 
         given()
