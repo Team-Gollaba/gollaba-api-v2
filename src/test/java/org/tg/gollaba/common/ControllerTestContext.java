@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -29,8 +30,12 @@ import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.HashIdHandler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -85,6 +90,21 @@ public class ControllerTestContext {
 
     protected String testHashId() {
         return hashIdHandler.encode(1L);
+    }
+
+    protected static File imageFile() throws IOException {
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "image", // 파일의 파라미터 이름
+            "test-image.jpg", // 파일의 원본 이름
+            "image/jpeg", // 파일의 MIME 타입
+            "mock file content".getBytes() // 파일의 내용을 담은 바이트 배열
+        );
+
+        File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(multipartFile.getBytes());
+        }
+        return file;
     }
 
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,
