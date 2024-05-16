@@ -18,7 +18,7 @@ public class UserFixture implements TestFixture<User> {
     private String backgroundImageUrl = "https://test.com/test.png";
     private User.RoleType roleType = User.RoleType.USER;
     private User.ProviderType providerType = User.ProviderType.KAKAO;
-    private String providerId = "providerId-test";
+    private String providerId = "1";
 
     @Override
     public User build() {
