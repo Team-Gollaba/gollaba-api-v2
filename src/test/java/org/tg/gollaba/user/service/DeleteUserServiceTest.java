@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.auth.service.KakaoDisconnectService;
+import org.tg.gollaba.auth.client.KakaoClient;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.domain.UserFixture;
 import org.tg.gollaba.user.repository.UserRepository;
@@ -24,7 +24,7 @@ class DeleteUserServiceTest {
     @InjectMocks
     private DeleteUserService service;
     @Mock
-    private KakaoDisconnectService kakaoDisconnectService;
+    private KakaoClient kakaoClient;
     @Mock
     private UserRepository userRepository;
 
@@ -32,7 +32,6 @@ class DeleteUserServiceTest {
     void success(){
         //given
         var user = new UserFixture().build();
-        long providerId = Long.parseLong(user.providerId());
         given(userRepository.findById(user.id())).willReturn(Optional.of(user));
 
         //when
@@ -40,7 +39,7 @@ class DeleteUserServiceTest {
 
         //then
         assertThat(throwable).isNull();
-        verify(kakaoDisconnectService, times(1)).disconnect(providerId);
+        verify(kakaoClient, times(1)).disconnect(user.providerId());
         verify(userRepository, times(1)).delete(any(User.class));
     }
 }
