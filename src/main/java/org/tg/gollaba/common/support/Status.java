@@ -46,7 +46,8 @@ public enum Status {
 
     //user
     INCONSISTENCY_PASSWORD("일치하지 않는 비밀번호입니다."),
-    USER_NOT_FOUND("존재하지 않는 회원입니다.");
+    USER_NOT_FOUND("존재하지 않는 회원입니다."),
+    KAKAO_DISCONNECT_FAIL("카카오 연결끊기에 실패했습니다.");
 
     private final String message;
 
