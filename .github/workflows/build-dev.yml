@@ -42,5 +42,5 @@ jobs:
           fi
 
           echo "Running deploy-dev.sh script..."
-          bash /home/ec2-user/gollaba-deploy/deploy-dev.sh
+          bash -c "/home/ec2-user/gollaba-deploy/deploy-dev.sh"
         EOF
