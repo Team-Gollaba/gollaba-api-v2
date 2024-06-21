@@ -22,7 +22,7 @@ jobs:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
       run: |
-        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+        ssh -tt -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
           set -e
           echo "Checking necessary directories and files..."
 
