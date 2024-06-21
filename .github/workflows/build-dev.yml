@@ -2,7 +2,7 @@ name: backend-build-dev
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   deploy:
