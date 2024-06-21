@@ -22,4 +22,25 @@ jobs:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
       run: |
-        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'bash /home/ec2-user/gollaba-deploy/deploy-dev.sh'
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+          set -e
+          echo "Checking necessary directories and files..."
+
+          if [ ! -d "/home/ec2-user/gollaba-deploy" ]; then
+            echo "Directory /home/ec2-user/gollaba-deploy does not exist."
+            exit 1
+          fi
+
+          if [ ! -f "/home/ec2-user/gollaba-deploy/deploy-dev.sh" ]; then
+            echo "File /home/ec2-user/gollaba-deploy/deploy-dev.sh does not exist."
+            exit 1
+          fi
+
+          if [ ! -d "/home/ec2-user/gollaba-api-v2" ]; then
+            echo "Directory /home/ec2-user/gollaba-api-v2 does not exist."
+            exit 1
+          fi
+
+          echo "Running deploy-dev.sh script..."
+          bash /home/ec2-user/gollaba-deploy/deploy-dev.sh
+        EOF
