@@ -7,40 +7,16 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.EC2_KEY }}
-
-    - name: Run build script on EC2
-      env:
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-      run: |
-        ssh -tt -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-          set -e
-          echo "Checking necessary directories and files..."
-
-          if [ ! -d "/home/ec2-user/gollaba-deploy" ]; then
-            echo "Directory /home/ec2-user/gollaba-deploy does not exist."
-            exit 1
-          fi
-
-          if [ ! -f "/home/ec2-user/gollaba-deploy/deploy-dev.sh" ]; then
-            echo "File /home/ec2-user/gollaba-deploy/deploy-dev.sh does not exist."
-            exit 1
-          fi
-
-          if [ ! -d "/home/ec2-user/gollaba-api-v2" ]; then
-            echo "Directory /home/ec2-user/gollaba-api-v2 does not exist."
-            exit 1
-          fi
-
-          echo "Running deploy-dev.sh script..."
-          bash -c "/home/ec2-user/gollaba-deploy/deploy-dev.sh"
-        EOF
+      - name: SSH to EC2 and run commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/gollaba-deploy
+            ./deploy-dev.sh
