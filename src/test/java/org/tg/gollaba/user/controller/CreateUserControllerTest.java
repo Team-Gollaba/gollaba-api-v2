@@ -22,7 +22,7 @@ class CreateUserControllerTest extends ControllerTestContext {
         given()
             .body(requestBody())
             .when()
-            .post("/v2/users")
+            .post("/v2/users/signup")
             .then()
             .log().all()
             .apply(

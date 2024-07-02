@@ -16,7 +16,7 @@ import org.tg.gollaba.user.service.CreateUserService;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/v2/users")
+@RequestMapping("/v2/users/signup")
 @RequiredArgsConstructor
 public class CreateUserController {
     private final CreateUserService service;
