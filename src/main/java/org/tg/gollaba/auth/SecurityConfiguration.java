@@ -92,6 +92,7 @@ public class SecurityConfiguration {
             "http://localhost:5500",
             "http://localhost:3000",
             "https://gollaba-application-deploy.vercel.app",
+            "https://gollaba-fe.vercel.app",
             "https://dev.gollaba.app",
             "https://www.gollaba.app"
         ));
