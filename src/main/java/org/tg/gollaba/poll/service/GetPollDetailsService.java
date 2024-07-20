@@ -26,7 +26,7 @@ public class GetPollDetailsService {
         Poll.PollResponseType responseType,
         Poll.PollType pollType,
         LocalDateTime endAt,
-        Integer totalVoteCount,
+        Integer totalVotingCount,
         List<PollItem> items
     ) {
         public record PollItem(

@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.common.web.AdminUtilController;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 
 @RestController
 @RequestMapping("/v2/hash")
 public class GetHashIdController extends AdminUtilController {
     private final HashIdHandler hashIdHandler;
 
-    public GetHashIdController(@Value("{security.admin-key}") String adminKey,
+    public GetHashIdController(@Value("${security.admin-key}") String adminKey,
                                HashIdHandler hashIdHandler) {
         super(adminKey);
         this.hashIdHandler = hashIdHandler;
     }
 
     @GetMapping
-    ApiResponse<String> get(@Valid @RequestBody Request request) {
+    ApiResponse<String> get(@Valid Request request) {
         validate(request.adminKey());
 
         return ApiResponse.success(

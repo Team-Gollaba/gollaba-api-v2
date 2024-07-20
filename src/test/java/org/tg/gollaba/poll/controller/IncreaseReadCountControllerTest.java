@@ -19,7 +19,7 @@ class IncreaseReadCountControllerTest extends ControllerTestContext {
     void success() {
         given()
             .when()
-            .post("/v2/polls/{pollId}/read", testHashId())
+            .post("/v2/polls/{pollHashId}/read", testHashId())
             .then()
             .log().all()
             .apply(

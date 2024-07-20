@@ -83,7 +83,7 @@ class CreateVotingServiceTest {
         // given
         var userId = 1L;
         var requirement = new RequirementFixture().userId(Optional.of(1L)).build();
-        given(votingRepository.existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId)))
+        given(votingRepository.existsActiveVotingBy(eq(requirement.pollId()), eq(userId)))
             .willReturn(true);
 
         // when
@@ -93,7 +93,7 @@ class CreateVotingServiceTest {
         assertThat(throwable).isInstanceOf(BadRequestException.class)
             .hasMessage(Status.ALREADY_VOTING.message());
         verify(duplicatedVotingChecker, times(1)).check(eq(requirement.ipAddress()), eq(requirement.pollId()));
-        verify(votingRepository, times(1)).existsByPollIdAndUserId(eq(requirement.pollId()), eq(userId));
+        verify(votingRepository, times(1)).existsActiveVotingBy(eq(requirement.pollId()), eq(userId));
     }
 
     @Getter

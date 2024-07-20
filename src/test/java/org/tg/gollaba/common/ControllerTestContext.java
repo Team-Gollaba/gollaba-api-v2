@@ -11,9 +11,11 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -26,15 +28,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.tg.gollaba.auth.AuthenticationHandlerMethodArgumentResolver;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -51,19 +56,18 @@ public class ControllerTestContext {
     private WebApplicationContext context;
     @Autowired
     private HashIdHandler hashIdHandler;
-
-    @MockBean
+    @SpyBean
     AuthenticationHandlerMethodArgumentResolver authenticationHandlerMethodArgumentResolver;
 
     @BeforeEach
     void setUp(RestDocumentationContextProvider restDocumentation) {
+        doReturn(new AuthenticatedUser(1L, "test", "test@test.com"))
+            .when(authenticationHandlerMethodArgumentResolver).resolveArgument(any(), any(), any(), any());
+
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(documentationConfiguration(restDocumentation))
             .alwaysDo(print())
             .build();
-
-        when(authenticationHandlerMethodArgumentResolver.resolveArgument(any(), any(), any(), any()))
-            .thenReturn(new AuthenticatedUser(1L, "test", "test@test.com"));
     }
 
     protected MockMvcRequestSpecification given() {
@@ -86,6 +90,21 @@ public class ControllerTestContext {
 
     protected String testHashId() {
         return hashIdHandler.encode(1L);
+    }
+
+    protected static File imageFile() throws IOException {
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "image", // 파일의 파라미터 이름
+            "test-image.jpg", // 파일의 원본 이름
+            "image/jpeg", // 파일의 MIME 타입
+            "mock file content".getBytes() // 파일의 내용을 담은 바이트 배열
+        );
+
+        File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(multipartFile.getBytes());
+        }
+        return file;
     }
 
     protected <T extends Enum<?>> ParameterDescriptor enumDescription(ParameterDescriptor descriptor,

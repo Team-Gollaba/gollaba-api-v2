@@ -23,7 +23,8 @@ public enum Status {
     NOT_ACCEPTABLE("허용하지 않는 요청입니다."),
     UNKNOWN("정의 되지 않은 상태입니다."),
     FAIL_TO_UPLOAD("파일 업로드에 실패했습니다."),
-    FAIL_TO_DECODE_HASH_ID("해시 아이디를 디코딩하는데 실패했습니다."),
+    INVALID_POLL_HASH_ID("올바르지 않은 투표 ID 입니다."),
+    FAIL_TO_SQL("SQL 처리에 실패했습니다."),
 
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),

@@ -2,7 +2,6 @@ package org.tg.gollaba.poll.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
@@ -14,6 +13,7 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -27,12 +27,12 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
 
     @Test
     void success() {
-        BDDMockito.when(getPollDetailsService.get(anyLong()))
+        when(getPollDetailsService.get(anyLong()))
             .thenReturn(mockResult());
 
         given()
             .when()
-            .get("/v2/polls/{pollId}", testHashId())
+            .get("/v2/polls/{pollHashId}", testHashId())
             .then()
             .log().all()
             .apply(
@@ -52,7 +52,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
                             fieldWithPath("data.responseType").type(STRING).description("투표 응답 타입"),
                             fieldWithPath("data.pollType").type(STRING).description("투표 타입"),
                             fieldWithPath("data.endAt").type(STRING).description("투표 종료 시간"),
-                            fieldWithPath("data.totalVoteCount").type(NUMBER).description("총 투표 수"),
+                            fieldWithPath("data.totalVotingCount").type(NUMBER).description("총 투표 수"),
                             fieldWithPath("data.items").type(ARRAY).description("투표 항목 목록"),
                             fieldWithPath("data.items[].id").type(NUMBER).description("투표 항목 ID"),
                             fieldWithPath("data.items[].description").type(STRING).description("투표 항목 설명"),

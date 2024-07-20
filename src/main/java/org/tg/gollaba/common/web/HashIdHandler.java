@@ -1,10 +1,8 @@
-package org.tg.gollaba.poll.component;
+package org.tg.gollaba.common.web;
 
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tg.gollaba.common.exception.ServerException;
-import org.tg.gollaba.common.support.Status;
 
 @Component
 public class HashIdHandler {
@@ -23,9 +21,12 @@ public class HashIdHandler {
         long[] result = hashids.decode(hash);
 
         if (result.length < 1) {
-            throw new ServerException(Status.FAIL_TO_DECODE_HASH_ID);
+            throw new FailToDecodeHashIdException();
         }
 
         return result[0];
+    }
+
+    public static class FailToDecodeHashIdException extends IllegalArgumentException {
     }
 }

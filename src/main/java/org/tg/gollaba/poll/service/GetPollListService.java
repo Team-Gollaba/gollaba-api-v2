@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.repository.PollRepository;
+import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,24 +34,5 @@ public class GetPollListService {
 
     public enum OptionGroup {
         TITLE
-    }
-
-    public record PollSummary(
-        Long id,
-        String title,
-        String creatorName,
-        Poll.PollResponseType responseType,
-        Poll.PollType pollType,
-        LocalDateTime endAt,
-        Integer readCount,
-        List<PollItem> items
-    ) {
-        public record PollItem(
-            Long id,
-            String description,
-            String imageUrl,
-            Integer voteCount
-        ) {
-        }
     }
 }

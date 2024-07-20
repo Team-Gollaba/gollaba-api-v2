@@ -49,11 +49,16 @@ security:
 
 cloud:
   aws:
-    credentials:
-      accessKey: 'test-access-key'
-      secretKey: 'test-secret-key'
     s3:
+      credentials:
+        accessKey: 'test-access-key'
+        secretKey: 'test-secret-key'
       bucket: 'test-bucket'
+
+application:
+  discord:
+    webhook:
+      url: 'test-webhook-url'
 
 logging:
   level:

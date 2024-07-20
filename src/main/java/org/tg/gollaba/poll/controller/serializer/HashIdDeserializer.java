@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 
 @Component
 @RequiredArgsConstructor

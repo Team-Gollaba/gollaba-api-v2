@@ -22,13 +22,4 @@ public class UserS3FileUploader implements FileUploader {
             multipartFile
         );
     }
-
-    @Override
-    public String uploadBackgroundImage(long userId, MultipartFile multipartFile){
-        return s3Client.upload(
-            s3Locations.backgroundImages().location(),
-            "%d-%s".formatted(userId, UUID.randomUUID()),
-            multipartFile
-        );
-    }
 }

@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
+import org.tg.gollaba.common.support.IpAddressExtractor;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.poll.component.HashIdHandler;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.voting.service.VoteService;
 
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class VoteController {
         var requirement = new VoteService.Requirement(
             pollId,
             request.pollItemIds(),
-            "", //TODO: IP 주소 추가
+            IpAddressExtractor.extract(httpServletRequest),
             Optional.of(user.id()),
             request.voterName()
         );
@@ -50,7 +51,7 @@ public class VoteController {
         var requirement = new VoteService.Requirement(
             pollId,
             request.pollItemIds(),
-            "", //TODO: IP 주소 추가
+            IpAddressExtractor.extract(httpServletRequest),
             Optional.empty(),
             request.voterName()
         );

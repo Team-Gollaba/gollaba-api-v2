@@ -75,4 +75,22 @@ class PollTest {
         //then
         assertThat(poll.readCount()).isEqualTo(1);
     }
+
+    @DisplayName("투표를 업데이트 한다")
+    @Test
+    void whenUpdatePoll(){
+        //given
+        var poll = new PollFixture().build();
+        var endAt = LocalDateTime.now().plusMinutes(40);
+
+        //when
+        poll.update(
+            "updateTitle",
+            endAt
+        );
+
+        //then
+        assertThat(poll.title()).isEqualTo("updateTitle");
+        assertThat(poll.endAt()).isEqualTo(endAt);
+    }
 }

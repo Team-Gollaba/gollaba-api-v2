@@ -13,6 +13,7 @@ import static org.tg.gollaba.common.support.Status.USER_NOT_FOUND;
 @RequiredArgsConstructor
 public class GetSelfService {
     private final UserRepository userRepository;
+
     @Transactional
     public UserDetails get(Long userId){
         var user = userRepository.findById(userId)

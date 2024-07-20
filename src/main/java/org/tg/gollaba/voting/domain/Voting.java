@@ -46,6 +46,8 @@ public class Voting extends BaseEntity {
 
     public void update(VoterName voterName,
                        Set<VotingItem> items) {
+        assert voterName != null;
+        assert items != null;
         this.voterName = voterName;
         setItems(items);
     }

@@ -1,5 +1,6 @@
 package org.tg.gollaba.common.exception;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.tg.gollaba.common.web.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,16 +21,23 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class CommonExceptionHandler {
     public static final String USER_4XX_MESSAGE = "잘못된 요청입니다.";
     public static final String USER_5XX_MESSAGE = "예상치 못한 오류가 발생하였습니다. 관리자에게 문의해주세요";
+    private final ErrorNotificationSender errorNotificationSender;
 
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnAuthorizedException.class)
     public ApiResponse<Void> unAuthorizedException(UnAuthorizedException e,
                                                    HttpServletRequest request) {
-        log.warn("[{}] 인증 정보가 없는 요청이 발생하였습니다.", request.getRequestURI());
+        var message = """
+            [%s] 인증 정보가 없는 요청이 발생하였습니다.
+            """.formatted(request.getRequestURI());
+        log.warn(message);
+        errorNotificationSender.send(message);
+
         return ApiResponse.fail(e.message());
     }
 
@@ -37,7 +45,12 @@ public class CommonExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ApiResponse<Void> accessDeniedException(AccessDeniedException e,
                                                   HttpServletRequest request) {
-        log.warn("[{}] 권한이 없는 요청이 발생하였습니다.", request.getRequestURI());
+        var message = """
+            [%s] 권한이 없는 요청이 발생하였습니다.
+            """.formatted(request.getRequestURI());
+        log.warn(message);
+        errorNotificationSender.send(message);
+
         return ApiResponse.fail("권한이 부족합니다.");
     }
 
@@ -46,6 +59,8 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> applicationException(ApplicationException e,
                                                   HttpServletRequest request) {
         log.warn("[{}] 잘못된 요청이 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
+
         return ApiResponse.error(
             e.status(),
             e.message()
@@ -57,6 +72,8 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> bindException(BindException e,
                                            HttpServletRequest request) {
         log.warn("[{}] 잘못된 요청이 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
+
         return ApiResponse.fail(
             e.getBindingResult()
                 .getAllErrors()
@@ -74,6 +91,8 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> handleIllegalException(Exception e,
                                                     HttpServletRequest request) {
         log.warn("[{}] 잘못된 요청이 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
+
         return ApiResponse.fail(e.getMessage());
     }
 
@@ -88,6 +107,8 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> handle4xx(Exception e,
                                        HttpServletRequest request) {
         log.warn("[{}] 잘못된 요청이 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
+
         return ApiResponse.fail(USER_4XX_MESSAGE);
     }
 
@@ -96,6 +117,7 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> handle5xx(Exception e,
                                        HttpServletRequest request) {
         log.error("[{}] 예상치 못한 오류가 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
 
         return ApiResponse.error(USER_5XX_MESSAGE);
     }
@@ -105,6 +127,7 @@ public class CommonExceptionHandler {
     public ApiResponse<Void> serverException(ServerException e,
                                              HttpServletRequest request) {
         log.error("[{}] 서버 오류가 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
 
         return ApiResponse.error(e.message());
     }
