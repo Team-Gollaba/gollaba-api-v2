@@ -19,7 +19,6 @@ spring:
     web:
       pageable:
         default-page-size: 10
-        one-indexed-parameters: true
     redis:
       host: ${REDIS_HOST}
 
