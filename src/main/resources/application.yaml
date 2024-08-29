@@ -55,6 +55,14 @@ spring:
               - name
               - email
               - profile_image
+          github:
+            client-id: ${OAUTH_GITHUB_CLIENT_ID}
+            client-secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${OAUTH_GITHUB_REDIRECT_URI}
+            scope:
+              - read:user
+              - user:email
         provider:
           kakao:
             authorization-uri: ${OAUTH_PROVIDER_KAKAO_AUTHORIZATION_URI}
