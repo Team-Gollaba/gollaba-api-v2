@@ -19,5 +19,5 @@ jobs:
           key: ${{ secrets.EC2_PROD_SSH_KEY }}
           port: ${{ secrets.EC2_PROD_PORT }}
           script: |
-            cd /home/ec2-user/gollaba-deploy
-            ./deploy-dev.sh
+            cd /home/ec2-user/gollaba-deploy-prod
+            ./deploy-prod.sh

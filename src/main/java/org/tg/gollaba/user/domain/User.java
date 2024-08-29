@@ -101,6 +101,7 @@ public class User extends BaseEntity {
 
     public enum ProviderType {
         KAKAO,
-        NAVER
+        NAVER,
+        GITHUB
     }
 }

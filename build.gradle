@@ -87,6 +87,9 @@ dependencies {
 
     // hashIds
     implementation 'org.hashids:hashids:1.0.3'
+
+    // postgreSQL
+    runtimeOnly 'org.postgresql:postgresql'
 }
 
 tasks.named('test') {

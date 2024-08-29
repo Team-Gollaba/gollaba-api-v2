@@ -8,7 +8,8 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
-        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: ${DEFAULT_SCHEMA}
     open-in-view: false
     show-sql: false
     hibernate:
@@ -19,11 +20,12 @@ spring:
     web:
       pageable:
         default-page-size: 10
+        one-indexed-parameters: true
     redis:
       host: ${REDIS_HOST}
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USER_NAME}
     password: ${DATASOURCE_PASSWORD}
@@ -53,6 +55,14 @@ spring:
               - name
               - email
               - profile_image
+          github:
+            client-id: ${OAUTH_GITHUB_CLIENT_ID}
+            client-secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${OAUTH_GITHUB_REDIRECT_URI}
+            scope:
+              - read:user
+              - user:email
         provider:
           kakao:
             authorization-uri: ${OAUTH_PROVIDER_KAKAO_AUTHORIZATION_URI}

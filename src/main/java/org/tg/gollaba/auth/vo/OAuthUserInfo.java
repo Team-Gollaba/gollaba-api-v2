@@ -55,6 +55,18 @@ public class OAuthUserInfo {
         );
     }
 
+    public static OAuthUserInfo github(OAuth2User oAuth2User) {
+        var attributes = oAuth2User.getAttributes();
+
+        return new OAuthUserInfo(
+            valueToString(attributes.get("id")),
+            User.ProviderType.GITHUB,
+            valueToString(attributes.get("email")),
+            valueToString(attributes.get("name")),
+            valueToString(attributes.get("avatar_url"))
+        );
+    }
+
     private static String valueToString(Object value) {
         if (value == null) return null;
 
