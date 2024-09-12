@@ -29,6 +29,20 @@ spring:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USER_NAME}
     password: ${DATASOURCE_PASSWORD}
+    hikari:
+      schema: ${DEFAULT_SCHEMA}
+      pool-name: ranchat-HikariPool
+      maximum-pool-size: 10
+      connection-timeout: 3000
+      max-lifetime: 58000
+      data-source-properties:
+        socketTimeout: 3000
+        prepStmtCacheSize: 100
+        prepStmtCacheSqlLimit: 2048
+        cachePrepStmts: true
+        useServerPrepStmts: true
+        rewriteBatchedStatements: false
+        useSsl: false
 
   security:
     oauth2:
