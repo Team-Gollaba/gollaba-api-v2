@@ -75,6 +75,10 @@ public class Poll extends BaseEntity {
             throw new IllegalArgumentException("투표 항목은 최소 두 개 이상이어야 합니다.");
         }
 
+        if (items.size() > 6) {
+            throw new IllegalArgumentException("투표 항목은 최대 6개까지 추가할 수 있습니다.");
+        }
+
         this.items = items;
     }
 
