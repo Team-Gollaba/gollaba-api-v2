@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -45,6 +46,29 @@ class PollTest {
         var pollItems = List.of(
             new PollItem("description1")
         );
+
+        //when
+        var throwable = catchThrowable(() -> new Poll(
+            1L,
+            "title",
+            "creatorName",
+            Poll.PollResponseType.MULTIPLE,
+            Poll.PollType.ANONYMOUS,
+            null,
+            pollItems
+        ));
+
+        //then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("투표 항목이 6개를 초과하면 예외를 뱉는다.")
+    @Test
+    void whenItemSizeExceedsSix_thenException() {
+        //given
+        var pollItems = IntStream.rangeClosed(1, 7)
+            .mapToObj(i -> new PollItem("description" + i))
+            .toList();
 
         //when
         var throwable = catchThrowable(() -> new Poll(
