@@ -94,7 +94,7 @@ public class SecurityConfiguration {
             "https://gollaba-application-deploy.vercel.app",
             "https://gollaba-fe.vercel.app",
             "https://dev.gollaba.app",
-            "https://www.gollaba.app",
+            "https://gollaba-v3.vercel.app/",
             "https://www.gollaba.app"
         ));
         corsConfiguration.setAllowedHeaders(
