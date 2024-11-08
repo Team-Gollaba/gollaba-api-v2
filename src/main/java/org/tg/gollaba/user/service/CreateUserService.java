@@ -1,8 +1,6 @@
 package org.tg.gollaba.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.user.component.UserValidator;
@@ -16,7 +14,6 @@ import java.util.Optional;
 public class CreateUserService {
     private final UserRepository userRepository;
     private final UserValidator userValidator;
-    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long create(Requirement requirement) {
@@ -32,10 +29,6 @@ public class CreateUserService {
         return new User(
             requirement.email(),
             requirement.name(),
-            passwordEncoder.encode(
-                requirement.password()
-                    .orElse(RandomStringUtils.randomAlphanumeric(7))
-            ),
             requirement.profileImageUrl()
                 .orElse(null),
             User.RoleType.USER,
@@ -48,7 +41,6 @@ public class CreateUserService {
     public record Requirement(
         String email,
         String name,
-        Optional<String> password,
         Optional<String> profileImageUrl,
         Optional<User.ProviderType> providerType,
         Optional<String> providerId

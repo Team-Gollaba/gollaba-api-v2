@@ -19,7 +19,6 @@ class UserTest {
             var throwable = catchThrowable(() ->
                 new User("email",
                     "name",
-                    "password",
                     "profileImageUrl",
                     User.RoleType.USER,
                     null,
@@ -32,30 +31,11 @@ class UserTest {
         }
 
         @Test
-        void providerType가_없고_password가_없으면_에러() {
-            // given when
-            var throwable = catchThrowable(() ->
-                new User("email",
-                    "name",
-                    null,
-                    "profileImageUrl",
-                    User.RoleType.USER,
-                    null,
-                    null)
-            );
-
-            // then
-            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("password 는 필수입니다.");
-        }
-
-        @Test
         void 이메일_형식이_아니면_에러() {
             // given when
             var throwable = catchThrowable(() ->
                 new User("invalidEmail",
                     "name",
-                    "password",
                     "profileImageUrl",
                     User.RoleType.USER,
                     null,
@@ -73,7 +53,6 @@ class UserTest {
             var throwable = catchThrowable(() ->
                 new User("test@test.com",
                     "name",
-                    "password",
                     "profileImageUrl",
                     User.RoleType.USER,
                     null,
