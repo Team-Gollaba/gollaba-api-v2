@@ -36,7 +36,6 @@ class CreateUserControllerTest extends ControllerTestContext {
                     requestFields(
                         fieldWithPath("email").type(STRING).description("이메일"),
                         fieldWithPath("name").type(STRING).description("이름"),
-                        fieldWithPath("password").type(STRING).optional().description("비밀번호"),
                         fieldWithPath("profileImageUrl").type(STRING).optional().description("프로필 이미지 URL"),
                         fieldWithPath("providerType").type(STRING).optional().description("소셜 로그인 타입"),
                         fieldWithPath("providerId").type(STRING).optional().description("소셜 로그인 ID")
@@ -56,7 +55,6 @@ class CreateUserControllerTest extends ControllerTestContext {
         return new CreateUserController.Request(
             "email",
             "name",
-            Optional.of("password"),
             Optional.of("profileImageUrl"),
             Optional.of(User.ProviderType.KAKAO),
             Optional.of("providerId")

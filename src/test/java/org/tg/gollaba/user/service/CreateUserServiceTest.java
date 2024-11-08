@@ -6,7 +6,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.tg.gollaba.user.component.UserValidator;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.domain.UserFixture;
@@ -28,8 +27,6 @@ class CreateUserServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private PasswordEncoder passwordEncoder;
-    @Mock
     private UserValidator userValidator;
 
     @Test
@@ -38,13 +35,10 @@ class CreateUserServiceTest {
         var requirement = new CreateUserService.Requirement(
             "test@test.com",
             "test",
-            Optional.empty(),
             Optional.of("https://www.test.com/test.jpg"),
             Optional.of(User.ProviderType.KAKAO),
             Optional.of("testProviderId")
         );
-        given(passwordEncoder.encode(any()))
-            .willReturn("testPassword");
         given(userRepository.save(any()))
             .willReturn(new UserFixture().build());
 
@@ -61,7 +55,6 @@ class CreateUserServiceTest {
         var capturedUser = argumentCaptor.getValue();
         assertThat(capturedUser.email()).isEqualTo(requirement.email());
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
-        assertThat(capturedUser.password()).isEqualTo("testPassword");
         assertThat(capturedUser.profileImageUrl()).isEqualTo("https://www.test.com/test.jpg");
         assertThat(capturedUser.backgroundImageUrl()).isNull();
         assertThat(capturedUser.roleType()).isEqualTo(User.RoleType.USER);
