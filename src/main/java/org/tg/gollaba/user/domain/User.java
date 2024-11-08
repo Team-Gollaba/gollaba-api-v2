@@ -47,12 +47,14 @@ public class User extends BaseEntity {
 
     public User(String email,
                 String name,
+                String password,
                 String profileImageUrl,
                 RoleType roleType,
                 User.ProviderType providerType,
                 String providerId) {
         this.email = email;
         this.name = name;
+        this.password = password;
         this.profileImageUrl = profileImageUrl;
         this.roleType = roleType;
         this.providerType = providerType;
@@ -64,6 +66,10 @@ public class User extends BaseEntity {
         if (providerType != null && providerId == null
             || providerType == null && providerId != null) {
             throw new IllegalArgumentException("providerType, providerId 둘 다 필요합니다.");
+        }
+
+        if (providerType == null && password == null) {
+            throw new IllegalArgumentException("password 는 필수입니다.");
         }
 
         if (!ValidationUtils.isValidEmail(email)) {

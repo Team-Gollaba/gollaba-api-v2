@@ -36,6 +36,7 @@ public class CreateUserController {
         String email,
         @NotBlank(message = "name 은 필수 입니다.")
         String name,
+        Optional<String> password,
         Optional<String> profileImageUrl,
         Optional<User.ProviderType> providerType,
         Optional<String> providerId
@@ -45,12 +46,19 @@ public class CreateUserController {
                 || providerType.isEmpty() && providerId.isPresent()) {
                 throw new BadRequestException(Status.INVALID_PARAMETER, "providerType, providerId 둘 다 필요합니다.");
             }
+
+            if (providerType.isEmpty() && providerId().isEmpty()) {
+                if (password.isEmpty()) {
+                    throw new BadRequestException(Status.INVALID_PARAMETER, "password 는 필수입니다.");
+                }
+            }
         }
 
         public CreateUserService.Requirement toRequirement() {
             return new CreateUserService.Requirement(
                 email,
                 name,
+                password,
                 profileImageUrl,
                 providerType,
                 providerId
