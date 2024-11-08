@@ -13,6 +13,7 @@ public class UserFixture implements TestFixture<User> {
     private Long id = 1L;
     private String email = "test@test.com";
     private String name = "test";
+    private String password = "test1234**";
     private String profileImageUrl = "https://test.com/test.png";
     private String backgroundImageUrl = "https://test.com/test.png";
     private User.RoleType roleType = User.RoleType.USER;
