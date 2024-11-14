@@ -24,7 +24,7 @@ public class PollDailyStats extends BaseEntityForOnlyCreatedAt {
     private Long pollId;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate aggregationDate;
 
     @Column(nullable = false)
     private Integer voteCount;

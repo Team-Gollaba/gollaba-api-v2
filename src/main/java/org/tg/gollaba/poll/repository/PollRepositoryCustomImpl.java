@@ -157,7 +157,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     private List<PollSummary> convert(List<Poll> polls,
-                                                         Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
+                                      Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
         return polls.stream()
             .map(poll -> {
                 var votingCountMap = votingCountMapByPollId.getOrDefault(poll.id(), emptyMap());
@@ -242,7 +242,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     private Map<Long, Map<Long, Integer>> combine(List<Poll> polls,
-                                                 Map<Long, Integer> votingCountByItems) {
+                                                  Map<Long, Integer> votingCountByItems) {
         return polls.stream()
             .collect(toMap(
                 Poll::id,
@@ -255,10 +255,11 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     @Override
-    public List<PollSummary> findTopPolls(int limit) {
+    public List<PollSummary> findTopPolls(LocalDate aggregationDate, int limit) {
         var polls = queryFactory
             .selectFrom(poll)
             .join(pollStats).on(pollStats.pollId.eq(poll.id))
+            .where(pollStats.aggregationDate.eq(aggregationDate))
             .orderBy(
                 pollStats.totalVoteCount.desc(),
                 pollStats.totalReadCount.desc(),
@@ -294,12 +295,12 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
         return convert(polls, response);
     }
 
-    public List<PollSummary> findTrendingPolls(int limit){
+    public List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit){
         var polls = queryFactory
             .selectFrom(poll)
             .innerJoin(pollDailyStats)
-            .on(poll.id.eq(pollDailyStats.pollId)
-                .and(pollDailyStats.date.eq(LocalDate.now())))
+            .on(poll.id.eq(pollDailyStats.pollId))
+            .where(pollDailyStats.aggregationDate.eq(aggregationDate))
             .orderBy(
                 pollDailyStats.voteCount.desc(),
                 pollDailyStats.readCount.desc(),

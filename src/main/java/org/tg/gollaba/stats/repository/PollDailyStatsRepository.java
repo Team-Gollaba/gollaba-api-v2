@@ -13,12 +13,12 @@ public interface PollDailyStatsRepository extends JpaRepository<PollDailyStats, 
     @Query("""
         SELECT pds
         FROM PollDailyStats pds
-        WHERE pds.date = :date
+        WHERE pds.aggregationDate = :aggregationDate
         ORDER BY
             pds.voteCount DESC,
             pds.readCount DESC,
             pds.favoritesCount DESC,
             pds.pollId DESC
     """)
-    List<PollDailyStats> findTrendingPolls(LocalDate date, Pageable pageable);
+    List<PollDailyStats> findTrendingPolls(LocalDate aggregationDate, Pageable pageable);
 }
