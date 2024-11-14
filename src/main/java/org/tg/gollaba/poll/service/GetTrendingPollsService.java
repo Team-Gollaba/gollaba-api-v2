@@ -15,6 +15,7 @@ public class GetTrendingPollsService {
 
     @Transactional(readOnly = true)
     public List<PollSummary> get(int limit){
-        return pollRepository.findTrendingPolls(limit);
+        var aggregationDate = java.time.LocalDate.now();
+        return pollRepository.findTrendingPolls(aggregationDate, limit);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.poll.vo.PollSummary;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class GetTopPollsService {
 
     @Transactional(readOnly = true)
     public List<PollSummary> get(int limit){
-    return pollRepository.findTopPolls(limit);
+        var aggregationDate = LocalDate.now();
+        return pollRepository.findTopPolls(aggregationDate, limit);
     }
 }

@@ -6,6 +6,7 @@ import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PollRepositoryCustom {
@@ -16,9 +17,9 @@ public interface PollRepositoryCustom {
 
     Page<PollSummary> findMyPolls(Long userId, Pageable pageable);
 
-    List<PollSummary> findTopPolls(int limit);
+    List<PollSummary> findTopPolls(LocalDate aggregationDate, int limit);
 
-    List<PollSummary> findTrendingPolls(int limit);
+    List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit);
 
     Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable);
 }

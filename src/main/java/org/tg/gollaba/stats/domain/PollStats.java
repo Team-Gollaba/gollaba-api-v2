@@ -9,6 +9,8 @@ import org.springframework.data.annotation.Immutable;
 import org.tg.gollaba.common.entity.BaseEntity;
 import org.tg.gollaba.common.entity.BaseEntityForOnlyCreatedAt;
 
+import java.time.LocalDate;
+
 @Entity
 @Immutable
 @Getter
@@ -21,6 +23,9 @@ public class PollStats extends BaseEntityForOnlyCreatedAt {
 
     @Column(nullable = false)
     private Long pollId;
+
+    @Column
+    private LocalDate aggregationDate;
 
     @Column(nullable = false)
     private Integer totalVoteCount;
