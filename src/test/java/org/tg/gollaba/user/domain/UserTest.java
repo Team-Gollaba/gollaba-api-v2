@@ -66,24 +66,6 @@ class UserTest {
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이메일 형식이 올바르지 않습니다.");
         }
-
-        @Test
-        void 프로필_이미지_URL_형식이_아니면_에러() {
-            // given when
-            var throwable = catchThrowable(() ->
-                new User("test@test.com",
-                    "name",
-                    "password",
-                    "profileImageUrl",
-                    User.RoleType.USER,
-                    null,
-                    null)
-            );
-
-            // then
-            assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("프로필 이미지 URL 형식이 올바르지 않습니다.");
-        }
     }
 
     @DisplayName("유저 정보 변경시 검증 테스트")

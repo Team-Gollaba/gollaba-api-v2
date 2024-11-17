@@ -28,10 +28,6 @@ public class PollItem extends BaseEntity {
     }
 
     public void changeImageUrl(String imageUrl) {
-        if (!ValidationUtils.isValidUrl(imageUrl)) {
-            throw new IllegalArgumentException("[PollItem][changeImageUrl] 유효하지 않은 URL 입니다.");
-        }
-
         this.imageUrl = imageUrl;
     }
 
