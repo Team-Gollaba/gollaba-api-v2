@@ -75,11 +75,6 @@ public class User extends BaseEntity {
         if (!ValidationUtils.isValidEmail(email)) {
             throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
-
-        if (StringUtils.hasText(profileImageUrl) &&
-            !ValidationUtils.isValidUrl(profileImageUrl)) {
-            throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");
-        }
     }
 
     public void update(String name){
