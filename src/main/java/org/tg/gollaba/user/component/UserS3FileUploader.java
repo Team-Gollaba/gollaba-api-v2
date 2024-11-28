@@ -2,6 +2,7 @@ package org.tg.gollaba.user.component;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.client.S3Client;
 import org.tg.gollaba.config.S3Locations;
@@ -16,10 +17,15 @@ public class UserS3FileUploader implements FileUploader {
 
     @Override
     public String uploadProfileImage(long userId, MultipartFile multipartFile) {
-        return s3Client.upload(
+        var originalFileName = multipartFile.getOriginalFilename();
+        var extension = StringUtils.getFilenameExtension(originalFileName);
+
+        var imageUrl = s3Client.upload(
             s3Locations.profileImages().location(),
             "%d-%s".formatted(userId, UUID.randomUUID()),
             multipartFile
         );
+
+        return imageUrl + "." + extension;
     }
 }
