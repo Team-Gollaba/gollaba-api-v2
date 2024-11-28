@@ -14,17 +14,14 @@ public class StatsScheduler {
     private final CreatePollStatsService createPollStatsService;
     private final CreatePollDailyStatsService createPollDailyStatsService;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24) // 매일
+    @Scheduled(
+        cron = "0 0 0 * * *", // 매일 0시 5분
+        zone = "Asia/Seoul"
+    )
     public void createPollStats() {
         log.info("투표 통계 생성 스케줄러 시작");
         createPollStatsService.create();
-        log.info("투표 통계 생성 스케줄러 종료");
-    }
-
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24) // 매일
-    public void createPollDailyStats() {
-        log.info("투표 일일 통계 생성 스케줄러 시작");
         createPollDailyStatsService.create();
-        log.info("투표 일일 통계 생성 스케줄러 종료");
+        log.info("투표 통계 생성 스케줄러 종료");
     }
 }
