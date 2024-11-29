@@ -19,6 +19,5 @@ public class SampleTest {
 
     @Test
     void test() {
-        pollDailyStatsRepository.createAllDailyStats();
     }
 }
