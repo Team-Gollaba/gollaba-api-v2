@@ -115,6 +115,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             pollEntity.pollType(),
             pollEntity.endAt(),
             totalVotingCount,
+            pollEntity.readCount(),
             pollEntity.items()
                 .stream()
                 .map(item -> new GetPollDetailsService.PollDetails.PollItem(
