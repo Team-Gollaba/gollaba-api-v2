@@ -58,7 +58,7 @@ public class VoteService {
             .orElse(null);
         var voterName = requirement.voterName()
             .map(name -> new VoterName(poll, name))
-            .orElse(null);
+            .orElse(new VoterName(poll));
         var items = requirement.pollItemIds()
             .stream()
             .map(VotingItem::new)
