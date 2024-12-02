@@ -17,13 +17,13 @@ public class StatsScheduler {
     private final CreatePollDailyStatsService createPollDailyStatsService;
 
     @Scheduled(
-        cron = "5 0 0 * * *", // 매일 0시 0분 5초에 실행
+        cron = "1 0 0 * * *", // 매일 0시 0분 1초에 실행
         zone = "Asia/Seoul"
     )
     public void createPollStats() {
         var aggregationDate = LocalDate.now();
         log.info("투표 통계 생성 스케줄러 시작");
-        createPollStatsService.create();
+        createPollStatsService.create(aggregationDate);
         createPollDailyStatsService.create(aggregationDate);
         log.info("투표 통계 생성 스케줄러 종료");
     }
