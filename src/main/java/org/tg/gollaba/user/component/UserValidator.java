@@ -7,6 +7,8 @@ import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.repository.UserRepository;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class UserValidator {
@@ -14,16 +16,24 @@ public class UserValidator {
     private final UserRepository userRepository;
 
     public void validate(User user) {
-        checkDuplication(user.email(), user.providerId());
+        checkDuplication(user.email());
     }
 
-    private void checkDuplication(String email,
-                                  String providerId) {
-        if (userRepository.existsByEmailAndProviderId(email, providerId)) {
+    private void checkDuplication(String email) {
+        var user = userRepository.findByEmail(email);
+
+        user.ifPresent(u -> {
+            var providerType = u.providerType();
             throw new BadRequestException(
-                Status.INVALID_PARAMETER,
-                EMAIL_DUPLICATION_MESSAGE
+                Status.EMAIL_DUPLICATION,
+                EMAIL_DUPLICATION_MESSAGE + " email: %s, providerType: %s"
+                    .formatted(
+                        email,
+                        Optional.ofNullable(providerType)
+                            .map(User.ProviderType::description)
+                            .orElse("없음")
+                    )
             );
-        }
+        });
     }
 }

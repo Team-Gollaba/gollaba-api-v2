@@ -5,13 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.stats.repository.PollStatsRepository;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class CreatePollStatsService {
     private final PollStatsRepository pollStatsRepository;
 
     @Transactional
-    public void create() {
-        pollStatsRepository.createAllStats();
+    public void create(LocalDate aggregationDate) {
+        pollStatsRepository.createAllStats(aggregationDate);
     }
 }

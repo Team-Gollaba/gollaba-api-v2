@@ -11,6 +11,8 @@ import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.user.domain.UserFixture;
 import org.tg.gollaba.user.repository.UserRepository;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
 import static org.tg.gollaba.user.component.UserValidator.EMAIL_DUPLICATION_MESSAGE;
@@ -27,8 +29,8 @@ class UserValidatorTest {
     void checkEmailDuplication() {
         //given
         var user = new UserFixture().build();
-        given(userRepository.existsByEmailAndProviderId(user.email(), user.providerId()))
-            .willReturn(true);
+        given(userRepository.findByEmail(user.email()))
+            .willReturn(Optional.of(user));
 
         //when
         var throwable = catchThrowable(() -> validator.validate(user));
@@ -36,6 +38,6 @@ class UserValidatorTest {
         //then
         Assertions.assertThat(throwable)
             .isInstanceOf(BadRequestException.class)
-            .hasMessage(EMAIL_DUPLICATION_MESSAGE);
+            .hasMessageContaining(EMAIL_DUPLICATION_MESSAGE);
     }
 }

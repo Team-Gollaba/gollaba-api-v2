@@ -9,6 +9,7 @@ import org.tg.gollaba.auth.component.JwtTokenHandler;
 import org.tg.gollaba.auth.component.JwtTokenProvider;
 import org.tg.gollaba.auth.domain.UserTokenFixture;
 import org.tg.gollaba.auth.repository.UserTokenRepository;
+import org.tg.gollaba.auth.vo.IssuedToken;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 
@@ -34,7 +35,7 @@ class RenewTokenServiceTest {
         //given
         var refreshToken = "refreshToken";
         var userToken = new UserTokenFixture().build();
-        var issuedToken = new JwtTokenProvider.IssuedToken("accessToken", "refreshToken");
+        var issuedToken = new IssuedToken("accessToken", "refreshToken");
         given(userTokenRepository.findByRefreshToken(refreshToken))
             .willReturn(Optional.of(userToken));
         given(tokenProvider.issue(userToken.userId()))

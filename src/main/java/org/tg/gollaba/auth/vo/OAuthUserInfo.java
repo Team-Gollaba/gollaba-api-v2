@@ -28,6 +28,15 @@ public class OAuthUserInfo {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public static OAuthUserInfo of(OAuth2User oAuth2User,
+                                   User.ProviderType providerType) {
+        return switch (providerType) {
+            case KAKAO -> kakao(oAuth2User);
+            case NAVER -> naver(oAuth2User);
+            case GITHUB -> github(oAuth2User);
+        };
+    }
+
     public static OAuthUserInfo kakao(OAuth2User oAuth2User) {
         var attributes = oAuth2User.getAttributes();
         var accountInfo = (Map<String, Object>) attributes.get("kakao_account");

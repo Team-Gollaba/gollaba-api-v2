@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.tg.gollaba.auth.component.CookieHandler;
 import org.tg.gollaba.auth.component.JwtTokenProvider;
 import org.tg.gollaba.auth.component.TokenProvider;
+import org.tg.gollaba.auth.vo.IssuedToken;
 import org.tg.gollaba.auth.vo.OAuthUserInfo;
 import org.tg.gollaba.user.repository.UserRepository;
 import org.tg.gollaba.user.domain.User;
@@ -44,7 +45,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .orElse(getDefaultTargetUrl());
         var oAuth2UserInfo = getOAuthUserInfo(authentication);
 
-        if (!userRepository.existsByEmailAndProviderId(oAuth2UserInfo.email(), oAuth2UserInfo.providerId())) {
+        if (!userRepository.existsByProviderIdAndProviderType(oAuth2UserInfo.providerId(), oAuth2UserInfo.providerType())) {
             var signUpUrl = generateSignupUrl(redirectUrl, oAuth2UserInfo);
             getRedirectStrategy().sendRedirect(request, response, signUpUrl);
             return;
@@ -55,7 +56,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             return;
         }
 
-        var user = userRepository.findByEmailAndProviderId(oAuth2UserInfo.email(), oAuth2UserInfo.providerId()).orElseThrow();
+        var user = userRepository.findByProviderIdAndProviderType(oAuth2UserInfo.providerId(), oAuth2UserInfo.providerType()).orElseThrow();
         var issuedToken = tokenProvider.issue(user.id());
         var targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)
             .queryParam("accessToken", issuedToken.accessToken())
@@ -109,7 +110,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private void addJwtRefreshTokenCookie(HttpServletRequest request,
                                           HttpServletResponse response,
-                                          JwtTokenProvider.IssuedToken issuedToken) {
+                                          IssuedToken issuedToken) {
         cookieHandler.deleteCookie(request, response, REFRESH_TOKEN);
         cookieHandler.addSecuredCookie(response, REFRESH_TOKEN, issuedToken.refreshToken(), (int) refreshExpirationTime / 1000);
     }

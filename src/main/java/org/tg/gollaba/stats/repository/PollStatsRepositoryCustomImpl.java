@@ -7,17 +7,19 @@ import org.tg.gollaba.common.exception.ServerException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.support.StringUtils;
 
+import java.time.LocalDate;
+
 @Repository
 @RequiredArgsConstructor
 public class PollStatsRepositoryCustomImpl implements PollStatsRepositoryCustom {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void createAllStats() {
-        jdbcTemplate.execute("""
+    public void createAllStats(LocalDate aggregationDate) {
+        jdbcTemplate.update("""
             INSERT INTO poll_stats (poll_id, aggregation_date, total_vote_count, total_read_count, total_favorites_count, created_at)
             SELECT p.id,
-                   CURRENT_DATE,
+                   ?,
                    COALESCE(vote_count_table.cnt, 0),
                    p.read_count,
                    COALESCE(favorites_count_table.cnt, 0),
@@ -35,7 +37,8 @@ public class PollStatsRepositoryCustomImpl implements PollStatsRepositoryCustom 
                    GROUP BY f.poll_id
                  ) favorites_count_table
                  ON favorites_count_table.poll_id = p.id;
-            """
+            """,
+            aggregationDate
         );
     }
 }
