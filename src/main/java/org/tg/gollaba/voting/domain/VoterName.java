@@ -25,6 +25,10 @@ public class VoterName {
         setVoterName(poll, value);
     }
 
+    public VoterName(Poll poll) {
+        setVoterName(poll, null);
+    }
+
     private void setVoterName(Poll poll, String value) {
         var pollType = poll.pollType();
 
