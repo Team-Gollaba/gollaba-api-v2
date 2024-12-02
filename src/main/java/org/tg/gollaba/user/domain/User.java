@@ -95,8 +95,18 @@ public class User extends BaseEntity {
     }
 
     public enum ProviderType {
-        KAKAO,
-        NAVER,
-        GITHUB
+        KAKAO("카카오"),
+        NAVER("네이버"),
+        GITHUB("깃허브");
+
+        private final String description;
+
+        ProviderType(String description) {
+            this.description = description;
+        }
+
+        public String description() {
+            return description;
+        }
     }
 }

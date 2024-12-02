@@ -45,12 +45,17 @@ public class SecurityConfiguration {
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository;
 
     @Bean
+    public DefaultOAuth2UserService oAuth2UserService() {
+        return new DefaultOAuth2UserService();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, DefaultOAuth2UserService oAuth2UserService) throws Exception {
         http
             .cors(cors -> cors
                 .configurationSource(corsConfigurationSource())
@@ -74,7 +79,7 @@ public class SecurityConfiguration {
                     )
                     .userInfoEndpoint(userInfoEndpoint ->
                         userInfoEndpoint
-                            .userService(new DefaultOAuth2UserService())
+                            .userService(oAuth2UserService)
                     )
                     .successHandler(customAuthenticationSuccessHandler)
                     .failureHandler(customAuthenticationFailureHandler)

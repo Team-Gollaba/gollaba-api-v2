@@ -48,6 +48,8 @@ public enum Status {
     //user
     INCONSISTENCY_PASSWORD("일치하지 않는 비밀번호입니다."),
     USER_NOT_FOUND("존재하지 않는 회원입니다."),
+    EMAIL_DUPLICATION("이미 존재하는 이메일입니다."),
+    NOT_SIGN_UP("회원가입을 진행해주세요."),
 
     //external
     KAKAO("카카오 서버와의 통신에 실패하였습니다. 관리자에게 문의해주세요.");
