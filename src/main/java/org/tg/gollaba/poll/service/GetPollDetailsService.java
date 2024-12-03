@@ -23,6 +23,7 @@ public class GetPollDetailsService {
         Long id,
         String title,
         String creatorName,
+        String creatorProfileUrl,
         Poll.PollResponseType responseType,
         Poll.PollType pollType,
         LocalDateTime endAt,

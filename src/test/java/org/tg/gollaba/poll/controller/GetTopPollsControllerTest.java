@@ -59,6 +59,7 @@ class GetTopPollsControllerTest extends ControllerTestContext {
                             fieldWithPath("data[].id").type(STRING).description("투표 해시 ID"),
                             fieldWithPath("data[].title").type(STRING).description("투표 제목"),
                             fieldWithPath("data[].creatorName").type(STRING).description("투표 생성자 이름"),
+                            fieldWithPath("data[].creatorProfileUrl").type(STRING).description("투표 생성자 프로필 이미지"),
                             enumDescription(
                                 fieldWithPath("data[].responseType").type(STRING).description("투표 응답 타입"),
                                 Poll.PollResponseType.class
@@ -88,6 +89,7 @@ class GetTopPollsControllerTest extends ControllerTestContext {
                 1L,
                 "title",
                 "creatorName",
+                "creatorProfileUrl",
                 Poll.PollResponseType.SINGLE,
                 Poll.PollType.NAMED,
                 LocalDateTime.now(),
