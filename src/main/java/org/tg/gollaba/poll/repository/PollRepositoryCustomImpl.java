@@ -17,11 +17,9 @@ import org.tg.gollaba.poll.vo.PollSummary;
 import org.tg.gollaba.stats.domain.QPollStats;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
@@ -31,6 +29,7 @@ import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
 import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
 import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
+import static org.tg.gollaba.user.domain.QUser.user;
 import static org.tg.gollaba.voting.domain.QVoting.voting;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
@@ -106,11 +105,13 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .stream()
             .mapToInt(Integer::intValue)
             .sum();
+        var creatorProfileUrl = getUserProfileImageUrl(pollEntity);
 
         return new GetPollDetailsService.PollDetails(
             pollEntity.id(),
             pollEntity.title(),
             pollEntity.creatorName(),
+            creatorProfileUrl,
             pollEntity.responseType(),
             pollEntity.pollType(),
             pollEntity.endAt(),
@@ -157,8 +158,39 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
         return result == null ? Collections.emptyMap() : result;
     }
 
+    private String getUserProfileImageUrl(Poll pollEntity) {
+        return queryFactory
+            .select(user.profileImageUrl)
+            .from(poll)
+            .join(user).on(poll.userId.eq(user.id))
+            .where(poll.id.eq(pollEntity.id()))
+            .fetchOne();
+    }
+
+    private Map<Long, String> getUserProfileImageUrls(List<Poll> polls) {
+        var pollIds = polls.stream()
+            .map(Poll::id)
+            .collect(Collectors.toList());
+
+        var profileImageUrls = queryFactory
+            .select(user.profileImageUrl)
+            .from(poll)
+            .join(user).on(poll.userId.eq(user.id))
+            .where(poll.id.in(pollIds))
+            .fetch();
+
+        return IntStream.range(0,
+                                Math.min(polls.size(), profileImageUrls.size()))
+            .boxed()
+            .collect(Collectors.toMap(
+                i -> polls.get(i).id(),
+                i -> profileImageUrls.get(i)
+            ));
+    }
+
     private List<PollSummary> convert(List<Poll> polls,
                                       Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
+        var userProfileImageUrls = getUserProfileImageUrls(polls);
         return polls.stream()
             .map(poll -> {
                 var votingCountMap = votingCountMapByPollId.getOrDefault(poll.id(), emptyMap());
@@ -166,10 +198,12 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     .stream()
                     .mapToInt(Integer::intValue)
                     .sum();
+                var profileImageUrl = userProfileImageUrls.getOrDefault(poll.id(), null);
                 return new PollSummary(
                     poll.id(),
                     poll.title(),
                     poll.creatorName(),
+                    profileImageUrl,
                     poll.responseType(),
                     poll.pollType(),
                     poll.endAt(),
