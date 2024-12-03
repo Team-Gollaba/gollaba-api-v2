@@ -26,6 +26,10 @@ public class PollS3FileUploader implements FileUploader {
     public String uploadPollItemImage(long pollId,
                                       long pollItemId,
                                       MultipartFile multipartFile) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            return null;
+        }
+
         var filePath = s3Locations.pollItems().location();
         var originalFileName = multipartFile.getOriginalFilename();
 
