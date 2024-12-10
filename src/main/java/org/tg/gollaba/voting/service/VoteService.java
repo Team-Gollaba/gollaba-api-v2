@@ -1,6 +1,7 @@
 package org.tg.gollaba.voting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.exception.BadRequestException;
@@ -58,7 +59,7 @@ public class VoteService {
             .orElse(null);
         var voterName = requirement.voterName()
             .map(name -> new VoterName(poll, name))
-            .orElse(new VoterName(poll));
+            .orElseGet(() -> new VoterName(poll));
         var items = requirement.pollItemIds()
             .stream()
             .map(VotingItem::new)
