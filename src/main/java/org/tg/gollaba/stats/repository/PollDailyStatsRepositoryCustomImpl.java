@@ -1,15 +1,20 @@
 package org.tg.gollaba.stats.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
 
 @Repository
 @RequiredArgsConstructor
 public class PollDailyStatsRepositoryCustomImpl implements PollDailyStatsRepositoryCustom {
     private final JdbcTemplate jdbcTemplate;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public void createAllDailyStats(LocalDate aggregationDate) {
@@ -48,5 +53,20 @@ public class PollDailyStatsRepositoryCustomImpl implements PollDailyStatsReposit
             startsAt,
             endsAt
         );
+    }
+
+    @Override
+    public List<Long> findTrendingPollIds(LocalDate aggregationDate, int limit) {
+        return queryFactory
+            .select(pollDailyStats.pollId)
+            .from(pollDailyStats)
+            .where(pollDailyStats.aggregationDate.eq(aggregationDate))
+            .orderBy(
+                pollDailyStats.voteCount.desc(),
+                pollDailyStats.readCount.desc(),
+                pollDailyStats.favoritesCount.desc(),
+                pollDailyStats.pollId.desc())
+            .limit(limit)
+            .fetch();
     }
 }
