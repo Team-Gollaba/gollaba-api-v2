@@ -21,4 +21,5 @@ public interface PollDailyStatsRepository extends JpaRepository<PollDailyStats, 
             pds.pollId DESC
     """)
     List<PollDailyStats> findTrendingPolls(LocalDate aggregationDate, Pageable pageable);
+    List<Long> findTrendingPollIds(LocalDate aggregationDate, int limit);
 }

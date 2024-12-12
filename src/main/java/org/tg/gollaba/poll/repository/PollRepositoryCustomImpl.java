@@ -7,17 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.tg.gollaba.common.exception.BadRequestException;
-import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.domain.PollItem;
-import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
-import org.tg.gollaba.poll.vo.PollSummary;
-import org.tg.gollaba.stats.domain.QPollStats;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,21 +17,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
-import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
-import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
-import static org.tg.gollaba.voting.domain.QVoting.voting;
-import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
 @RequiredArgsConstructor
 public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<PollSummary> findPollList(GetPollListService.Requirement requirement) {
+    public Page<Poll> findPollList(GetPollListService.Requirement requirement) {
         var pageable = requirement.pageable();
         var where = Stream.of(
                 requirement.optionGroup()
@@ -73,124 +59,19 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             return Page.empty();
         }
 
-        var polls = queryFactory
+        var pollEntities = queryFactory
             .selectFrom(poll)
             .where(where)
             .orderBy(orderBy)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
-        var pollIds = polls.stream().map(Poll::id).toList();
-        var votingCountMapByPollId = votingCountMapByPollId(pollIds);
 
-        return new PageImpl<>(
-            convert(polls, votingCountMapByPollId),
-            pageable,
-            totalCount
-        );
+        return new PageImpl<>(pollEntities, pageable, totalCount);
     }
 
     @Override
-    public GetPollDetailsService.PollDetails findPollDetails(Long id) {
-        var pollEntity = queryFactory
-            .selectFrom(poll)
-            .where(poll.id.eq(id))
-            .fetchOne();
-
-        if (pollEntity == null) {
-            throw new BadRequestException(Status.POLL_NOT_FOUND);
-        }
-
-        var votingCountMap = votingCountMap(pollEntity.id());
-        var totalVotingCount = votingCountMap.values()
-            .stream()
-            .mapToInt(Integer::intValue)
-            .sum();
-
-        return new GetPollDetailsService.PollDetails(
-            pollEntity.id(),
-            pollEntity.title(),
-            pollEntity.creatorName(),
-            pollEntity.responseType(),
-            pollEntity.pollType(),
-            pollEntity.endAt(),
-            totalVotingCount,
-            pollEntity.readCount(),
-            pollEntity.items()
-                .stream()
-                .map(item -> new GetPollDetailsService.PollDetails.PollItem(
-                    item.id(),
-                    item.description(),
-                    item.imageUrl(),
-                    votingCountMap.getOrDefault(item.id(), 0)
-                ))
-                .toList()
-        );
-    }
-
-    private Map<Long, Map<Long, Integer>> votingCountMapByPollId(List<Long> pollIds) {
-        return queryFactory
-            .select(voting.pollId, votingItem.pollItemId, votingItem.count())
-            .from(voting)
-            .join(voting.items, votingItem)
-            .where(voting.pollId.in(pollIds))
-            .groupBy(voting.pollId, votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(
-                Collectors.groupingBy(
-                    t -> t.get(voting.pollId),
-                    Collectors.toMap(
-                        t -> t.get(votingItem.pollItemId),
-                        t -> Optional.ofNullable(t.get(votingItem.count()))
-                            .map(Long::intValue)
-                            .orElse(0)
-                    )
-                )
-            );
-    }
-
-    private Map<Long, Integer> votingCountMap(long pollId) {
-        var result = votingCountMapByPollId(List.of(pollId))
-            .get(pollId);
-
-        return result == null ? Collections.emptyMap() : result;
-    }
-
-    private List<PollSummary> convert(List<Poll> polls,
-                                      Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
-        return polls.stream()
-            .map(poll -> {
-                var votingCountMap = votingCountMapByPollId.getOrDefault(poll.id(), emptyMap());
-                var totalVotingCount = votingCountMap.values()
-                    .stream()
-                    .mapToInt(Integer::intValue)
-                    .sum();
-                return new PollSummary(
-                    poll.id(),
-                    poll.title(),
-                    poll.creatorName(),
-                    poll.responseType(),
-                    poll.pollType(),
-                    poll.endAt(),
-                    poll.readCount(),
-                    totalVotingCount,
-                    poll.items()
-                        .stream()
-                        .map(item -> new PollSummary.PollItem(
-                            item.id(),
-                            item.description(),
-                            item.imageUrl(),
-                            votingCountMap.getOrDefault(item.id(), 0)
-                        ))
-                        .toList()
-                );
-            })
-            .toList();
-    }
-
-    @Override
-    public Page<PollSummary> findMyPolls(Long userId, Pageable pageable) {
+    public Page<Poll> findMyPolls(Long userId, Pageable pageable) {
         var totalCount = queryFactory
             .select(poll.countDistinct())
             .from(poll)
@@ -201,192 +82,31 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             return Page.empty();
         }
 
-        var polls = queryFactory
+        var pollEntities = queryFactory
             .selectFrom(poll)
             .where(poll.userId.eq(userId))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        if (polls.isEmpty()) {
-            throw new BadRequestException(Status.POLL_NOT_FOUND);
-        }
-
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return new PageImpl<>(
-            convert(polls, response),
-            pageable,
-            totalCount
-        );
-    }
-
-    private Map<Long, Map<Long, Integer>> combine(List<Poll> polls,
-                                                  Map<Long, Integer> votingCountByItems) {
-        return polls.stream()
-            .collect(toMap(
-                Poll::id,
-                poll -> poll.items().stream()
-                    .collect(toMap(
-                        PollItem::id,
-                        item -> votingCountByItems.getOrDefault(item.id(), 0)
-                    ))
-            ));
+        return new PageImpl<>(pollEntities, pageable, totalCount);
     }
 
     @Override
-    public List<PollSummary> findTopPolls(LocalDate aggregationDate, int limit) {
-        var polls = queryFactory
-            .selectFrom(poll)
-            .join(pollStats).on(pollStats.pollId.eq(poll.id))
-            .where(pollStats.aggregationDate.eq(aggregationDate))
-            .orderBy(
-                pollStats.totalVoteCount.desc(),
-                pollStats.totalReadCount.desc(),
-                pollStats.totalFavoritesCount.desc(),
-                pollStats.pollId.desc()
-            )
-            .limit(limit)
-            .fetch();
-
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return convert(polls, response);
-    }
-
-    public List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit){
-        var polls = queryFactory
-            .selectFrom(poll)
-            .innerJoin(pollDailyStats)
-            .on(poll.id.eq(pollDailyStats.pollId))
-            .where(pollDailyStats.aggregationDate.eq(aggregationDate))
-            .orderBy(
-                pollDailyStats.voteCount.desc(),
-                pollDailyStats.readCount.desc(),
-                pollDailyStats.favoritesCount.desc(),
-                poll.id.desc())
-            .limit(limit)
-            .fetch();
-
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return convert(polls, response);
-    }
-
-    @Override
-    public Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable){
-        var pollIds = queryFactory
-            .select(voting.pollId)
-            .from(voting)
-            .where(voting.userId.eq(userId))
-            .fetch();
-
-        var totalCount = pollIds.size();
-
-        if (totalCount == 0) {
-            return Page.empty();
+    public Map<Long, Long> findUserIdsByPollIds(List<Long> pollIds) {
+        if (pollIds.isEmpty()) {
+            return Map.of();
         }
 
-        var polls = queryFactory
-            .selectFrom(poll)
+        return queryFactory
+            .select(poll.id, poll.userId)
+            .from(poll)
             .where(poll.id.in(pollIds))
-            .fetch();
-
-        if (polls.isEmpty()) {
-            throw new BadRequestException(Status.POLL_NOT_FOUND);
-        }
-
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
             .fetch()
             .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(poll.id),
+                tuple -> tuple.get(poll.userId) == null ? -1L : tuple.get(poll.userId) // userId가 null이면 -1L로 처리
             ));
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return new PageImpl<>(
-            convert(polls, response),
-            pageable,
-            totalCount
-        );
     }
 }

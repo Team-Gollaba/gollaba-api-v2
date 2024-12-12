@@ -2,24 +2,16 @@ package org.tg.gollaba.poll.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.tg.gollaba.poll.service.GetPollDetailsService;
+import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
-import org.tg.gollaba.poll.vo.PollSummary;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface PollRepositoryCustom {
 
-    Page<PollSummary> findPollList(GetPollListService.Requirement requirement);
-
-    GetPollDetailsService.PollDetails findPollDetails(Long id);
-
-    Page<PollSummary> findMyPolls(Long userId, Pageable pageable);
-
-    List<PollSummary> findTopPolls(LocalDate aggregationDate, int limit);
-
-    List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit);
-
-    Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable);
+    Page<Poll> findPollList(GetPollListService.Requirement requirement);
+    Page<Poll> findMyPolls(Long userId, Pageable pageable);
+//    Map<Long, Long> findUserIdsByPollIds(List<Long> pollIds);
+    Map<Long, Long> findUserIdsByPollIds(List<Long> pollIds);
 }

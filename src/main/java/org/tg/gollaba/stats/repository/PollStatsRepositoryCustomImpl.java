@@ -1,18 +1,20 @@
 package org.tg.gollaba.stats.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.tg.gollaba.common.exception.ServerException;
-import org.tg.gollaba.common.support.Status;
-import org.tg.gollaba.common.support.StringUtils;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
 
 @Repository
 @RequiredArgsConstructor
 public class PollStatsRepositoryCustomImpl implements PollStatsRepositoryCustom {
     private final JdbcTemplate jdbcTemplate;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public void createAllStats(LocalDate aggregationDate) {
@@ -40,5 +42,21 @@ public class PollStatsRepositoryCustomImpl implements PollStatsRepositoryCustom 
             """,
             aggregationDate
         );
+    }
+
+    @Override
+    public List<Long> findTopPollIds(LocalDate aggregationDate, int limit) {
+        return queryFactory
+            .select(pollStats.pollId)
+            .from(pollStats)
+            .where(pollStats.aggregationDate.eq(aggregationDate))
+            .orderBy(
+                pollStats.totalVoteCount.desc(),
+                pollStats.totalReadCount.desc(),
+                pollStats.totalFavoritesCount.desc(),
+                pollStats.pollId.desc()
+            )
+            .limit(limit)
+            .fetch();
     }
 }
