@@ -42,13 +42,7 @@ public class GetMyPollsController {
         var pollSummaries = service.get(user.id(), pageable);
 
         return ApiResponse.success(
-            new PageResponse<>(
-                pollSummaries.getContent(),
-                pollSummaries.getNumber(),
-                pollSummaries.getSize(),
-                pollSummaries.getTotalElements(),
-                pollSummaries.getTotalPages()
-            )
+            PageResponse.from(pollSummaries)
         );
     }
 }
