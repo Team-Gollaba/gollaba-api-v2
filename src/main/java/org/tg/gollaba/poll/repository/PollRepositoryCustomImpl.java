@@ -134,7 +134,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .from(voting)
             .join(voting.items, votingItem)
             .where(voting.pollId.in(pollIds))
-            .groupBy(votingItem.pollItemId)
+            .groupBy(voting.pollId, votingItem.pollItemId)
             .fetch()
             .stream()
             .collect(
