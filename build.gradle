@@ -90,6 +90,9 @@ dependencies {
 
     // postgreSQL
     runtimeOnly 'org.postgresql:postgresql'
+
+    // tika
+    implementation 'org.apache.tika:tika-core:3.0.0-BETA'
 }
 
 tasks.named('test') {

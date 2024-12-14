@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.common.exception.ServerException;
 
+import java.io.File;
 import java.io.InputStream;
 
 import static org.springframework.util.StringUtils.getFilenameExtension;
@@ -50,5 +51,18 @@ public class S3Client {
         );
 
         return amazonS3.getUrl(bucket, filePath + "/" + fileName).toString();
+    }
+
+    public String upload(String filePath,
+                         String fileName,
+                         File file) {
+        var key = filePath + "/" + fileName;
+        amazonS3.putObject(
+            bucket,
+            key,
+            file
+        );
+
+        return amazonS3.getUrl(bucket, key).toString();
     }
 }

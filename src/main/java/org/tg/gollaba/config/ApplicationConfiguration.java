@@ -1,5 +1,6 @@
 package org.tg.gollaba.config;
 
+import org.apache.tika.Tika;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestTemplate;
 import org.tg.gollaba.common.web.CommonObjectMapper;
@@ -24,5 +25,10 @@ public class ApplicationConfiguration {
     @Bean
     JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    Tika tika() {
+        return new Tika();
     }
 }
