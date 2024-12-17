@@ -14,7 +14,6 @@ import org.tg.gollaba.poll.domain.PollItem;
 import org.tg.gollaba.poll.service.GetPollDetailsService;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
-import org.tg.gollaba.stats.domain.QPollStats;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -31,6 +30,7 @@ import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
 import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
 import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
+import static org.tg.gollaba.user.domain.QUser.user;
 import static org.tg.gollaba.voting.domain.QVoting.voting;
 import static org.tg.gollaba.voting.domain.QVotingItem.votingItem;
 
@@ -82,9 +82,10 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .fetch();
         var pollIds = polls.stream().map(Poll::id).toList();
         var votingCountMapByPollId = votingCountMapByPollId(pollIds);
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
 
         return new PageImpl<>(
-            convert(polls, votingCountMapByPollId),
+            convert(polls, pollCreatorProfileMap, votingCountMapByPollId),
             pageable,
             totalCount
         );
@@ -106,11 +107,13 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .stream()
             .mapToInt(Integer::intValue)
             .sum();
+        var creatorProfileUrl = getCreatorProfileUrl(pollEntity);
 
         return new GetPollDetailsService.PollDetails(
             pollEntity.id(),
             pollEntity.title(),
             pollEntity.creatorName(),
+            creatorProfileUrl,
             pollEntity.responseType(),
             pollEntity.pollType(),
             pollEntity.endAt(),
@@ -158,6 +161,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     private List<PollSummary> convert(List<Poll> polls,
+                                      Map<Long, String> pollCreatorProfileMap,
                                       Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
         return polls.stream()
             .map(poll -> {
@@ -166,10 +170,15 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     .stream()
                     .mapToInt(Integer::intValue)
                     .sum();
+                var creatorProfileUrl = pollCreatorProfileMap.get(poll.id());
+                if ("".equals(creatorProfileUrl)) {
+                    creatorProfileUrl = null;  // "" >> null 변환
+                }
                 return new PollSummary(
                     poll.id(),
                     poll.title(),
                     poll.creatorName(),
+                    creatorProfileUrl,
                     poll.responseType(),
                     poll.pollType(),
                     poll.endAt(),
@@ -208,10 +217,6 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
 
-        if (polls.isEmpty()) {
-            throw new BadRequestException(Status.POLL_NOT_FOUND);
-        }
-
         var pollItemIds = polls.stream()
             .flatMap(poll -> poll.items().stream())
             .map(PollItem::id)
@@ -230,13 +235,15 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.count()).intValue()
             ));
 
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+
         var response = combine(
             polls,
             votingCountByItems
         );
 
         return new PageImpl<>(
-            convert(polls, response),
+            convert(polls, pollCreatorProfileMap, response),
             pageable,
             totalCount
         );
@@ -288,12 +295,14 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.count()).intValue()
             ));
 
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+
         var response = combine(
             polls,
             votingCountByItems
         );
 
-        return convert(polls, response);
+        return convert(polls, pollCreatorProfileMap, response);
     }
 
     public List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit){
@@ -328,12 +337,14 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.count()).intValue()
             ));
 
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+
         var response = combine(
             polls,
             votingCountByItems
         );
 
-        return convert(polls, response);
+        return convert(polls, pollCreatorProfileMap, response);
     }
 
     @Override
@@ -378,15 +389,56 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 tuple -> tuple.get(votingItem.count()).intValue()
             ));
 
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+
         var response = combine(
             polls,
             votingCountByItems
         );
 
         return new PageImpl<>(
-            convert(polls, response),
+            convert(polls, pollCreatorProfileMap, response),
             pageable,
             totalCount
         );
+    }
+
+    public String getCreatorProfileUrl(Poll pollEntity) {
+        return queryFactory
+            .select(user.profileImageUrl)
+            .from(poll)
+            .join(user).on(poll.userId.eq(user.id))
+            .where(poll.id.eq(pollEntity.id()))
+            .fetchOne();
+    }
+
+    private Map<Long, String> getUserProfileImageUrls(List<Poll> polls) {
+        var pollIds = polls.stream()
+            .map(Poll::id)
+            .collect(Collectors.toList());
+
+        var pollList = queryFactory
+            .select(poll.id, user.profileImageUrl)
+            .from(poll)
+            .join(user).on(poll.userId.eq(user.id))
+            .where(poll.id.in(pollIds))
+            .fetch();
+
+        return polls.stream()
+            .collect(Collectors.toMap(
+                Poll::id,
+                pollEntity -> {
+                    //key setting: userId / key Default setting:-1L
+                    if (pollEntity.userId() == null || pollEntity.userId().equals(-1L)) {
+                        return ""; //value Default setting: userProfileImageUrl ""
+                    }
+
+                    return pollList.stream()
+                        .filter(tuple -> tuple.get(poll.id).equals(pollEntity.id()))
+                        .map(tuple -> tuple.get(user.profileImageUrl))
+                        .findFirst()
+                        .orElse(""); //userProfile null / Default Setting > ""
+                }
+            ));
     }
 }
