@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
+import org.tg.gollaba.voting.controller.GetMyVotingController.Request;
 import org.tg.gollaba.voting.service.GetMyVotingService;
-import org.tg.gollaba.voting.vo.VotingVo;
+import org.tg.gollaba.voting.service.GetMyVotingService.VotingDetailVo;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Arrays;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,8 +18,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetMyVotingControllerTest extends ControllerTestContext {
@@ -36,7 +34,7 @@ class GetMyVotingControllerTest extends ControllerTestContext {
 
         given()
             .header(authHeader())
-            .queryParam("pollHashId", testHashId())
+            .body(requestBody())
             .when()
             .get("/v2/voting/me")
             .then()
@@ -50,13 +48,14 @@ class GetMyVotingControllerTest extends ControllerTestContext {
                     preprocessRequest(),
                     preprocessResponse(),
                     requestHeaderWithAuthorization(),
-                    queryParameters(
-                        parameterWithName("pollHashId").description("투표 ID")
+                    requestFields(
+                        fieldWithPath("pollHashId").type(STRING).description("투표 ID")
                     ),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                            fieldWithPath("data.id").type(NUMBER).description("투표 참여 ID")
+                            fieldWithPath("data.id").type(NUMBER).description("투표 참여 ID"),
+                            fieldWithPath("data.votedItemIds").type(ARRAY).description("투표한 항목의 Ids")
                         )
                     )
                 )
@@ -64,20 +63,16 @@ class GetMyVotingControllerTest extends ControllerTestContext {
             .status(HttpStatus.OK);
     }
 
-    private VotingVo mockResult() {
-        return new VotingVo(
-            1L,
-            1L,
-            1L,
-            "voterName",
-            LocalDateTime.now(),
-            Set.of(
-                new VotingVo.Item(
-                    1L,
-                    1L
-                )
-            )
+    private Request requestBody() {
+        return new Request(
+            testHashId()
         );
     }
 
+    private VotingDetailVo mockResult() {
+        return new VotingDetailVo(
+            1L,
+            Arrays.asList(1L, 2L)
+        );
+    }
 }

@@ -6,12 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.voting.service.GetMyVotingService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v2/voting/me")
@@ -22,13 +25,13 @@ public class GetMyVotingController {
 
     @PreAuthorize("hasAnyAuthority('USER')")
     @GetMapping
-    ApiResponse<Response> get(@Valid Request request,
+    ApiResponse<Response> get(@RequestBody @Valid Request request,
                               AuthenticatedUser user) {
         var pollId = hashIdHandler.decode(request.pollHashId());
         var voting = service.getMyVoting(pollId, user.id());
 
         return ApiResponse.success(
-            new Response(voting.id())
+            new Response(voting.id(),voting.votedItemIds())
         );
     }
 
@@ -39,7 +42,8 @@ public class GetMyVotingController {
     }
 
     record Response(
-        Long id
+        Long id,
+        List<Long> votedItemIds
     ) {
     }
 }
