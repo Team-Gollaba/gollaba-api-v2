@@ -6,7 +6,7 @@ import org.tg.gollaba.voting.domain.Voting;
 
 import java.util.Optional;
 
-public interface VotingRepository extends JpaRepository<Voting, Long> {
+public interface VotingRepository extends JpaRepository<Voting, Long>, VotingRepositoryCustom {
 
     @Query("""
         SELECT CASE WHEN COUNT(v) > 0

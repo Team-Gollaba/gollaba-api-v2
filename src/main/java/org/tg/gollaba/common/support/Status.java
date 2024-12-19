@@ -30,6 +30,7 @@ public enum Status {
     //poll
     POLL_NOT_FOUND("투표를 찾을 수 없습니다."),
     POLL_ITEM_NOT_FOUND("투표 항목을 찾을 수 없습니다."),
+    POLL_TYPE_NOT_NAMED("기명 투표가 아닙니다"),
 
     //voting
     POLL_IS_CLOSED("투표가 종료되었습니다."),

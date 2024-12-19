@@ -35,9 +35,9 @@ public class Voting extends BaseEntity {
     private Set<VotingItem> items = new HashSet<>();
 
     public Voting(Long pollId,
-                         Long userId,
-                         VoterName voterName,
-                         Set<VotingItem> items) {
+                  Long userId,
+                  VoterName voterName,
+                  Set<VotingItem> items) {
         this.pollId = pollId;
         this.userId = userId;
         this.voterName = voterName;
