@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
-import org.tg.gollaba.voting.controller.GetMyVotingController.Request;
 import org.tg.gollaba.voting.service.GetMyVotingService;
 import org.tg.gollaba.voting.service.GetMyVotingService.VotingDetailVo;
 
@@ -34,7 +33,7 @@ class GetMyVotingControllerTest extends ControllerTestContext {
 
         given()
             .header(authHeader())
-            .body(requestBody())
+            .param("pollHashId", testHashId())
             .when()
             .get("/v2/voting/me")
             .then()
@@ -48,9 +47,6 @@ class GetMyVotingControllerTest extends ControllerTestContext {
                     preprocessRequest(),
                     preprocessResponse(),
                     requestHeaderWithAuthorization(),
-                    requestFields(
-                        fieldWithPath("pollHashId").type(STRING).description("투표 ID")
-                    ),
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
@@ -61,12 +57,6 @@ class GetMyVotingControllerTest extends ControllerTestContext {
                 )
             )
             .status(HttpStatus.OK);
-    }
-
-    private Request requestBody() {
-        return new Request(
-            testHashId()
-        );
     }
 
     private VotingDetailVo mockResult() {
