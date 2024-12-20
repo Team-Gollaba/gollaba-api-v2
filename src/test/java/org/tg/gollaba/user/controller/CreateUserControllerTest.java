@@ -39,7 +39,8 @@ class CreateUserControllerTest extends ControllerTestContext {
                         fieldWithPath("password").type(STRING).optional().description("비밀번호"),
                         fieldWithPath("profileImageUrl").type(STRING).optional().description("프로필 이미지 URL"),
                         fieldWithPath("providerType").type(STRING).optional().description("소셜 로그인 타입"),
-                        fieldWithPath("providerId").type(STRING).optional().description("소셜 로그인 ID")
+                        fieldWithPath("providerId").type(STRING).optional().description("소셜 로그인 ID"),
+                        fieldWithPath("providerAccessToken").type(STRING).optional().description("앱 사용자 액세스 토큰")
                     ),
                     responseFields(
                         fieldsWithBasic(
@@ -59,7 +60,8 @@ class CreateUserControllerTest extends ControllerTestContext {
             Optional.of("password"),
             Optional.of("profileImageUrl"),
             Optional.of(User.ProviderType.KAKAO),
-            Optional.of("providerId")
+            Optional.of("providerId"),
+            Optional.of("providerAccessToken")
         );
     }
 }
