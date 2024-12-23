@@ -47,8 +47,10 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                         case TITLE -> poll.title.contains(requirement.query().orElseThrow());
                     }),
                 requirement.isActive()
-                    .filter(Boolean.TRUE::equals)
-                    .map(isEnded -> poll.endAt.goe(now())),
+                    .map(isActive -> isActive
+                        ? poll.endAt.goe(now())
+                        : poll.endAt.loe(now())
+                    ),
                 requirement.pollType()
                     .map(poll.pollType::eq)
             )
