@@ -424,20 +424,21 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .where(poll.id.in(pollIds))
             .fetch();
 
+        var pollToProfileImageUrlMap = pollList.stream()
+            .collect(Collectors.toMap(
+                tuple -> tuple.get(poll.id),
+                tuple -> tuple.get(user.profileImageUrl) != null ? tuple.get(user.profileImageUrl) : ""
+            ));
+
         return polls.stream()
             .collect(Collectors.toMap(
                 Poll::id,
                 pollEntity -> {
-                    //key setting: userId / key Default setting:-1L
                     if (pollEntity.userId() == null || pollEntity.userId().equals(-1L)) {
-                        return ""; //value Default setting: userProfileImageUrl ""
+                        return "";
                     }
 
-                    return pollList.stream()
-                        .filter(tuple -> tuple.get(poll.id).equals(pollEntity.id()))
-                        .map(tuple -> tuple.get(user.profileImageUrl))
-                        .findFirst()
-                        .orElse(""); //userProfile null / Default Setting > ""
+                    return pollToProfileImageUrlMap.getOrDefault(pollEntity.id(), "");
                 }
             ));
     }
