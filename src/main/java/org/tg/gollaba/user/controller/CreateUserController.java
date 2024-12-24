@@ -39,7 +39,8 @@ public class CreateUserController {
         Optional<String> password,
         Optional<String> profileImageUrl,
         Optional<User.ProviderType> providerType,
-        Optional<String> providerId
+        Optional<String> providerId,
+        Optional<String> providerAccessToken
     ) {
         public void validate() {
             if (providerType.isPresent() && providerId.isEmpty()
@@ -61,7 +62,8 @@ public class CreateUserController {
                 password,
                 profileImageUrl,
                 providerType,
-                providerId
+                providerId,
+                providerAccessToken
             );
         }
     }
