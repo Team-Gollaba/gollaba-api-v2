@@ -68,3 +68,16 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type: TRACE
+
+
+google-apis:
+  service-account-credential:
+    project-id: 'test-project-id'
+    private-key-id: '0000000000private0key0id0000000000000000'
+    private-key: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCZ4HYZAFUYzVBf\nVmw9M+1COOvkXSDzHfATDhluRg9F6Enwc6rrsnKMxZn4XaahN9SfHwJ399qwerAp\nDdgRvqIWWziAJCPsEbDe0BQ0GxfF6R6EMwH41v00YZAJCMg3Y1cWQC60oOk7Aqsz\nCn48DhM8ZcYq+MEyD6n9+sPpG7nUEKesF0uNRbGDwsj4uL81GG1Wf1rw8o4j5B3u\noCRFHLdp96CRdum+Bx04qrOsssuwJ9eTRg1+bAG8cMRsV7GvlhegXosMZuu02Ody\ntyYkfkisVzPFinUI/jT95hkMvkX0s+s1Owrx2S3+esqh3qQwMB0aOVTiYAJBpY3p\n3CfKLW77AgMBAAECggEAB65dSRfrudHKdm63G+cA0Fu6eHRdo45Mu+bFasfFp/l2\nPNSzWcigUFoKg9USE7j9KmQ/BihWVPhF5D2YrCDxsKiSxE4uGpV8D1D7uldGvIU5\nXwgBXlaPTADwdx5prd6ydQuZbdLTmsXrVLKjG6joNOjB8w/CEIUYyzw+cQPh3a3A\n/q3wdLBPlgLsDu5ov8oioyv0PAuCwtvqeT4r7Wpz0fcQ6aFaYrwmzQ4k0fZyI8iT\n1RX2Q/efbu8TtfxS6G5NQ0iguBANk6cjDYGcAuRBtUthfXyjkutTKhHMBxfO72tf\nAs24Sb0WOy+a3e+ui92sl5equye4sl6PfQbwubSxoQKBgQDWhAsBSWOv3zZ8U6Tc\nlrBu/DeLws056yMiwd61ib6Pj4k519RfJPBk4CdUnlrRVFUERQMLg+H8F+lEPWRf\nQmHVqbdZYUR/nv0cfACaJWdPRlT7/HyMobeQNKLA/Ofz/ahoVkSMzpSipundw6r2\nUCmduyAYnoSew9EUKlPc+pTo3wKBgQC3omKo8nvxUYmWrxRyY1WDxdf51uytd/Os\npuoTz8BBcWQGh+mBM2JwQiA5FWvp0XAfSE7ohLLOLGd0speVfIlaqCmWDATIAAak\njANideygM9disI/ndEj8GN89QIBOcrpt89U0nz9cDkRMzDSUmeSoAj9gFeAvUrE6\nX3iMlSFRZQKBgG2VYKXUntcuOQBEHnkNha38rEd6SSqoQvezgBjO+AkQczKYXgYI\nscFmfNEOYCiFYzTeKFMOmTgV4vUYQ5kiKSZkH6TKOprTVkvh0NDuAJuPu0RK1Dln\nN4W0Tdw2liufThOW1kf0FBwPFnNSTJitlMTd3eSVvfv43mrlwJenbsCTAoGBALK/\nZUvQ5SaMWOKNP9jsqkPfZBD0zWM5fL8VpopsUlched0FlRzHmM1vAJCwMl/iF0LM\nDss0yBv6iyXD5duD4uuU/w3oWwsXQ2AOTgkcgp2aeNC+zwTcY2LJDxw/WeWCtcfr\nbiCP1ovT81XR/GiduD52GZx9DsDhvFP2tJAbZdglAoGBAMOSwZ9OYrwI8gsg89FX\nYvU8ssEogcEZ7ZylqNmBy0jwoBET3J69FjaquDazrmIeDbxdAoADlN5QTq5oD8wx\nzbN2D1QgoKDCVDNt7al+4RyJaDvX8VPKxDVUe47wLtOUUo6WtrsRxVMbwG0HUVl0\ntJDC8woSfdnS3ukLAFIrlmQq\n-----END PRIVATE KEY-----\n'
+    client-email: 'firebase-adminsdk-000wq@test-c9382.iam.gserviceaccount.com'
+    client-id: '550948123409034910929'
+    auth-uri: 'https://test.auth.com/o/auth/auth'
+    token-uri: 'https://test.token.com/token;'
+    auth-provider-x509-cert-url: 'https://test-x509.com'
+    client-x509-cert-url: 'https://test-uri.com'

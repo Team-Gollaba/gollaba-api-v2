@@ -137,7 +137,8 @@ public class ControllerTestContext {
         USER("유저"),
         FAVORITES("좋아요"),
         AUTHORIZATION("인가"),
-        IMAGE("이미지");
+        IMAGE("이미지"),
+        NOTIFICATION("푸쉬 알림");
 
         private final String tagName;
 
