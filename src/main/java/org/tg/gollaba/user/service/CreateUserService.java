@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.auth.OAuthClientRegistrationProvider;
+import org.tg.gollaba.auth.component.TokenProvider;
 import org.tg.gollaba.auth.vo.OAuthUserInfo;
 import org.tg.gollaba.user.component.UserValidator;
 import org.tg.gollaba.user.domain.User;
@@ -27,9 +28,10 @@ public class CreateUserService {
     private final PasswordEncoder passwordEncoder;
     private final DefaultOAuth2UserService oAuth2UserService;
     private final OAuthClientRegistrationProvider clientRegistrationProvider;
+    private final TokenProvider tokenProvider;
 
     @Transactional
-    public Long create(Requirement requirement) {
+    public String create(Requirement requirement) {
         var user = requirement.providerAccessToken()
             .map(providerAccessToken -> {
             var providerType =requirement.providerType().get();
@@ -48,7 +50,9 @@ public class CreateUserService {
         .orElseGet(() -> createUserEntity(requirement));
 
         userValidator.validate(user);
-        return userRepository.save(user).id();
+        var savedUser = userRepository.save(user);
+
+        return tokenProvider.issue(savedUser.id()).accessToken();
     }
 
     static class OAuthUserInfoLoadingException extends IllegalArgumentException {
