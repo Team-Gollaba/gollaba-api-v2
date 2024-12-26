@@ -24,10 +24,10 @@ public class CreateUserController {
     @PostMapping
     ApiResponse<Response> create(@Valid @RequestBody Request request) {
         request.validate();
-        var userId = service.create(request.toRequirement());
+        var accessToken = service.create(request.toRequirement());
 
         return ApiResponse.success(
-            new Response(userId)
+            new Response(accessToken)
         );
     }
 
@@ -69,7 +69,7 @@ public class CreateUserController {
     }
 
     record Response(
-        Long id
+        String accessToken
     ) {
     }
 }
