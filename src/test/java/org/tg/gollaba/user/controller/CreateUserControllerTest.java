@@ -2,13 +2,17 @@ package org.tg.gollaba.user.controller;
 
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.tg.gollaba.auth.vo.IssuedToken;
 import org.tg.gollaba.common.ControllerTestContext;
 import org.tg.gollaba.user.domain.User;
+import org.tg.gollaba.user.service.CreateUserService;
 
 import java.util.Optional;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
@@ -17,8 +21,14 @@ class CreateUserControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.USER.tagName();
     private static final String DESCRIPTION = Tags.USER.descriptionWith("회원 가입");
 
+    @Autowired
+    private CreateUserService createUserService;
+
     @Test
     void success() {
+        when(createUserService.create(requirement()))
+            .thenReturn("accessToken");
+
         given()
             .body(requestBody())
             .when()
@@ -45,7 +55,7 @@ class CreateUserControllerTest extends ControllerTestContext {
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                            fieldWithPath("data.id").type(NUMBER).description("생성된 사용자 ID")
+                            fieldWithPath("data.accessToken").type(STRING).description("생성된 사용자의 엑세스 토큰")
                         )
                     )
                 )
@@ -55,6 +65,18 @@ class CreateUserControllerTest extends ControllerTestContext {
 
     private CreateUserController.Request requestBody() {
         return new CreateUserController.Request(
+            "email",
+            "name",
+            Optional.of("password"),
+            Optional.of("profileImageUrl"),
+            Optional.of(User.ProviderType.KAKAO),
+            Optional.of("providerId"),
+            Optional.of("providerAccessToken")
+        );
+    }
+
+    private CreateUserService.Requirement requirement() {
+        return new CreateUserService.Requirement(
             "email",
             "name",
             Optional.of("password"),
