@@ -43,9 +43,14 @@ public class CreateUserController {
         Optional<String> providerAccessToken
     ) {
         public void validate() {
-            if (providerType.isPresent() && providerId.isEmpty()
-                || providerType.isEmpty() && providerId.isPresent()) {
-                throw new BadRequestException(Status.INVALID_PARAMETER, "providerType, providerId 둘 다 필요합니다.");
+            if (providerType.isPresent()) {
+                if (providerAccessToken.isEmpty() && providerId.isEmpty()) {
+                    throw new BadRequestException(Status.INVALID_PARAMETER, "providerAccessToken 또는 providerId가 필요합니다.");
+                }
+            } else {
+                if (providerId.isPresent() || providerAccessToken.isPresent()) {
+                    throw new BadRequestException(Status.INVALID_PARAMETER, "providerType 이 없는 경우 providerId 또는 providerAccessToken 은 사용할 수 없습니다.");
+                }
             }
 
             if (providerType.isEmpty() && providerId().isEmpty()) {
