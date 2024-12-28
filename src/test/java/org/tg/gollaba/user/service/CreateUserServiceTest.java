@@ -9,6 +9,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.tg.gollaba.auth.OAuthClientRegistrationProvider;
+import org.tg.gollaba.auth.component.TokenProvider;
+import org.tg.gollaba.auth.vo.IssuedToken;
 import org.tg.gollaba.user.component.UserValidator;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.domain.UserFixture;
@@ -41,6 +43,9 @@ class CreateUserServiceTest {
     @Mock
     private DefaultOAuth2UserService oAuth2UserService;
 
+    @Mock
+    private TokenProvider tokenProvider;
+
 
     @Test
     void success() {
@@ -58,6 +63,8 @@ class CreateUserServiceTest {
             .willReturn("testPassword");
         given(userRepository.save(any()))
             .willReturn(new UserFixture().build());
+        given(tokenProvider.issue(any()))
+            .willReturn(new IssuedToken("accessToken", "refreshToken"));
 
         //when
         var throwable = catchThrowable(() -> service.create(requirement));
@@ -70,6 +77,7 @@ class CreateUserServiceTest {
         verify(userRepository).save(argumentCaptor.capture());
 
         var capturedUser = argumentCaptor.getValue();
+        var accessToken = service.create(requirement);
         assertThat(capturedUser.email()).isEqualTo(requirement.email());
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
         assertThat(capturedUser.password()).isEqualTo("testPassword");
@@ -78,6 +86,8 @@ class CreateUserServiceTest {
         assertThat(capturedUser.roleType()).isEqualTo(User.RoleType.USER);
         assertThat(capturedUser.providerType()).isEqualTo(User.ProviderType.KAKAO);
         assertThat(capturedUser.providerId()).isEqualTo("testProviderId");
+        assertThat(accessToken).isNotNull();
+        assertThat(accessToken).isEqualTo("accessToken");
     }
 
     @Test
@@ -104,6 +114,8 @@ class CreateUserServiceTest {
             .willReturn(clientRegistration);
         given(oAuth2UserService.loadUser(Mockito.any()))
             .willReturn(oauth2User);
+        given(tokenProvider.issue(any()))
+            .willReturn(new IssuedToken("accessToken", "refreshToken"));
 
         // when
         var throwable = catchThrowable(() -> service.create(requirement));
@@ -119,6 +131,7 @@ class CreateUserServiceTest {
         verify(userRepository).save(argumentCaptor.capture());
 
         var capturedUser = argumentCaptor.getValue();
+        var accessToken = service.create(requirement);
         assertThat(capturedUser.email()).isEqualTo(requirement.email());
         assertThat(capturedUser.name()).isEqualTo(requirement.name());
         assertThat(capturedUser.password()).isEqualTo("testPassword");
@@ -128,6 +141,8 @@ class CreateUserServiceTest {
         assertThat(capturedUser.providerType()).isEqualTo(User.ProviderType.KAKAO);
         assertThat(capturedUser.providerId()).isEqualTo("testProviderId");
         assertThat(oAuth2UserService.loadUser(Mockito.any())).isNotNull();
+        assertThat(accessToken).isNotNull();
+        assertThat(accessToken).isEqualTo("accessToken");
     }
 
     private OAuth2User testOAuth2User() {
