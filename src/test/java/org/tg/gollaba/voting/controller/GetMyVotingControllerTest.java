@@ -50,7 +50,7 @@ class GetMyVotingControllerTest extends ControllerTestContext {
                     responseFields(
                         fieldsWithBasic(
                             fieldWithPath("data").type(OBJECT).description("응답 데이터"),
-                            fieldWithPath("data.id").type(NUMBER).description("투표 참여 ID"),
+                            fieldWithPath("data.votingId").type(NUMBER).description("투표 참여 ID"),
                             fieldWithPath("data.votedItemIds").type(ARRAY).description("투표한 항목의 Ids")
                         )
                     )
