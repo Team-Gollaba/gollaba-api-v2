@@ -34,7 +34,7 @@ public class GetMyVotingController {
     }
 
     record Response(
-        Long id,
+        Long votingId,
         List<Long> votedItemIds
     ) {
     }
