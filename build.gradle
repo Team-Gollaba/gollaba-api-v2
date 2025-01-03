@@ -93,6 +93,10 @@ dependencies {
 
     // tika
     implementation 'org.apache.tika:tika-core:3.0.0-BETA'
+
+    // firebase
+    implementation 'com.google.firebase:firebase-admin:9.4.2'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.12.0'
 }
 
 tasks.named('test') {
