@@ -27,6 +27,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
+import static org.tg.gollaba.favorites.domain.QFavorites.favorites;
 import static org.tg.gollaba.poll.domain.QPoll.poll;
 import static org.tg.gollaba.stats.domain.QPollDailyStats.pollDailyStats;
 import static org.tg.gollaba.stats.domain.QPollStats.pollStats;
@@ -443,5 +444,58 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     return pollToProfileImageUrlMap.getOrDefault(pollEntity.id(), "");
                 }
             ));
+    }
+
+    @Override
+    public Page<PollSummary> findMyFavoritePolls(Long userId, Pageable pageable) {
+        var totalCount = queryFactory
+            .select(poll.countDistinct())
+            .from(favorites)
+            .join(poll).on(favorites.pollId.eq(poll.id))
+            .where(favorites.userId.eq(userId))
+            .fetchOne();
+
+        if (totalCount == null || totalCount == 0) {
+            return Page.empty();
+        }
+
+        var polls = queryFactory
+            .selectFrom(poll)
+            .join(favorites).on(favorites.pollId.eq(poll.id))
+            .where(favorites.userId.eq(userId))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        var pollItemIds = polls.stream()
+            .flatMap(poll -> poll.items().stream())
+            .map(PollItem::id)
+            .distinct()
+            .toList();
+
+        var votingCountByItems = queryFactory
+            .select(votingItem.pollItemId, votingItem.count())
+            .from(votingItem)
+            .where(votingItem.pollItemId.in(pollItemIds))
+            .groupBy(votingItem.pollItemId)
+            .fetch()
+            .stream()
+            .collect(toMap(
+                tuple -> tuple.get(votingItem.pollItemId),
+                tuple -> tuple.get(votingItem.count()).intValue()
+            ));
+
+        var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+
+        var response = combine(
+            polls,
+            votingCountByItems
+        );
+
+        return new PageImpl<>(
+            convert(polls, pollCreatorProfileMap, response),
+            pageable,
+            totalCount
+        );
     }
 }
