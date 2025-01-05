@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.tg.gollaba.stats.domain.QPollSearchStats.pollSearchStats;
+import static org.tg.gollaba.stats.domain.QPollSearchStat.pollSearchStat;
 
 @Repository
 @RequiredArgsConstructor
-public class PollSearchStatsRepositoryCustomImpl implements PollSearchStatsRepositoryCustom {
+public class PollSearchStatRepositoryCustomImpl implements PollSearchStatRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
     public List<Map<String, Object>> findTop10SearchedWords() {
         var result = queryFactory
-            .select(pollSearchStats.searchedWord, pollSearchStats.searchedWord.count())
-            .from(pollSearchStats)
-            .groupBy(pollSearchStats.searchedWord)
-            .orderBy(pollSearchStats.searchedWord.count().desc())
+            .select(pollSearchStat.searchedWord, pollSearchStat.searchedWord.count())
+            .from(pollSearchStat)
+            .groupBy(pollSearchStat.searchedWord)
+            .orderBy(pollSearchStat.searchedWord.count().desc())
             .limit(10)
             .fetch();
 
@@ -34,8 +34,8 @@ public class PollSearchStatsRepositoryCustomImpl implements PollSearchStatsRepos
         return result.stream()
             .map(tuple -> {
                 Map<String, Object> map = new HashMap<>();
-                map.put("searchedWord", tuple.get(pollSearchStats.searchedWord));
-                map.put("searchCount", tuple.get(pollSearchStats.searchedWord.count()));
+                map.put("searchedWord", tuple.get(pollSearchStat.searchedWord));
+                map.put("searchCount", tuple.get(pollSearchStat.searchedWord.count()));
                 return map;
             })
             .collect(Collectors.toList());
