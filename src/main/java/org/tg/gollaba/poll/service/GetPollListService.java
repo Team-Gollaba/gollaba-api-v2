@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.poll.vo.PollSummary;
-import org.tg.gollaba.stats.domain.PollSearchStats;
-import org.tg.gollaba.stats.repository.PollSearchStatsRepository;
+import org.tg.gollaba.stats.domain.PollSearchStat;
+import org.tg.gollaba.stats.repository.PollSearchStatRepository;
 
 import java.util.Optional;
 
@@ -17,15 +17,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GetPollListService {
     private final PollRepository pollRepository;
-    private final PollSearchStatsRepository pollSearchStatsRepository;
+    private final PollSearchStatRepository pollSearchStatRepository;
 
     @Transactional
     public Page<PollSummary> get(Requirement requirement) {
         requirement.optionGroup
             .filter(optionGroup -> optionGroup == OptionGroup.TITLE)
             .ifPresent(optionGroup -> {
-                var pollSearchStats = new PollSearchStats(requirement.query.orElseThrow());
-                pollSearchStatsRepository.save(pollSearchStats);
+                var pollSearchStat = new PollSearchStat(
+                    requirement.query.orElseThrow(),
+                    requirement.userId().orElse(null)
+                );
+                pollSearchStatRepository.save(pollSearchStat);
             });
 
         return pollRepository.findPollList(requirement);
@@ -36,7 +39,8 @@ public class GetPollListService {
         Optional<String> query,
         Optional<Boolean> isActive,
         Optional<Poll.PollType> pollType,
-        Pageable pageable
+        Pageable pageable,
+        Optional<Long> userId
     ) {
     }
 
