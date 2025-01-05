@@ -22,4 +22,6 @@ public interface PollRepositoryCustom {
     List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit);
 
     Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable);
+
+    Page<PollSummary> findMyFavoritePolls(Long userId, Pageable pageable);
 }
