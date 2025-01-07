@@ -15,6 +15,7 @@ import java.util.Set;
 public class VotingFixture implements TestFixture<Voting> {
     private Long id = 1L;
     private Long pollId = 1L;
+    private Long userId = 1L;
     private VoterName voterName = new VoterNameFixture().build();
     private Set<VotingItem> items = new HashSet<>(){{
         add(new VotingItemFixture().setId(1L).build());
