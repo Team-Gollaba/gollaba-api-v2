@@ -2,7 +2,9 @@ package org.tg.gollaba.voting.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.voting.service.UpdateVotingService;
 
@@ -15,10 +17,12 @@ import java.util.Set;
 public class UpdateVotingController {
     private final UpdateVotingService service;
 
-    @PutMapping //TODO user 받기
-    public ApiResponse<Void> update(@PathVariable Long votingId,
+    @PutMapping (headers = HttpHeaders.AUTHORIZATION)
+    public ApiResponse<Void> update(AuthenticatedUser user,
+                                    @PathVariable Long votingId,
                                     @RequestBody @Valid Request request) {
         var requirement = createRequirement(
+            user.id(),
             request,
             votingId
         );
@@ -27,9 +31,11 @@ public class UpdateVotingController {
         return ApiResponse.success();
     }
 
-    private UpdateVotingService.Requirement createRequirement(Request request,
+    private UpdateVotingService.Requirement createRequirement(Long userId,
+                                                              Request request,
                                                               Long votingId) {
         return new UpdateVotingService.Requirement(
+            userId,
             votingId,
             request.voterName(),
             request.pollItemIds()
