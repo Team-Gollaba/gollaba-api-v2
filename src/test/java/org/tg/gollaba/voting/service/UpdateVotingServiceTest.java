@@ -12,6 +12,8 @@ import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.poll.domain.PollFixture;
 import org.tg.gollaba.poll.domain.PollItemFixture;
+import org.tg.gollaba.user.domain.UserFixture;
+import org.tg.gollaba.user.repository.UserRepository;
 import org.tg.gollaba.voting.component.VotingValidator;
 import org.tg.gollaba.voting.domain.VotingFixture;
 import org.tg.gollaba.voting.repository.VotingRepository;
@@ -34,6 +36,8 @@ class UpdateVotingServiceTest {
     private VotingValidator votingValidator;
     @Mock
     private PollRepository pollRepository;
+    @Mock
+    private UserRepository userRepository;
 
 
     @Test
@@ -42,14 +46,18 @@ class UpdateVotingServiceTest {
         var requirement = new RequirementFixture()
             .setPollItemIds(Set.of(1L))
             .build();
-        var voting = new VotingFixture().build();
+        var voting = new VotingFixture()
+            .build();
         var poll = new PollFixture()
             .setItems(List.of(
                 new PollItemFixture().setId(1L).build(),
                 new PollItemFixture().setId(2L).build()
             ))
             .build();
+        var user = new UserFixture().build();
 
+        given(userRepository.findById(requirement.userId()))
+            .willReturn(Optional.of(user));
         given(votingRepository.findById(requirement.votingId()))
             .willReturn(Optional.of(voting));
         given(pollRepository.findById(voting.pollId()))
@@ -73,6 +81,7 @@ class UpdateVotingServiceTest {
         @Override
         public UpdateVotingService.Requirement build() {
             return new UpdateVotingService.Requirement(
+                1L,
                 votingId,
                 Optional.of(voterName),
                 Optional.of(pollItemIds)
