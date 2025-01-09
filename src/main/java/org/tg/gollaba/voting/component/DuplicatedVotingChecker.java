@@ -6,4 +6,6 @@ public interface DuplicatedVotingChecker {
 
     void record(String ipAddress, Long pollId);
 
+    void delete(String ipAddress, Long pollId);
+
 }
