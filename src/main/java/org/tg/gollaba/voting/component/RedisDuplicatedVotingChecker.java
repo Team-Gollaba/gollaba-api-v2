@@ -38,4 +38,9 @@ public class RedisDuplicatedVotingChecker implements DuplicatedVotingChecker {
                 TimeUnit.HOURS
             );
     }
+
+    @Override
+    public void delete(String ipAddress, Long pollId) {
+        redisTemplate.delete(VOTING_CHECK_KEY.formatted(ipAddress, pollId));
+    }
 }
