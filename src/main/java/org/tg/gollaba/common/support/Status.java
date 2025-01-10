@@ -55,7 +55,12 @@ public enum Status {
     NOT_SIGN_UP("회원가입을 진행해주세요."),
 
     //external
-    KAKAO("카카오 서버와의 통신에 실패하였습니다. 관리자에게 문의해주세요.");
+    KAKAO("카카오 서버와의 통신에 실패하였습니다. 관리자에게 문의해주세요."),
+    FAIL_TO_SEND_FCM_MESSAGE("FCM 메시지 전송에 실패했습니다."),
+
+    //notification
+    APP_NOTIFICATION_NOT_FOUND("등록된 기기를 찾을 수 없습니다"),
+    DUPLICATE_DEVICE("이미 등록된 디바이스 입니다");
 
     private final String message;
 

@@ -55,32 +55,6 @@ public class CreateUserService {
         return tokenProvider.issue(savedUser.id()).accessToken();
     }
 
-    //3안
-//    @Transactional
-//    public String create(Requirement requirement) {
-//        User user;
-//        if (requirement.providerAccessToken().isPresent()) {
-//            var providerType = requirement.providerType().get();
-//            var providerAccessToken = requirement.providerAccessToken().get();
-//            var clientRegistration = clientRegistrationProvider.findByProviderType(providerType);
-//            var getUserInfoRequest = createRequest(clientRegistration, providerAccessToken);
-//            var oAuthUserInfo = OAuthUserInfo.of(
-//                oAuth2UserService.loadUser(getUserInfoRequest),
-//                providerType
-//            );
-//            user = createUserEntity(requirement, oAuthUserInfo);
-//        } else {
-//            user = createUserEntity(requirement);
-//        }
-//
-//        userValidator.validate(user);
-//        var savedUser = userRepository.save(user);
-//
-//        return tokenProvider.issue(savedUser.id()).accessToken();
-//    }
-
-
-
     static class OAuthUserInfoLoadingException extends IllegalArgumentException {
         public OAuthUserInfoLoadingException() {
             super("OAuth 사용자 정보를 로드하는 데 실패했습니다.");
