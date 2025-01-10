@@ -2,7 +2,7 @@ package org.tg.gollaba.voting.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
@@ -17,7 +17,8 @@ import java.util.Set;
 public class UpdateVotingController {
     private final UpdateVotingService service;
 
-    @PutMapping (headers = HttpHeaders.AUTHORIZATION)
+    @PreAuthorize("hasAuthority('USER')")
+    @PutMapping
     public ApiResponse<Void> update(AuthenticatedUser user,
                                     @PathVariable Long votingId,
                                     @RequestBody @Valid Request request) {
