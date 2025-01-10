@@ -81,6 +81,7 @@ dependencies {
     // S3
     implementation('org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE') {
         exclude group: 'com.google.firebase', module: 'firebase-admin'
+        exclude group: 'io.opentelemetry', module: 'opentelemetry-semconv'
     }
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.396'
 
@@ -97,7 +98,9 @@ dependencies {
     implementation 'org.apache.tika:tika-core:3.0.0-BETA'
 
     // firebase
-    implementation 'com.google.firebase::firebase-admin:9.1.1'
+    implementation('com.google.firebase:firebase-admin:9.1.1') {
+        exclude group: 'io.opentelemetry', module: 'opentelemetry-semconv'
+    }
 }
 
 tasks.named('test') {
