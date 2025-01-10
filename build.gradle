@@ -110,6 +110,10 @@ tasks.named('bootJar') {
 
 configurations.all {
     resolutionStrategy {
+        force 'io.opentelemetry:opentelemetry-api:1.25.0'
+        force 'io.opentelemetry:opentelemetry-sdk-logs:1.25.0'
+        force 'io.opentelemetry:opentelemetry-sdk-trace:1.25.0'
+        force 'io.opentelemetry:opentelemetry-sdk-common:1.25.0'
         force 'io.opentelemetry:opentelemetry-semconv:1.25.0-alpha'
     }
 }
