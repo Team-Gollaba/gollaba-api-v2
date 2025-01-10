@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
 
 import java.util.Optional;
@@ -22,9 +23,10 @@ class UpdateVotingControllerTest extends ControllerTestContext {
     private static final String DESCRIPTION = Tags.VOTING.descriptionWith("수정");
 
     @Test
+    @WithMockUser(authorities = "USER")
     void success() {
         given()
-            .header(authHeader())
+            .header(HttpHeaders.AUTHORIZATION, "JWT token")
             .body(requestBody())
             .when()
             .put("/v2/voting/{votingId}", 1L)
