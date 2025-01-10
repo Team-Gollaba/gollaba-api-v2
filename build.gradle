@@ -97,7 +97,7 @@ dependencies {
     implementation 'org.apache.tika:tika-core:3.0.0-BETA'
 
     // firebase
-    implementation 'com.google.firebase:firebase-admin:9.4.2'
+    implementation 'com.google.firebase::firebase-admin:9.1.1'
 }
 
 tasks.named('test') {
