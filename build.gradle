@@ -106,6 +106,12 @@ tasks.named('bootJar') {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'io.opentelemetry:opentelemetry-semconv:1.25.0-alpha'
+    }
+}
+
 // Querydsl 설정부
 def generated = 'src/main/generated'
 
