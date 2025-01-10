@@ -49,7 +49,7 @@ public class AppNotificationSenderTest {
             "testingContent"
         );
         var deviceNotifications = deviceNotifications();
-        given(deviceNotificationRepository.findAll())
+        given(deviceNotificationRepository.findAllByAllowsNotificationTrue())
             .willReturn(deviceNotifications);
         doNothing().when(fcmClient)
             .sendMessage(any(FcmClient.Request.class));
