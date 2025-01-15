@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.tg.gollaba.poll.domain.Poll;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,7 @@ public interface PollRepository extends JpaRepository<Poll, Long>, PollRepositor
 
     @Query("SELECT pi.id FROM Poll p JOIN p.items pi WHERE p.id = :pollId")
     List<Long> findPollItemIdsByPollId(@Param("pollId") Long pollId);
+
+    @Query("SELECT p FROM Poll p WHERE p.endAt < :aggregationDate")
+    List<Poll> findTerminatedPollsBefore(@Param("aggregationDate") LocalDate aggregationDate);
 }
