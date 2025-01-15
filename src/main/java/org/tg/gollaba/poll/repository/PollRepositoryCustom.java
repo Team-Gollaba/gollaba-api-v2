@@ -7,6 +7,7 @@ import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PollRepositoryCustom {
@@ -24,4 +25,6 @@ public interface PollRepositoryCustom {
     Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable);
 
     Page<PollSummary> findMyFavoritePolls(Long userId, Pageable pageable);
+
+    List<Long> findPollIdsByEndAtBetween(LocalDateTime from, LocalDateTime to);
 }

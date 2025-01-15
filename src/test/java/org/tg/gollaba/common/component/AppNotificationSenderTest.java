@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.List.*;
+import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -44,18 +46,16 @@ public class AppNotificationSenderTest {
     @Test
     void success(){
         //given
-        var notificationMessage = new AppNotificationSender.NotificationMessage(
-            "testingTitle",
-            "testingContent"
-        );
-        var deviceNotifications = deviceNotifications();
-        given(deviceNotificationRepository.findAllByAllowsNotificationTrue())
-            .willReturn(deviceNotifications);
+        var targetDevices = targetDevices();
+        var pollIds = of(1L, 2L);
+        var userIds = of(1L, 2L);
+        given(deviceNotificationRepository.findNotiAllowUsers(userIds))
+            .willReturn(targetDevices);
         doNothing().when(fcmClient)
             .sendMessage(any(FcmClient.Request.class));
 
         //when
-        var throwable = catchThrowable(() -> sender.sendServerNotice(notificationMessage));
+        var throwable = catchThrowable(() -> sender.sendPollNotifications(pollIds));
 
         //then
         assertThat(throwable).isNull();
@@ -66,12 +66,12 @@ public class AppNotificationSenderTest {
         var capturedHistories = argumentCaptor.getAllValues();
         assertThat(capturedHistories).hasSize(2);
         var history = capturedHistories.get(0);
-        assertThat(history.title()).isEqualTo("testingTitle");
-        assertThat(history.content()).isEqualTo("testingContent");
+        assertThat(history.title()).isEqualTo("투표가 종료되었습니다.");
+        assertThat(history.content()).isEqualTo("종료된 투표의 결과를 확인하세요.");
         assertThat(history.status()).isEqualTo(AppNotificationHistory.Status.SUCCESS);
     }
 
-    private List<DeviceNotification> deviceNotifications() {
+    private List<DeviceNotification> targetDevices() {
         return Stream.of(
             new DeviceNotificationFixture()
                 .setUserId(1L)
