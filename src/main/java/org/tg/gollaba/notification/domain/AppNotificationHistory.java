@@ -44,6 +44,9 @@ public class AppNotificationHistory extends BaseEntity {
     @Column
     private String failReason;
 
+    @Column
+    private Long pollId;
+
     public AppNotificationHistory(Type type,
                                   Status status,
                                   Long userId,
@@ -63,11 +66,29 @@ public class AppNotificationHistory extends BaseEntity {
     }
 
     public enum Type {
+        POLL_TERMINATE,
+        FAVORITE,
+        VOTING,
         SERVER_NOTICE
     }
 
     public enum Status {
         SUCCESS,
         FAILURE
+    }
+
+    public void setPollId(AppNotificationHistory history, Long pollId){
+        if(history.type != Type.POLL_TERMINATE && history.userId == null){
+            throw new InvalidAppNotificationException(
+                "투표 종료시에만 해당 팝업 메시지를 보낼 수 있습니다."
+            );
+        }
+        this.pollId = pollId;
+    }
+
+    public static class InvalidAppNotificationException extends IllegalArgumentException {
+        public InvalidAppNotificationException(String message) {
+            super(message);
+        }
     }
 }

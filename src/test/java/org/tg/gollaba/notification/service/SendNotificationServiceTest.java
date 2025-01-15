@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.common.compoenet.AppNotificationSender;
+import org.tg.gollaba.common.compoenet.TestAppNotificationSender;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -18,7 +18,7 @@ public class SendNotificationServiceTest {
     @InjectMocks
     private SendNotificationService service;
     @Mock
-    private AppNotificationSender appNotificationSender;
+    private TestAppNotificationSender testAppNotificationSender;
 
     @Test
     void success(){
@@ -30,7 +30,7 @@ public class SendNotificationServiceTest {
 
         //then
         assertThat(throwable).isNull();
-        verify(appNotificationSender, times(1)).sendServerNotice(any(AppNotificationSender.NotificationMessage.class));
+        verify(testAppNotificationSender, times(1)).sendServerNotice(any(TestAppNotificationSender.NotificationMessage.class));
     }
 
     private SendNotificationService.Requirement message(){

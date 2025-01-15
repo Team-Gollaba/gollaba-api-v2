@@ -6,7 +6,7 @@ import org.tg.gollaba.notification.domain.DeviceNotification;
 import java.util.List;
 import java.util.Optional;
 
-public interface DeviceNotificationRepository extends JpaRepository<DeviceNotification, Long> {
+public interface DeviceNotificationRepository extends JpaRepository<DeviceNotification, Long>, DeviceNotificationRepositoryCustom {
 
     boolean existsByUserIdAndDeviceName(Long userId, String deviceName);
 
