@@ -370,11 +370,9 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
         var polls = queryFactory
             .selectFrom(poll)
             .where(poll.id.in(pollIds))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .fetch();
-
-        if (polls.isEmpty()) {
-            throw new BadRequestException(Status.POLL_NOT_FOUND);
-        }
 
         var pollItemIds = polls.stream()
             .flatMap(poll -> poll.items().stream())
