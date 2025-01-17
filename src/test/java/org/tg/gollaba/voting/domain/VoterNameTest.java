@@ -43,4 +43,21 @@ class VoterNameTest {
         //then
         assertThat(throwable).isInstanceOf(RequiredVoterNameException.class);
     }
+
+    @DisplayName("기명 투표시 voterName에 #으로 시작하는 랜덤 해시태그가 붙는다")
+    @Test
+    void shouldAddHashTagToVoterNameWhenPollTypeIsNamed() {
+        //given
+        var poll = new PollFixture()
+            .setPollType(Poll.PollType.NAMED)
+            .build();
+
+        // when
+        var voterName = new VoterName(poll, "testName");
+
+        //then
+        assertThat(voterName.value())
+            .startsWith("testName #")
+            .matches("testName #\\d{5}");
+    }
 }
