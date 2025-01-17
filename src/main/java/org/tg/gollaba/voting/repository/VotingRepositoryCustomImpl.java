@@ -17,7 +17,9 @@ public class VotingRepositoryCustomImpl implements VotingRepositoryCustom {
         var queryVotingIds = queryFactory
             .select(voting.id)
             .from(voting)
-            .where(voting.pollId.eq(pollId))
+            .where(voting.pollId.eq(pollId)
+              .and(voting.deletedAt.isNull())
+            )
             .fetch();
 
         var pollItemIdVoterMap = queryFactory
