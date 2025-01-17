@@ -63,11 +63,11 @@ public class GetPollItemVotersControllerTest extends ControllerTestContext {
             List.of(
                 Map.of(
                     "pollItemId", 1L,
-                    "voterNames", List.of("voter1", "voter2")
+                    "voterNames", List.of("voter1#59182", "voter2#19283")
                 ),
                 Map.of(
                     "pollItemId", 2L,
-                    "voterNames", List.of("voter3")
+                    "voterNames", List.of("voter3#48123")
                 )
             )
         );
