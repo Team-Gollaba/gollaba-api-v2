@@ -10,6 +10,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.tg.gollaba.common.support.StringUtils;
 import org.tg.gollaba.poll.domain.Poll;
 
+import java.util.Random;
+
 @Embeddable
 @Getter
 @Accessors(fluent = true)
@@ -39,7 +41,8 @@ public class VoterName {
         if (pollType == Poll.PollType.ANONYMOUS) {
             this.value = ANONYMOUS_NAME_PREFIX + RandomStringUtils.randomAlphanumeric(7);
         } else {
-            this.value = value;
+            var randomHash = String.format("#%05d", new Random().nextInt(100000));
+            this.value = value + randomHash;
         }
     }
 
