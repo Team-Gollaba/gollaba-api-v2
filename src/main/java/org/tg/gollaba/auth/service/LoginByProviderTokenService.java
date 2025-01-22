@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
 public class LoginByProviderTokenService {
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
-    private final DefaultOAuth2UserService oAuth2UserService;
+    private final CustomOAuth2UserService oAuth2UserService;
     private final OAuthClientRegistrationProvider clientRegistrationProvider;
 
     public IssuedToken login(String providerAccessToken, User.ProviderType providerType) {

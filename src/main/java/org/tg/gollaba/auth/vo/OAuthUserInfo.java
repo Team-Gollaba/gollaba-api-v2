@@ -1,39 +1,24 @@
 package org.tg.gollaba.auth.vo;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.tg.gollaba.user.domain.User;
 
 import java.util.Map;
 
-@Getter
-@Accessors(fluent = true)
-public class OAuthUserInfo {
-    private final String providerId;
-    private final User.ProviderType providerType;
-    private final String email;
-    private final String name;
-    private final String profileImageUrl;
-
-    public OAuthUserInfo(String providerId,
-                         User.ProviderType providerType,
-                         String email,
-                         String name,
-                         String profileImageUrl) {
-        this.providerId = providerId;
-        this.providerType = providerType;
-        this.email = email;
-        this.name = name;
-        this.profileImageUrl = profileImageUrl;
-    }
-
+public record OAuthUserInfo(
+    String providerId,
+    User.ProviderType providerType,
+    String email,
+    String name,
+    String profileImageUrl
+) {
     public static OAuthUserInfo of(OAuth2User oAuth2User,
                                    User.ProviderType providerType) {
         return switch (providerType) {
             case KAKAO -> kakao(oAuth2User);
             case NAVER -> naver(oAuth2User);
             case GITHUB -> github(oAuth2User);
+            case APPLE -> apple(oAuth2User);
         };
     }
 
@@ -73,6 +58,17 @@ public class OAuthUserInfo {
             valueToString(attributes.get("email")),
             valueToString(attributes.get("name")),
             valueToString(attributes.get("avatar_url"))
+        );
+    }
+    public static OAuthUserInfo apple(OAuth2User oAuth2User) {
+        var attributes = oAuth2User.getAttributes();
+
+        return new OAuthUserInfo(
+            valueToString(attributes.get("sub")),
+            User.ProviderType.APPLE,
+            valueToString(attributes.get("email")),
+            valueToString(attributes.get("name")),
+            null
         );
     }
 

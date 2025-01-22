@@ -29,6 +29,11 @@ spring:
             client-id: 'test-client-id'
             client-secret: 'test-client-secret'
             redirect-uri: 'test-redirect-uri'
+          apple:
+            client-name: apple
+            client-id: 'test-client-id'
+            client-secret: 'test-client-secret'
+            redirect-uri: 'test-redirect-uri'
         provider:
           kakao:
             authorization-uri: 'test-authorization-uri'
@@ -81,3 +86,7 @@ google-apis:
     token-uri: 'https://test.token.com/token;'
     auth-provider-x509-cert-url: 'https://test-x509.com'
     client-x509-cert-url: 'https://test-uri.com'
+
+apple:
+  team-id: 'test'
+  key-id: 'test'
