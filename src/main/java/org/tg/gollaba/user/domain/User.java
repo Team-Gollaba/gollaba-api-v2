@@ -97,7 +97,8 @@ public class User extends BaseEntity {
     public enum ProviderType {
         KAKAO("카카오"),
         NAVER("네이버"),
-        GITHUB("깃허브");
+        GITHUB("깃허브"),
+        APPLE("애플");
 
         private final String description;
 

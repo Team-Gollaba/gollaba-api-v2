@@ -77,6 +77,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             case NAVER -> OAuthUserInfo.naver(authToken.getPrincipal());
             case KAKAO -> OAuthUserInfo.kakao(authToken.getPrincipal());
             case GITHUB -> OAuthUserInfo.github(authToken.getPrincipal());
+            case APPLE -> OAuthUserInfo.apple(authToken.getPrincipal());
         };
     }
 

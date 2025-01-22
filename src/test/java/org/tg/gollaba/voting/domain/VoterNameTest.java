@@ -57,7 +57,7 @@ class VoterNameTest {
 
         //then
         assertThat(voterName.value())
-            .startsWith("testName #")
-            .matches("testName #\\d{5}");
+            .startsWith("testName#")
+            .matches("testName#\\d{5}");
     }
 }

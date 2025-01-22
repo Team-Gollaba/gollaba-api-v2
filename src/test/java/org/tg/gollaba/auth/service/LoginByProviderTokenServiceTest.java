@@ -39,7 +39,7 @@ class LoginByProviderTokenServiceTest {
     @Mock
     private TokenProvider tokenProvider;
     @Mock
-    private DefaultOAuth2UserService oAuth2UserService;
+    private CustomOAuth2UserService oAuth2UserService;
     @Mock
     private OAuthClientRegistrationProvider clientRegistrationProvider;
 

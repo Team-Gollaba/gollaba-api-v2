@@ -1,6 +1,7 @@
 package org.tg.gollaba.common.exception;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.tg.gollaba.common.web.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -130,5 +131,14 @@ public class CommonExceptionHandler {
         errorNotificationSender.send(e);
 
         return ApiResponse.error(e.message());
+    }
+
+    @ExceptionHandler(HttpClientException.class)
+    public ResponseEntity<ApiResponse<Void>> serverException(HttpClientException e,
+                                                             HttpServletRequest request) {
+        log.error("[{}] 외부 서버 오류가 발생하였습니다.", request.getRequestURI(), e);
+        errorNotificationSender.send(e);
+
+        return new ResponseEntity<>(ApiResponse.error(e.message()), HttpStatus.valueOf(e.statusCode()));
     }
 }

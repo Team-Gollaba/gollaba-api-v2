@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByProviderIdAndProviderType(String providerId,
                                               User.ProviderType providerType);
+
     Optional<User> findByProviderIdAndProviderType(String providerId,
                                                    User.ProviderType providerType);
 
