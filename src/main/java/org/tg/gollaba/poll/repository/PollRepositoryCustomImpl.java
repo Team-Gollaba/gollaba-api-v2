@@ -16,6 +16,7 @@ import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -498,5 +499,13 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             pageable,
             totalCount
         );
+    }
+
+    public List<Long> findPollIdsByEndAtBetween(LocalDateTime from, LocalDateTime to) {
+        return queryFactory
+            .select(poll.id)
+            .from(poll)
+            .where(poll.endAt.between(from, to))
+            .fetch();
     }
 }

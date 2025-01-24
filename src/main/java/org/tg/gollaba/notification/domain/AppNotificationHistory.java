@@ -63,6 +63,9 @@ public class AppNotificationHistory extends BaseEntity {
     }
 
     public enum Type {
+        POLL_TERMINATE,
+        FAVORITE,
+        VOTING,
         SERVER_NOTICE
     }
 
