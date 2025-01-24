@@ -3,20 +3,19 @@ package org.tg.gollaba.notification.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.tg.gollaba.common.compoenet.AppNotificationSender;
+import org.tg.gollaba.common.compoenet.TestAppNotificationSender;
 
 @Service
 @RequiredArgsConstructor
 public class SendNotificationService {
-    private final AppNotificationSender appNotificationSender;
-
+    private final TestAppNotificationSender testAppNotificationSender;
     @Transactional
     public void send(Requirement requirement) {
-        var message = new AppNotificationSender.NotificationMessage(
+        var message = new TestAppNotificationSender.NotificationMessage(
             requirement.title(),
             requirement.content()
         );
-        appNotificationSender.sendServerNotice(message);
+        testAppNotificationSender.sendServerNotice(message);
     }
 
     public record Requirement(

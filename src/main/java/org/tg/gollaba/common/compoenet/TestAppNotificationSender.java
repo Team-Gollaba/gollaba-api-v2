@@ -10,48 +10,43 @@ import org.tg.gollaba.notification.domain.DeviceNotification;
 import org.tg.gollaba.notification.repository.AppNotificationHistoryRepository;
 import org.tg.gollaba.notification.repository.DeviceNotificationRepository;
 
-import java.util.List;
-import java.util.Objects;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class AppNotificationSender {
-    private static final AppNotificationHistory.Type TYPE = AppNotificationHistory.Type.POLL_TERMINATE;
-    private static final String TITLE = "투표가 종료되었습니다.";
-    private static final String CONTENT = "종료된 투표의 결과를 확인하세요.";
-
+public class TestAppNotificationSender {
     private final FcmClient fcmClient;
-    private final AppNotificationHistoryRepository appNotificationHistoryRepository;
     private final DeviceNotificationRepository deviceNotificationRepository;
+    private final AppNotificationHistoryRepository appNotificationHistoryRepository;
 
     @Transactional
-    public void sendPollNotifications(List<Long> pollIds) {
-        var targetPollIds = pollIds.stream()
-            .filter(Objects::nonNull)
-            .toList();
-        var targetDevices = deviceNotificationRepository.findNotiAllowUsers(targetPollIds);
+    public void sendServerNotice(TestAppNotificationSender.NotificationMessage notificationMessage) {
+        var deviceNotifications = deviceNotificationRepository.findAllByAllowsNotificationTrue();
+        if (deviceNotifications.isEmpty()) {
+            log.info("No active notifications available to send server notice.");
+            return;
+        }
 
-        send(targetDevices);
-    }
-
-    private void send(List<DeviceNotification> targetDevices){
-        targetDevices.forEach(targetDevice -> {
+        deviceNotifications.forEach(userDevice -> {
             AppNotificationHistory history = null;
             var request = new FcmClient.Request(
-                targetDevice.agentId(),
-                TITLE,
-                CONTENT
+                userDevice.agentId(),
+                notificationMessage.title(),
+                notificationMessage.content()
             );
+
+            log.info("Sending FCM message with request: {}", request);
 
             try {
                 fcmClient.sendMessage(request);
-                history = createSuccessHistory(targetDevice, TYPE, request);
+                log.info("FCM message sent successfully for device: {}", userDevice.agentId());
+                history = createSuccessHistory(userDevice, AppNotificationHistory.Type.SERVER_NOTICE, request);
             } catch (Exception e) {
+                System.out.println("Failed to send FCM message: " + e.getMessage());
                 log.error("Failed to send FCM message", e);
-                history = createFailureHistory(targetDevice, TYPE, e, request);
+                history = createFailureHistory(userDevice, AppNotificationHistory.Type.SERVER_NOTICE, e, request);
             } finally {
                 appNotificationHistoryRepository.save(history);
+                log.info("Notification history saved for device: {} with status: {}", userDevice.agentId(), history.status());
             }
         });
     }
@@ -85,4 +80,8 @@ public class AppNotificationSender {
             failReason
         );
     }
+    public record NotificationMessage(
+        String title,
+        String content
+    ){}
 }
