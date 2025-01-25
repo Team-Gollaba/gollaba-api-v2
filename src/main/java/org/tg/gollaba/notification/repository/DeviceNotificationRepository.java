@@ -13,4 +13,5 @@ public interface DeviceNotificationRepository extends JpaRepository<DeviceNotifi
     Optional<DeviceNotification> findByUserIdAndAgentId(Long userId, String agentId);
 
     List<DeviceNotification> findAllByAllowsNotificationTrue();
+    List<DeviceNotification> findByUserId(Long userId);
 }
