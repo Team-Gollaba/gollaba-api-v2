@@ -82,6 +82,10 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
+    public void deleteProfileImage(){
+        this.profileImageUrl = null;
+    }
+
     public void changeProfileImage(String profileImageUrl){
             if (!ValidationUtils.isValidUrl(profileImageUrl)) {
                 throw new IllegalArgumentException("프로필 이미지 URL 형식이 올바르지 않습니다.");

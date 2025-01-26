@@ -27,7 +27,7 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 public class GetUserNotificationListControllerTest extends ControllerTestContext {
 
     private static final String TAG = ControllerTestContext.Tags.NOTIFICATION.tagName();
-    private static final String DESCRIPTION = ControllerTestContext.Tags.NOTIFICATION.descriptionWith("디바이스 알림 수정");
+    private static final String DESCRIPTION = ControllerTestContext.Tags.NOTIFICATION.descriptionWith("유저 디바이스 알림 전체 조회");
 
     @Autowired
     private GetUserNotificationListService service;
