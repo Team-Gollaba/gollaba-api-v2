@@ -44,6 +44,12 @@ public class AppNotificationHistory extends BaseEntity {
     @Column
     private String failReason;
 
+    @Column
+    private String eventId;
+
+    @Column
+    private String deepLink;
+
     public AppNotificationHistory(Type type,
                                   Status status,
                                   Long userId,
@@ -51,7 +57,9 @@ public class AppNotificationHistory extends BaseEntity {
                                   long deviceNotificationId,
                                   String title,
                                   String content,
-                                  String failReason) {
+                                  String failReason,
+                                  String eventId,
+                                  String deepLink) {
         this.type = type;
         this.status = status;
         this.userId = userId;
@@ -60,6 +68,8 @@ public class AppNotificationHistory extends BaseEntity {
         this.title = title;
         this.content = content;
         this.failReason = failReason;
+        this.eventId = eventId;
+        this.deepLink = deepLink;
     }
 
     public enum Type {
