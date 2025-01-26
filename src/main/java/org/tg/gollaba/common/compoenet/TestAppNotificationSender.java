@@ -77,7 +77,9 @@ public class TestAppNotificationSender {
             deviceNotification.id(),
             request.title(),
             request.content(),
-            failReason
+            failReason,
+            null,
+            null
         );
     }
     public record NotificationMessage(

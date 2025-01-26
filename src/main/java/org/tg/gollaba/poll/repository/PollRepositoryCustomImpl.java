@@ -501,6 +501,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
         );
     }
 
+    @Override
     public List<Long> findPollIdsByEndAtBetween(LocalDateTime from, LocalDateTime to) {
         return queryFactory
             .select(poll.id)

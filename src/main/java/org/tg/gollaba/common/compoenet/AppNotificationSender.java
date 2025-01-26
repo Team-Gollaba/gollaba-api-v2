@@ -11,7 +11,10 @@ import org.tg.gollaba.notification.repository.AppNotificationHistoryRepository;
 import org.tg.gollaba.notification.repository.DeviceNotificationRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component
 @Slf4j
@@ -31,12 +34,18 @@ public class AppNotificationSender {
             .filter(Objects::nonNull)
             .toList();
         var targetDevices = deviceNotificationRepository.findNotiAllowUsers(targetPollIds);
+        var deviceMap = targetDevices.stream() //pollId:targetDevice
+            .collect(toMap(DeviceNotification::userId, device -> device));
 
-        send(targetDevices);
+        send(targetPollIds, deviceMap);
     }
 
-    private void send(List<DeviceNotification> targetDevices){
-        targetDevices.forEach(targetDevice -> {
+    private void send(List<Long> targetPollIds, Map<Long, DeviceNotification> deviceMap){
+        targetPollIds.stream()
+            .filter(deviceMap::containsKey)
+            .forEach(pollId -> {
+                var targetDevice = deviceMap.get(pollId);
+
             AppNotificationHistory history = null;
             var request = new FcmClient.Request(
                 targetDevice.agentId(),
@@ -46,7 +55,7 @@ public class AppNotificationSender {
 
             try {
                 fcmClient.sendMessage(request);
-                history = createSuccessHistory(targetDevice, TYPE, request);
+                history = createSuccessHistory(targetDevice, TYPE, request, pollId.toString());
             } catch (Exception e) {
                 log.error("Failed to send FCM message", e);
                 history = createFailureHistory(targetDevice, TYPE, e, request);
@@ -58,22 +67,25 @@ public class AppNotificationSender {
 
     private AppNotificationHistory createSuccessHistory(DeviceNotification deviceNotification,
                                                         AppNotificationHistory.Type historyType,
-                                                        FcmClient.Request request) {
-        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.SUCCESS, null, request);
+                                                        FcmClient.Request request,
+                                                        String eventId) {
+        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.SUCCESS, null, request, eventId, null);
     }
 
     private AppNotificationHistory createFailureHistory(DeviceNotification deviceNotification,
                                                         AppNotificationHistory.Type historyType,
                                                         Exception e,
                                                         FcmClient.Request request) {
-        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.FAILURE, e.getMessage(), request);
+        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.FAILURE, e.getMessage(), request, null, null);
     }
 
     private AppNotificationHistory createHistory(DeviceNotification deviceNotification,
                                                  AppNotificationHistory.Type historyType,
                                                  AppNotificationHistory.Status historyStatus,
                                                  String failReason,
-                                                 FcmClient.Request request) {
+                                                 FcmClient.Request request,
+                                                 String eventId,
+                                                 String deepLink) {
         return new AppNotificationHistory(
             historyType,
             historyStatus,
@@ -82,7 +94,9 @@ public class AppNotificationSender {
             deviceNotification.id(),
             request.title(),
             request.content(),
-            failReason
+            failReason,
+            eventId,
+            null
         );
     }
 }
