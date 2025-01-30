@@ -45,6 +45,7 @@ public class GetPollDetailsController extends HashIdController {
             pollDetails.pollType(),
             pollDetails.endAt(),
             pollDetails.totalVotingCount(),
+            pollDetails.votedPeopleCount(),
             pollDetails.readCount(),
             pollDetails.items().stream()
                 .map(item -> new PollDetailsResponse.PollItem(
@@ -66,6 +67,7 @@ public class GetPollDetailsController extends HashIdController {
         Poll.PollType pollType,
         LocalDateTime endAt,
         Integer totalVotingCount,
+        Integer votedPeopleCount,
         Integer readCount,
         List<PollItem> items
     ) {
