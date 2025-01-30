@@ -30,14 +30,14 @@ spring:
     password: ${DATASOURCE_PASSWORD}
     hikari:
       schema: ${DEFAULT_SCHEMA}
-      pool-name: ranchat-HikariPool
-      maximum-pool-size: 30
+      pool-name: gollaba-HikariPool
+      maximum-pool-size: 20
       connection-timeout: 10000
       max-lifetime: 90000
       data-source-properties:
-        socketTimeout: 3000
+        socketTimeout: 10000
         prepStmtCacheSize: 100
-        prepStmtCacheSqlLimit: 2048
+        prepStmtCacheSqlLimit: 250
         cachePrepStmts: true
         useServerPrepStmts: true
         rewriteBatchedStatements: false
