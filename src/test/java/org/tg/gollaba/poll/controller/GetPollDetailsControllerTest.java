@@ -54,6 +54,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
                             fieldWithPath("data.pollType").type(STRING).description("투표 타입"),
                             fieldWithPath("data.endAt").type(STRING).description("투표 종료 시간"),
                             fieldWithPath("data.totalVotingCount").type(NUMBER).description("총 투표 수"),
+                            fieldWithPath("data.votedPeopleCount").type(NUMBER).description("투표한 사람 수"),
                             fieldWithPath("data.readCount").type(NUMBER).description("투표 조회 수"),
                             fieldWithPath("data.items").type(ARRAY).description("투표 항목 목록"),
                             fieldWithPath("data.items[].id").type(NUMBER).description("투표 항목 ID"),
@@ -76,6 +77,7 @@ class GetPollDetailsControllerTest extends ControllerTestContext {
             Poll.PollResponseType.SINGLE,
             Poll.PollType.ANONYMOUS,
             LocalDateTime.now(),
+            10,
             10,
             2,
             List.of(

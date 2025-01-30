@@ -87,6 +87,7 @@ class GetPollListControllerTest extends ControllerTestContext {
                             fieldWithPath("data.items[].endAt").type(STRING).description("마감 시간"),
                             fieldWithPath("data.items[].readCount").type(NUMBER).description("조회수"),
                             fieldWithPath("data.items[].totalVotingCount").type(NUMBER).description("총 투표수"),
+                            fieldWithPath("data.items[].votedPeopleCount").type(NUMBER).description("투표한 사람 수"),
                             enumDescription(
                                 fieldWithPath("data.items[].responseType").type(STRING).description("응답 타입"),
                                 Poll.PollResponseType.class
@@ -118,6 +119,7 @@ class GetPollListControllerTest extends ControllerTestContext {
                     Poll.PollResponseType.SINGLE,
                     Poll.PollType.NAMED,
                     LocalDateTime.now(),
+                    0,
                     0,
                     0,
                     List.of(
