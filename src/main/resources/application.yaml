@@ -30,8 +30,8 @@ spring:
     password: ${DATASOURCE_PASSWORD}
     hikari:
       schema: ${DEFAULT_SCHEMA}
-      pool-name: gollaba-HikariPool
-      maximum-pool-size: 10
+      pool-name: gollaba-HikariPool-test
+      maximum-pool-size: 1
       connection-timeout: 10000
       max-lifetime: 90000
       data-source-properties:
@@ -42,6 +42,7 @@ spring:
         useServerPrepStmts: true
         rewriteBatchedStatements: false
         useSsl: false
+      minimum-idle: 3
 
   security:
     oauth2:

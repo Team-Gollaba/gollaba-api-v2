@@ -18,6 +18,7 @@ public record PollSummary(
     LocalDateTime endAt,
     Integer readCount,
     Integer totalVotingCount,
+    Integer votedPeopleCount,
     List<PollItem> items
 ) {
     public record PollItem(

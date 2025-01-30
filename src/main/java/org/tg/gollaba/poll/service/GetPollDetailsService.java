@@ -28,6 +28,7 @@ public class GetPollDetailsService {
         Poll.PollType pollType,
         LocalDateTime endAt,
         Integer totalVotingCount,
+        Integer votedPeopleCount,
         Integer readCount,
         List<PollItem> items
     ) {

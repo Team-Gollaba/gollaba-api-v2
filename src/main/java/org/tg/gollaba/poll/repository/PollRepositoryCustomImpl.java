@@ -85,11 +85,12 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
         var pollIds = polls.stream().map(Poll::id).toList();
-        var votingCountMapByPollId = votingCountMapByPollId(pollIds);
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
 
         return new PageImpl<>(
-            convert(polls, pollCreatorProfileMap, votingCountMapByPollId),
+            convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds),
             pageable,
             totalCount
         );
@@ -111,6 +112,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .stream()
             .mapToInt(Integer::intValue)
             .sum();
+        var votedPeopleCount = votedPeopleCount(pollEntity.id());
         var creatorProfileUrl = getCreatorProfileUrl(pollEntity);
 
         return new GetPollDetailsService.PollDetails(
@@ -122,6 +124,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             pollEntity.pollType(),
             pollEntity.endAt(),
             totalVotingCount,
+            votedPeopleCount,
             pollEntity.readCount(),
             pollEntity.items()
                 .stream()
@@ -134,8 +137,34 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                 .toList()
         );
     }
+    
+    private Map<Long, Integer> votedPeopleCountMapByPollIds(List<Long> pollIds) {
+        return queryFactory
+            .select(voting.pollId, voting.countDistinct())
+            .from(voting)
+            .where(
+                voting.pollId.in(pollIds),
+                voting.deletedAt.isNull()
+            )
+            .groupBy(voting.pollId)
+            .fetch()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    t -> t.get(voting.pollId),
+                    t -> Optional.ofNullable(t.get(voting.countDistinct()))
+                        .map(Long::intValue)
+                        .orElse(0)
+                )
+            );
+    }
+    
+    private int votedPeopleCount(long pollId) {
+        return votedPeopleCountMapByPollIds(List.of(pollId))
+            .getOrDefault(pollId, 0);
+    }
 
-    private Map<Long, Map<Long, Integer>> votingCountMapByPollId(List<Long> pollIds) {
+    private Map<Long, Map<Long, Integer>> votingCountMapByPollIds(List<Long> pollIds) {
         return queryFactory
             .select(voting.pollId, votingItem.pollItemId, votingItem.count())
             .from(voting)
@@ -161,7 +190,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
     }
 
     private Map<Long, Integer> votingCountMap(long pollId) {
-        var result = votingCountMapByPollId(List.of(pollId))
+        var result = votingCountMapByPollIds(List.of(pollId))
             .get(pollId);
 
         return result == null ? Collections.emptyMap() : result;
@@ -169,10 +198,11 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
 
     private List<PollSummary> convert(List<Poll> polls,
                                       Map<Long, String> pollCreatorProfileMap,
-                                      Map<Long, Map<Long, Integer>> votingCountMapByPollId) {
+                                      Map<Long, Map<Long, Integer>> votingCountMapByPollIds,
+                                      Map<Long, Integer> votedPeopleCountMapByPollIds) {
         return polls.stream()
             .map(poll -> {
-                var votingCountMap = votingCountMapByPollId.getOrDefault(poll.id(), emptyMap());
+                var votingCountMap = votingCountMapByPollIds.getOrDefault(poll.id(), emptyMap());
                 var totalVotingCount = votingCountMap.values()
                     .stream()
                     .mapToInt(Integer::intValue)
@@ -191,6 +221,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
                     poll.endAt(),
                     poll.readCount(),
                     totalVotingCount,
+                    votedPeopleCountMapByPollIds.getOrDefault(poll.id(), 0),
                     poll.items()
                         .stream()
                         .map(item -> new PollSummary.PollItem(
@@ -224,33 +255,15 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
 
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
+        var pollIds = polls.stream()
+            .map(Poll::id)
             .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
 
         return new PageImpl<>(
-            convert(polls, pollCreatorProfileMap, response),
+            convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds),
             pageable,
             totalCount
         );
@@ -284,32 +297,14 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(limit)
             .fetch();
 
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
+        var pollIds = polls.stream()
+            .map(Poll::id)
             .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
 
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return convert(polls, pollCreatorProfileMap, response);
+        return convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds);
     }
 
     public List<PollSummary> findTrendingPolls(LocalDate aggregationDate, int limit){
@@ -326,32 +321,14 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(limit)
             .fetch();
 
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
+        var pollIds = polls.stream()
+            .map(Poll::id)
             .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(Collectors.toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
 
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
-
-        return convert(polls, pollCreatorProfileMap, response);
+        return convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds);
     }
 
     @Override
@@ -374,35 +351,12 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
-
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
-            .toList();
-
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
 
         return new PageImpl<>(
-            convert(polls, pollCreatorProfileMap, response),
+            convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds),
             pageable,
             totalCount
         );
@@ -469,33 +423,15 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetch();
 
-        var pollItemIds = polls.stream()
-            .flatMap(poll -> poll.items().stream())
-            .map(PollItem::id)
-            .distinct()
+        var pollIds = polls.stream()
+            .map(Poll::id)
             .toList();
-
-        var votingCountByItems = queryFactory
-            .select(votingItem.pollItemId, votingItem.count())
-            .from(votingItem)
-            .where(votingItem.pollItemId.in(pollItemIds))
-            .groupBy(votingItem.pollItemId)
-            .fetch()
-            .stream()
-            .collect(toMap(
-                tuple -> tuple.get(votingItem.pollItemId),
-                tuple -> tuple.get(votingItem.count()).intValue()
-            ));
-
         var pollCreatorProfileMap = getUserProfileImageUrls(polls);
-
-        var response = combine(
-            polls,
-            votingCountByItems
-        );
+        var votingCountMapByPollIds = votingCountMapByPollIds(pollIds);
+        var votedPeopleCountMapByPollIds = votedPeopleCountMapByPollIds(pollIds);
 
         return new PageImpl<>(
-            convert(polls, pollCreatorProfileMap, response),
+            convert(polls, pollCreatorProfileMap, votingCountMapByPollIds, votedPeopleCountMapByPollIds),
             pageable,
             totalCount
         );
