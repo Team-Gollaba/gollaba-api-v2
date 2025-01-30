@@ -31,7 +31,7 @@ spring:
     hikari:
       schema: ${DEFAULT_SCHEMA}
       pool-name: gollaba-HikariPool
-      maximum-pool-size: 3
+      maximum-pool-size: 10
       connection-timeout: 10000
       max-lifetime: 90000
       data-source-properties:
