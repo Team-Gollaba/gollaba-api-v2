@@ -70,6 +70,7 @@ class GetTrendingPollsControllerTest extends ControllerTestContext {
                             fieldWithPath("data[].endAt").type(STRING).description("투표 종료 시간"),
                             fieldWithPath("data[].readCount").type(NUMBER).description("조회수"),
                             fieldWithPath("data[].totalVotingCount").type(NUMBER).description("총 투표 수"),
+                            fieldWithPath("data[].votedPeopleCount").type(NUMBER).description("투표한 사람 수"),
                             fieldWithPath("data[].items").type(ARRAY).description("투표 항목"),
                             fieldWithPath("data[].items[].id").type(NUMBER).description("투표 ID"),
                             fieldWithPath("data[].items[].description").type(STRING).description("투표 항목 설명"),
@@ -92,6 +93,7 @@ class GetTrendingPollsControllerTest extends ControllerTestContext {
                 Poll.PollResponseType.SINGLE,
                 Poll.PollType.NAMED,
                 LocalDateTime.now(),
+                0,
                 0,
                 0,
                 List.of(
