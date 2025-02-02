@@ -6,7 +6,7 @@ application:
 spring:
   datasource:
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 3
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
