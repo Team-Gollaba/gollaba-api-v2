@@ -59,8 +59,8 @@ public enum Status {
     FAIL_TO_SEND_FCM_MESSAGE("FCM 메시지 전송에 실패했습니다."),
 
     //notification
-    APP_NOTIFICATION_NOT_FOUND("등록된 기기를 찾을 수 없습니다"),
-    DUPLICATE_DEVICE("이미 등록된 디바이스 입니다");
+    APP_NOTIFICATION_NOT_FOUND("등록된 기기를 찾을 수 없습니다."),
+    DUPLICATE_DEVICE("이미 등록된 디바이스 입니다.");
 
     private final String message;
 
