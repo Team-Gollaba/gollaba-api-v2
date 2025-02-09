@@ -14,6 +14,7 @@ public class ProviderDisconnectorImpl implements ProviderDisconnector {
     public void disconnect(User.ProviderType providerType, String providerId) {
         switch (providerType) {
             case KAKAO -> kakaoClient.disconnect(providerId);
+            case APPLE -> {} // TODO: implement
             case NAVER -> {} // TODO: implement
             default -> throw new IllegalArgumentException("Unknown provider type: " + providerType);
         }
