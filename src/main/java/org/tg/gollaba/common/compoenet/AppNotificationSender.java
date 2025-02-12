@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.client.FcmClient;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.notification.domain.AppNotificationHistory;
 import org.tg.gollaba.notification.domain.DeviceNotification;
 import org.tg.gollaba.notification.repository.AppNotificationHistoryRepository;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.lang.Long.parseLong;
 import static java.util.stream.Collectors.toMap;
 
 @Component
@@ -27,6 +29,7 @@ public class AppNotificationSender {
     private final FcmClient fcmClient;
     private final AppNotificationHistoryRepository appNotificationHistoryRepository;
     private final DeviceNotificationRepository deviceNotificationRepository;
+    private final HashIdHandler hashIdHandler;
 
     @Transactional
     public void sendPollNotifications(List<Long> pollIds) {
@@ -69,14 +72,14 @@ public class AppNotificationSender {
                                                         AppNotificationHistory.Type historyType,
                                                         FcmClient.Request request,
                                                         String eventId) {
-        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.SUCCESS, null, request, eventId, null);
+        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.SUCCESS, null, request, eventId);
     }
 
     private AppNotificationHistory createFailureHistory(DeviceNotification deviceNotification,
                                                         AppNotificationHistory.Type historyType,
                                                         Exception e,
                                                         FcmClient.Request request) {
-        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.FAILURE, e.getMessage(), request, null, null);
+        return createHistory(deviceNotification, historyType, AppNotificationHistory.Status.FAILURE, e.getMessage(), request, null);
     }
 
     private AppNotificationHistory createHistory(DeviceNotification deviceNotification,
@@ -84,8 +87,9 @@ public class AppNotificationSender {
                                                  AppNotificationHistory.Status historyStatus,
                                                  String failReason,
                                                  FcmClient.Request request,
-                                                 String eventId,
-                                                 String deepLink) {
+                                                 String eventId) {
+        var pollId = parseLong(eventId);
+        var pollHashId = hashIdHandler.encode(pollId);
         return new AppNotificationHistory(
             historyType,
             historyStatus,
@@ -96,7 +100,7 @@ public class AppNotificationSender {
             request.content(),
             failReason,
             eventId,
-            null
+            "Gollaba-app//notification?pollHashId=" + pollHashId
         );
     }
 }
