@@ -22,13 +22,13 @@ public class GetUserNotificationListService {
         var userAgentIds = deviceNotifications.stream()
             .map(DeviceNotification::agentId)
             .toList();
-        var notifications = appNotificationHistoryRepository.findUserNotifications(
+        var appNotificationHistories = appNotificationHistoryRepository.findUserNotifications(
             userId,
             userAgentIds,
             pageable
         );
 
-        return notifications.map(notification -> new AppNotificationVo(
+        return appNotificationHistories.map(notification -> new AppNotificationVo(
             notification.id(),
             notification.userId(),
             notification.agentId(),
