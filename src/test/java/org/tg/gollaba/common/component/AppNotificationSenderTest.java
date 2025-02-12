@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.tg.gollaba.common.client.FcmClient;
 import org.tg.gollaba.common.compoenet.AppNotificationSender;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.notification.domain.AppNotificationHistory;
 import org.tg.gollaba.notification.domain.DeviceNotification;
 import org.tg.gollaba.notification.domain.DeviceNotificationFixture;
@@ -43,6 +44,9 @@ public class AppNotificationSenderTest {
     @Mock
     private AppNotificationHistoryRepository appNotificationHistoryRepository;
 
+    @Mock
+    private HashIdHandler hashIdHandler;
+
     @Test
     void success(){
         //given
@@ -53,6 +57,7 @@ public class AppNotificationSenderTest {
             .willReturn(targetDevices);
         doNothing().when(fcmClient)
             .sendMessage(any(FcmClient.Request.class));
+        given(hashIdHandler.encode(1L)).willReturn("pollHashId");
 
         //when
         var throwable = catchThrowable(() -> sender.sendPollNotifications(pollIds));
@@ -69,6 +74,7 @@ public class AppNotificationSenderTest {
         assertThat(history.title()).isEqualTo("투표가 종료되었습니다.");
         assertThat(history.content()).isEqualTo("종료된 투표의 결과를 확인하세요.");
         assertThat(history.status()).isEqualTo(AppNotificationHistory.Status.SUCCESS);
+        assertThat(history.deepLink()).isEqualTo("Gollaba-app//notification?pollHashId=pollHashId");
     }
 
     private List<DeviceNotification> targetDevices() {
