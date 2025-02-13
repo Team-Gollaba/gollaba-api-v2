@@ -55,7 +55,8 @@ public class GetMyFavoritePollListControllerTest extends ControllerTestContext {
                     preprocessResponse(),
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
-                        parameterWithName("size").description("페이지 크기")
+                        parameterWithName("size").description("페이지 크기"),
+                        parameterWithName("sort").optional().description("정렬 조건: createdAt,desc || createdAt,asc")
                     ),
                     requestHeaderWithAuthorization(),
                     responseFields(
