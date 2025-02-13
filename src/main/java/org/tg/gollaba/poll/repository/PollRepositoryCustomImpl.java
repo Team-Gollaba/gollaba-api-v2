@@ -17,10 +17,7 @@ import org.tg.gollaba.poll.vo.PollSummary;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -333,6 +330,15 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
 
     @Override
     public Page<PollSummary> findMyVotingPolls(Long userId, Pageable pageable){
+        var orderBy = pageable.getSort()
+            .stream()
+            .map(order -> switch (order.getProperty()) {
+                case "createdAt" -> createColumnOrder(poll.createdAt, order);
+                case "endAt" -> createColumnOrder(poll.endAt, order);
+                default -> throw new IllegalArgumentException("존재하지 않는 컬럼입니다.");
+            })
+            .toArray(OrderSpecifier[]::new);
+
         var pollIds = queryFactory
             .select(voting.pollId)
             .from(voting)
@@ -352,6 +358,7 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
         var polls = queryFactory
             .selectFrom(poll)
             .where(poll.id.in(pollIds))
+            .orderBy(orderBy)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -419,10 +426,20 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             return Page.empty();
         }
 
+        var orderBy = pageable.getSort()
+            .stream()
+            .map(order -> switch (order.getProperty()) {
+                case "createdAt" -> createColumnOrder(poll.createdAt, order);
+                case "endAt" -> createColumnOrder(poll.endAt, order);
+                default -> throw new IllegalArgumentException("존재하지 않는 컬럼입니다.");
+            })
+            .toArray(OrderSpecifier[]::new);
+
         var polls = queryFactory
             .selectFrom(poll)
             .join(favorites).on(favorites.pollId.eq(poll.id))
             .where(favorites.userId.eq(userId))
+            .orderBy(orderBy)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
