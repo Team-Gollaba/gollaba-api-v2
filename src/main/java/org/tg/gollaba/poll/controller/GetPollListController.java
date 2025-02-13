@@ -56,6 +56,7 @@ public class GetPollListController extends HashIdController {
                                                              )
                                                              @PageableDefault Pageable pageable,
                                                              Request request) {
+        System.out.println("@@@controller pageable sort: " + pageable.getSort());
         request.validate();
         var requirement = createRequirement(request, pageable);
         var pageResult = service.get(requirement);

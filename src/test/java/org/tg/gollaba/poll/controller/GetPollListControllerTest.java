@@ -59,7 +59,7 @@ class GetPollListControllerTest extends ControllerTestContext {
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
                         parameterWithName("size").description("페이지 크기"),
-                        parameterWithName("sort").optional().description("정렬 조건: createAt, endAt"),
+                        parameterWithName("sort").optional().description("정렬 조건: createdAt,desc || createdAt,asc"),
                         enumDescription(
                             parameterWithName("pollType").optional().description("투표 타입"),
                             Poll.PollType.class
