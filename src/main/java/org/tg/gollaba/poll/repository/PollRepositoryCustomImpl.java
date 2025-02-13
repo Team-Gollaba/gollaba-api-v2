@@ -339,7 +339,11 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             .where(voting.userId.eq(userId))
             .fetch();
 
-        var totalCount = pollIds.size();
+        var totalCount = queryFactory
+            .select(voting.pollId.countDistinct())
+            .from(voting)
+            .where(voting.userId.eq(userId))
+            .fetchOne();
 
         if (totalCount == 0) {
             return Page.empty();
