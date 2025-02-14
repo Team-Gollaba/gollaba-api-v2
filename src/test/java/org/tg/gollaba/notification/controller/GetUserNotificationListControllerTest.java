@@ -41,6 +41,7 @@ public class GetUserNotificationListControllerTest extends ControllerTestContext
             .header(authHeader())
             .queryParam("page", 0)
             .queryParam("size", 10)
+            .queryParams("sort", "createdAt,desc")
             .when()
             .get("/v2/app-notifications")
             .then()
@@ -55,7 +56,8 @@ public class GetUserNotificationListControllerTest extends ControllerTestContext
                     preprocessResponse(),
                     queryParameters(
                         parameterWithName("page").description("페이지 번호"),
-                        parameterWithName("size").description("페이지 크기")
+                        parameterWithName("size").description("페이지 크기"),
+                        parameterWithName("sort").optional().description("정렬 조건: createdAt,desc || createdAt,asc")
                     ),
                     requestHeaders(
                         headerWithName(HttpHeaders.AUTHORIZATION).description("Bearer 토큰")

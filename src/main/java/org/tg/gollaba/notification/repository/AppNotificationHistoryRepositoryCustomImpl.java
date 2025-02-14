@@ -1,6 +1,9 @@
 package org.tg.gollaba.notification.repository;
 
+import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.notification.domain.QAppNotificationHistory.appNotificationHistory;
+
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,16 @@ public class AppNotificationHistoryRepositoryCustomImpl implements AppNotificati
             return Page.empty();
         }
 
+        var orderBy = pageable.getSort()
+            .stream()
+            .map(order -> {
+                if ("createdAt".equals(order.getProperty())) {
+                    return createColumnOrder(appNotificationHistory.createdAt, order);
+                }
+                throw new IllegalArgumentException("존재하지 않는 컬럼입니다.");
+            })
+            .toArray(OrderSpecifier[]::new);
+
         var query = queryFactory
             .selectFrom(appNotificationHistory)
             .where(
@@ -39,6 +52,7 @@ public class AppNotificationHistoryRepositoryCustomImpl implements AppNotificati
                 appNotificationHistory.agentId.in(agentIds),
                 appNotificationHistory.status.eq(AppNotificationHistory.Status.SUCCESS)
             )
+            .orderBy(orderBy)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();

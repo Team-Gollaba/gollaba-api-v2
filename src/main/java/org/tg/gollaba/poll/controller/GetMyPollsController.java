@@ -30,8 +30,6 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class GetMyPollsController {
     private final GetMyPollsService service;
 
-    private final HashIdHandler hashIdHandler;
-
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
     public ApiResponse<PageResponse<PollSummary>> get(AuthenticatedUser user,
