@@ -245,9 +245,19 @@ public class PollRepositoryCustomImpl implements PollRepositoryCustom {
             return Page.empty();
         }
 
+        var orderBy = pageable.getSort()
+            .stream()
+            .map(order -> switch (order.getProperty()) {
+                case "createdAt" -> createColumnOrder(poll.createdAt, order);
+                case "endAt" -> createColumnOrder(poll.endAt, order);
+                default -> throw new IllegalArgumentException("존재하지 않는 컬럼입니다.");
+            })
+            .toArray(OrderSpecifier[]::new);
+
         var polls = queryFactory
             .selectFrom(poll)
             .where(poll.userId.eq(userId))
+            .orderBy(orderBy)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
