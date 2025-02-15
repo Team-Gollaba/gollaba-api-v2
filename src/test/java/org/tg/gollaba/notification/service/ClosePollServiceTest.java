@@ -9,9 +9,10 @@ import org.tg.gollaba.common.compoenet.AppNotificationSender;
 import org.tg.gollaba.poll.repository.PollRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static java.util.List.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -20,9 +21,9 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 
 @ExtendWith(MockitoExtension.class)
-public class SendNotificationTerminatedPollServiceTest {
+public class ClosePollServiceTest {
     @InjectMocks
-    private SendNotificationTerminatedPollService service;
+    private ClosePollService service;
     @Mock
     private PollRepository pollRepository;
     @Mock
@@ -37,11 +38,11 @@ public class SendNotificationTerminatedPollServiceTest {
         given(pollRepository.findPollIdsByEndAtBetween(from, to)).willReturn(pollIds);
 
         //when
-        var throwable = catchThrowable(() -> service.notifyTerminatedPolls(from, to));
+        var throwable = catchThrowable(() -> service.close(from, to));
 
         //then
         assertThat(throwable).isNull();
         verify(pollRepository, times(1)).findPollIdsByEndAtBetween(from, to);
-        verify(appNotificationSender, times(1)).sendPollNotifications(pollIds);
+        verify(appNotificationSender, times(2)).pollClosed(anyLong());
     }
 }

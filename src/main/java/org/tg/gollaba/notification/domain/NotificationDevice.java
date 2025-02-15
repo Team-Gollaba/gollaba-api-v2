@@ -7,12 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-@Table(name = "device_notification")
+import java.time.LocalDateTime;
+
+@Table(name = "notification_device")
 @Entity
 @Getter
 @Accessors(fluent = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DeviceNotification extends BaseEntity {
+public class NotificationDevice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,14 +32,17 @@ public class DeviceNotification extends BaseEntity {
     @Column(nullable = false)
     private String deviceName;
 
-    @Column
+    @Column(nullable = false)
     private boolean allowsNotification;
 
-    public DeviceNotification(Long userId,
-                           String agentId,
-                           OperatingSystemType osType,
-                           String deviceName,
-                           boolean allowsNotification) {
+    @Column
+    private LocalDateTime deletedAt;
+
+    public NotificationDevice(Long userId,
+                              String agentId,
+                              OperatingSystemType osType,
+                              String deviceName,
+                              boolean allowsNotification) {
         this.userId = userId;
         this.agentId = agentId;
         this.osType = osType;
@@ -52,6 +57,10 @@ public class DeviceNotification extends BaseEntity {
         }
 
         validate();
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 
     void validate() {

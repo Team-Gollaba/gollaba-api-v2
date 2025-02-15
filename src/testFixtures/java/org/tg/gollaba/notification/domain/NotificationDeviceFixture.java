@@ -9,17 +9,17 @@ import org.tg.gollaba.common.TestFixture;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DeviceNotificationFixture implements TestFixture<DeviceNotification> {
+public class NotificationDeviceFixture implements TestFixture<NotificationDevice> {
     private Long id = 1L;
     private Long userId = 1L;
     private String agentId = "testAgentId";
-    private DeviceNotification.OperatingSystemType osType = DeviceNotification.OperatingSystemType.IOS;
+    private NotificationDevice.OperatingSystemType osType = NotificationDevice.OperatingSystemType.IOS;
     private String deviceName = "testDeviceName";
     private Boolean allowsNotification = true;
 
     @Override
-    public DeviceNotification build(){
-        var deviceNotification = new DeviceNotification();
+    public NotificationDevice build(){
+        var deviceNotification = new NotificationDevice();
         FixtureReflectionUtils.reflect(deviceNotification, this);
         return deviceNotification;
     }

@@ -6,28 +6,26 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.tg.gollaba.common.ControllerTestContext;
+import org.tg.gollaba.notification.domain.NotificationDevice;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
-import static org.tg.gollaba.common.ApiDocumentUtils.fieldsWithBasic;
 
-class UpdateDeviceSendNotificationControllerTest extends ControllerTestContext {
+class CreateNotificationDeviceControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.NOTIFICATION.tagName();
-    private static final String DESCRIPTION = Tags.NOTIFICATION.descriptionWith("디바이스 알림 수정");
+    private static final String DESCRIPTION = Tags.NOTIFICATION.descriptionWith("디바이스 등록");
 
     @Test
     @WithMockUser(authorities = "USER")
     void success() {
         given()
-            .header(HttpHeaders.AUTHORIZATION, "JWT token")
             .body(requestBody())
-            .when()
-            .put("/v2/app-notifications")
+            .header(HttpHeaders.AUTHORIZATION, "JWT token")
+            .post("/v2/app-notifications")
             .then()
             .log().all()
             .apply(
@@ -43,6 +41,8 @@ class UpdateDeviceSendNotificationControllerTest extends ControllerTestContext {
                     ),
                     requestFields(
                         fieldWithPath("agentId").type(STRING).description("에이전트 아이디"),
+                        fieldWithPath("osType").type(STRING).description("운영체제 타입"),
+                        fieldWithPath("deviceName").type(STRING).description("디바이스 이름"),
                         fieldWithPath("allowsNotification").type(BOOLEAN).description("알림 허용 여부")
                     ),
                     responseFields(
@@ -55,10 +55,13 @@ class UpdateDeviceSendNotificationControllerTest extends ControllerTestContext {
             .status(HttpStatus.OK);
     }
 
-    private UpdateDeviceNotificationController.Request requestBody() {
-        return new UpdateDeviceNotificationController.Request(
+    private CreateNotificationDeviceController.Request requestBody() {
+        return new CreateNotificationDeviceController.Request(
             "agentId",
+            NotificationDevice.OperatingSystemType.IOS,
+            "deviceName",
             true
         );
     }
 }
+
