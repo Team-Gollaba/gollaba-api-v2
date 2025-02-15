@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.tg.gollaba.voting.domain.Voting;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VotingRepository extends JpaRepository<Voting, Long>, VotingRepositoryCustom {
@@ -27,4 +28,11 @@ public interface VotingRepository extends JpaRepository<Voting, Long>, VotingRep
         AND v.deletedAt is null
     """)
     Optional<Voting> findActiveVotingBy(Long pollId, Long userId);
+
+    @Query("""
+        SELECT v FROM Voting v
+        WHERE v.pollId = :pollId
+        AND v.deletedAt is null
+    """)
+    List<Voting> findActiveByPollId(Long pollId);
 }

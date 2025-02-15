@@ -6,9 +6,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.notification.domain.DeviceNotification;
-import org.tg.gollaba.notification.domain.DeviceNotificationFixture;
-import org.tg.gollaba.notification.repository.DeviceNotificationRepository;
+import org.tg.gollaba.notification.domain.NotificationDevice;
+import org.tg.gollaba.notification.domain.NotificationDeviceFixture;
+import org.tg.gollaba.notification.repository.NotificationDeviceRepository;
 import org.tg.gollaba.user.domain.UserFixture;
 import org.tg.gollaba.user.repository.UserRepository;
 
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class UpdateDeviceSendNotificationServiceTest {
     @InjectMocks
-    private UpdateDeviceNotificationService service;
+    private UpdateNotificationDeviceService service;
 
     @Mock
-    private DeviceNotificationRepository deviceNotificationRepository;
+    private NotificationDeviceRepository notificationDeviceRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -36,16 +36,16 @@ public class UpdateDeviceSendNotificationServiceTest {
     void success(){
         //given
         var user = new UserFixture().build();
-        var deviceNotification = new DeviceNotificationFixture()
+        var deviceNotification = new NotificationDeviceFixture()
             .setAllowsNotification(true)
             .build();
-        var requirement = new UpdateDeviceNotificationService.Requirement(
+        var requirement = new UpdateNotificationDeviceService.Requirement(
             1L,
             "12",
             false
         );
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
-        given(deviceNotificationRepository.findByUserIdAndAgentId(1L, "12"))
+        given(notificationDeviceRepository.findByUserIdAndAgentIdAndDeletedAtIsNull(1L, "12"))
             .willReturn(Optional.of(deviceNotification));
 
         // when
@@ -53,9 +53,9 @@ public class UpdateDeviceSendNotificationServiceTest {
 
         // then
         assertThat(throwable).isNull();
-        verify(deviceNotificationRepository, times(1)).save(any(DeviceNotification.class));
-        var argumentCaptor = ArgumentCaptor.forClass(DeviceNotification.class);
-        verify(deviceNotificationRepository).save(argumentCaptor.capture());
+        verify(notificationDeviceRepository, times(1)).save(any(NotificationDevice.class));
+        var argumentCaptor = ArgumentCaptor.forClass(NotificationDevice.class);
+        verify(notificationDeviceRepository).save(argumentCaptor.capture());
         var capturedAppNotification = argumentCaptor.getValue();
         assertThat(capturedAppNotification.allowsNotification()).isEqualTo(requirement.allowsNotification());
     }

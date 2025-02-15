@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-public class DeviceNotificationTest {
+public class NotificationDeviceTest {
     @DisplayName("디바이스 등록 검증 테스트")
     @Nested
     class validateTest{
@@ -15,10 +15,10 @@ public class DeviceNotificationTest {
         void userId가_null이면_에러(){
             // given when
             var throwable = catchThrowable(() ->
-                new DeviceNotification(
+                new NotificationDevice(
                     null,
                     "agentId",
-                    DeviceNotification.OperatingSystemType.IOS,
+                    NotificationDevice.OperatingSystemType.IOS,
                     "deviceName",
                     true)
             );
@@ -32,7 +32,7 @@ public class DeviceNotificationTest {
         void osType이_null이면_에러(){
             // given when
             var throwable = catchThrowable(() ->
-                new DeviceNotification(
+                new NotificationDevice(
                     1L,
                     "agentId",
                     null,
@@ -49,10 +49,10 @@ public class DeviceNotificationTest {
         void deviceName이_null이면_에러() {
             // given when
             var throwable = catchThrowable(() ->
-                new DeviceNotification(
+                new NotificationDevice(
                     1L,
                     "agentId",
-                    DeviceNotification.OperatingSystemType.IOS,
+                    NotificationDevice.OperatingSystemType.IOS,
                     null,
                     true)
             );

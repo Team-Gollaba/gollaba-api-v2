@@ -68,8 +68,6 @@ public class GetUserNotificationListControllerTest extends ControllerTestContext
                         fieldWithPath("data.items").type(ARRAY).description("알림 목록"),
                         fieldWithPath("data.items[].notificationId").type(NUMBER).description("알림 ID"),
                         fieldWithPath("data.items[].userId").type(NUMBER).description("사용자 ID"),
-                        fieldWithPath("data.items[].agentId").type(STRING).description("에이전트 ID"),
-                        fieldWithPath("data.items[].eventId").type(STRING).description("투표 ID").optional(),
                         fieldWithPath("data.items[].deepLink").type(STRING).description("딥링크"),
                         fieldWithPath("data.items[].title").type(STRING).description("알림 제목"),
                         fieldWithPath("data.items[].content").type(STRING).description("알림 내용"),
@@ -90,8 +88,6 @@ public class GetUserNotificationListControllerTest extends ControllerTestContext
             new AppNotificationVo(
                 1L,
                 1L,
-                "agent-id",
-                null,
                 "https://deepLink",
                 "알림 제목 1",
                 "알림 내용 1"
@@ -99,8 +95,6 @@ public class GetUserNotificationListControllerTest extends ControllerTestContext
             new AppNotificationVo(
                 2L,
                 2L,
-                "agent-id2",
-                null,
                 "https://deepLink2",
                 "알림 제목 2",
                 "알림 내용 2"

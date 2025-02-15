@@ -5,22 +5,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
-import org.tg.gollaba.notification.domain.DeviceNotification;
+import org.tg.gollaba.notification.domain.NotificationDevice;
 import org.tg.gollaba.notification.repository.AppNotificationHistoryRepository;
-import org.tg.gollaba.notification.repository.DeviceNotificationRepository;
+import org.tg.gollaba.notification.repository.NotificationDeviceRepository;
 import org.tg.gollaba.notification.vo.AppNotificationVo;
 
 @Service
 @RequiredArgsConstructor
 public class GetUserNotificationListService {
-    private final DeviceNotificationRepository deviceNotificationRepository;
+    private final NotificationDeviceRepository notificationDeviceRepository;
     private final AppNotificationHistoryRepository appNotificationHistoryRepository;
 
     @Transactional(readOnly = true)
     public Page<AppNotificationVo> get(Long userId, Pageable pageable) {
-        var deviceNotifications = deviceNotificationRepository.findByUserId(userId);
+        var deviceNotifications = notificationDeviceRepository.findAllActiveByUserId(userId);
         var userAgentIds = deviceNotifications.stream()
-            .map(DeviceNotification::agentId)
+            .map(NotificationDevice::agentId)
             .toList();
         var appNotificationHistories = appNotificationHistoryRepository.findUserNotifications(
             userId,
@@ -31,8 +31,6 @@ public class GetUserNotificationListService {
         return appNotificationHistories.map(notification -> new AppNotificationVo(
             notification.id(),
             notification.userId(),
-            notification.agentId(),
-            notification.eventId(),
             notification.deepLink(),
             notification.title(),
             notification.content()

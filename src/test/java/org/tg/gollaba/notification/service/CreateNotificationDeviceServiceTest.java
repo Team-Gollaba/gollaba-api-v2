@@ -6,8 +6,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.tg.gollaba.notification.domain.DeviceNotification;
-import org.tg.gollaba.notification.repository.DeviceNotificationRepository;
+import org.tg.gollaba.notification.domain.NotificationDevice;
+import org.tg.gollaba.notification.repository.NotificationDeviceRepository;
 import org.tg.gollaba.user.domain.UserFixture;
 import org.tg.gollaba.user.repository.UserRepository;
 
@@ -21,12 +21,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateDeviceSendNotificationServiceTest {
+public class CreateNotificationDeviceServiceTest {
     @InjectMocks
-    private CreateDeviceNotificationService service;
+    private CreateNotificationDeviceService service;
 
     @Mock
-    private DeviceNotificationRepository deviceNotificationRepository;
+    private NotificationDeviceRepository notificationDeviceRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -35,30 +35,30 @@ public class CreateDeviceSendNotificationServiceTest {
     void success(){
         //given
         var user = new UserFixture().build();
-        var requirement = new CreateDeviceNotificationService.Requirement(
+        var requirement = new CreateNotificationDeviceService.Requirement(
             1L,
             "12",
-            DeviceNotification.OperatingSystemType.ANDROID,
+            NotificationDevice.OperatingSystemType.ANDROID,
             "deviceName",
             true
         );
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
-        given(deviceNotificationRepository.findByUserIdAndAgentId(1L, "12")).willReturn(Optional.empty());
+        given(notificationDeviceRepository.findByUserIdAndAgentIdAndDeletedAtIsNull(1L, "12")).willReturn(Optional.empty());
 
         // when
         var throwable = catchThrowable(() -> service.create(requirement));
 
         // then
         assertThat(throwable).isNull();
-        verify(deviceNotificationRepository, times(1)).save(any(DeviceNotification.class));
+        verify(notificationDeviceRepository, times(1)).save(any(NotificationDevice.class));
 
-        var argumentCaptor = ArgumentCaptor.forClass(DeviceNotification.class);
-        verify(deviceNotificationRepository).save(argumentCaptor.capture());
+        var argumentCaptor = ArgumentCaptor.forClass(NotificationDevice.class);
+        verify(notificationDeviceRepository).save(argumentCaptor.capture());
 
         var capturedAppNotification = argumentCaptor.getValue();
         assertThat(capturedAppNotification.userId()).isEqualTo(requirement.userId());
         assertThat(capturedAppNotification.agentId()).isEqualTo(requirement.agentId());
-        assertThat(capturedAppNotification.osType()).isEqualTo(DeviceNotification.OperatingSystemType.ANDROID);
+        assertThat(capturedAppNotification.osType()).isEqualTo(NotificationDevice.OperatingSystemType.ANDROID);
         assertThat(capturedAppNotification.deviceName()).isEqualTo(requirement.deviceName());
         assertThat(capturedAppNotification.allowsNotification()).isEqualTo(requirement.allowsNotification());
     }

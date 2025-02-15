@@ -42,13 +42,10 @@ public class AppNotificationHistory extends BaseEntity {
     private String content;
 
     @Column
-    private String failReason;
-
-    @Column
-    private String eventId;
-
-    @Column
     private String deepLink;
+
+    @Column
+    private String failReason;
 
     public AppNotificationHistory(Type type,
                                   Status status,
@@ -58,7 +55,6 @@ public class AppNotificationHistory extends BaseEntity {
                                   String title,
                                   String content,
                                   String failReason,
-                                  String eventId,
                                   String deepLink) {
         this.type = type;
         this.status = status;
@@ -68,12 +64,11 @@ public class AppNotificationHistory extends BaseEntity {
         this.title = title;
         this.content = content;
         this.failReason = failReason;
-        this.eventId = eventId;
         this.deepLink = deepLink;
     }
 
     public enum Type {
-        POLL_TERMINATE,
+        POLL_CLOSED,
         FAVORITE,
         VOTING,
         SERVER_NOTICE
