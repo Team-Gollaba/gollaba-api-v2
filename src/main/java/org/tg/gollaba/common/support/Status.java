@@ -43,6 +43,7 @@ public enum Status {
     IMAGE_EXCESS("이미지는 12개 이하로 제한됩니다."),
     VOTING_NOT_USER("본인의 투표만 수정할 수 있습니다."),
     VOTING_ALREADY_ENDED("이미 종료된 투표는 수정할 수 없습니다."),
+    ALREADY_ANONYMOUS_VOTING("비회원으로 투표한 항목은 조회할 수 없습니다."),
 
     //favorites
     FAVORITE_NOT_FOUND("좋아요 이력을 찾을 수 없습니다."),
