@@ -17,6 +17,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.tg.gollaba.common.ApiDocumentUtils.*;
 
 class GetMyVotingControllerTest extends ControllerTestContext {
@@ -47,6 +49,9 @@ class GetMyVotingControllerTest extends ControllerTestContext {
                         .description(DESCRIPTION),
                     preprocessRequest(),
                     preprocessResponse(),
+                    queryParameters(
+                        parameterWithName("pollHashId").description("투표 ID")
+                    ),
                     requestHeaderWithAuthorization(),
                     responseFields(
                         fieldsWithBasic(
