@@ -1,11 +1,12 @@
 package org.tg.gollaba.voting.controller;
 
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
+import org.tg.gollaba.common.support.IpAddressExtractor;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.voting.service.GetMyVotingService;
@@ -24,9 +25,10 @@ public class GetMyVotingController {
     ApiResponse<Response> get(@RequestParam
                               @NotBlank(message = "pollHashId 는 필수 값입니다.")
                               String pollHashId,
-                              AuthenticatedUser user) {
+                              AuthenticatedUser user,
+                              HttpServletRequest httpServletRequest) {
         var pollId = hashIdHandler.decode(pollHashId);
-        var voting = service.getMyVoting(pollId, user.id());
+        var voting = service.getMyVoting(pollId, user.id(), IpAddressExtractor.extract(httpServletRequest));
 
         return ApiResponse.success(
             new Response(voting.id(),voting.votedItemIds())

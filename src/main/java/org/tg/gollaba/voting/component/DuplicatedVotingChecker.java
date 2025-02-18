@@ -8,4 +8,5 @@ public interface DuplicatedVotingChecker {
 
     void delete(String ipAddress, Long pollId);
 
+    boolean hasVoted(String ipAddress, Long pollId);
 }

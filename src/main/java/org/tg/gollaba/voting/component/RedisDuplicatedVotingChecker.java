@@ -43,4 +43,11 @@ public class RedisDuplicatedVotingChecker implements DuplicatedVotingChecker {
     public void delete(String ipAddress, Long pollId) {
         redisTemplate.delete(VOTING_CHECK_KEY.formatted(ipAddress, pollId));
     }
+
+    @Override
+    public boolean hasVoted(String ipAddress, Long pollId) {
+        var value = redisTemplate.opsForValue()
+            .get(VOTING_CHECK_KEY.formatted(ipAddress, pollId));
+        return value != null;
+    }
 }
