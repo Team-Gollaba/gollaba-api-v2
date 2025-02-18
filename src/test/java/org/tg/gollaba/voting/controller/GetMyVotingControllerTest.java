@@ -22,13 +22,14 @@ import static org.tg.gollaba.common.ApiDocumentUtils.*;
 class GetMyVotingControllerTest extends ControllerTestContext {
     private static final String TAG = Tags.VOTING.tagName();
     private static final String DESCRIPTION = Tags.VOTING.descriptionWith("내 투표 참여 조회");
+
     @Autowired
     private GetMyVotingService service;
 
     @Test
     @WithMockUser(authorities = "USER")
     void success() {
-        when(service.getMyVoting(any(), any()))
+        when(service.getMyVoting(any(), any(), any()))
             .thenReturn(mockResult());
 
         given()
