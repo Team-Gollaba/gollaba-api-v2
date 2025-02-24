@@ -46,12 +46,13 @@ public class AppNotificationSender {
             .stream()
             .filter(NotificationDevice::allowsNotification)
             .toList();
+        var pollTitle = poll.title();
 
         devices.forEach(device -> {
             var request = new FcmClient.Request(
                 device.agentId(),
-                "투표가 종료되었습니다.",
-                "종료된 투표의 결과를 확인하세요.",
+                "투표 결과 도착!",
+                pollTitle+"의 투표가 마감되었어요! 1위는 누구일까요?!",
                 "gollaba://voting?pollHashId=" + hashIdHandler.encode(pollId)
             );
 
