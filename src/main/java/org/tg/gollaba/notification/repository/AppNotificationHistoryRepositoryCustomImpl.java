@@ -1,5 +1,6 @@
 package org.tg.gollaba.notification.repository;
 
+import static java.util.stream.Collectors.toMap;
 import static org.tg.gollaba.common.support.QueryDslUtils.createColumnOrder;
 import static org.tg.gollaba.notification.domain.QAppNotificationHistory.appNotificationHistory;
 
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.tg.gollaba.notification.domain.AppNotificationHistory;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -21,20 +23,6 @@ public class AppNotificationHistoryRepositoryCustomImpl implements AppNotificati
 
     @Override
     public Page<AppNotificationHistory> findUserNotifications(Long userId, List<String> agentIds, Pageable pageable) {
-        var totalCount = queryFactory
-            .select(appNotificationHistory.count())
-            .from(appNotificationHistory)
-            .where(
-                appNotificationHistory.userId.eq(userId),
-                appNotificationHistory.agentId.in(agentIds),
-                appNotificationHistory.status.eq(AppNotificationHistory.Status.SUCCESS)
-            )
-            .fetchOne();
-
-        if (totalCount == null || totalCount == 0) {
-            return Page.empty();
-        }
-
         var orderBy = pageable.getSort()
             .stream()
             .map(order -> {
@@ -57,6 +45,28 @@ public class AppNotificationHistoryRepositoryCustomImpl implements AppNotificati
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(query, pageable, totalCount);
+        var distinctNotifications = query.stream()
+            .collect(toMap(
+                AppNotificationHistory::deepLink,
+                notification -> notification,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+            ))
+            .values()
+            .stream()
+            .toList();
+
+        var totalCount = distinctNotifications.size();
+
+        if (totalCount == 0) {
+            return Page.empty();
+        }
+
+        var pagedNotifications = distinctNotifications.stream()
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+
+        return new PageImpl<>(pagedNotifications, pageable, totalCount);
     }
 }
