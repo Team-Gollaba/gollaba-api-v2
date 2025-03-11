@@ -35,34 +35,38 @@ public class GetPollListController extends HashIdController {
         this.service = service;
     }
     @GetMapping(headers = HttpHeaders.AUTHORIZATION)
-    ApiResponse<PageResponse<PollSummary>> get(@SortDefaults(
-                                                                @SortDefault(sort = "createdAt", direction = DESC)
-                                                            )
-                                               @PageableDefault Pageable pageable,
-                                               AuthenticatedUser user,
-                                               Request request) {
+    ApiResponse<PageResponse<PollSummary>> get(
+        @SortDefaults(
+            @SortDefault(sort = "createdAt", direction = DESC)
+        )
+        @PageableDefault Pageable pageable,
+        AuthenticatedUser user,
+        Request request
+    ) {
         request.validate();
         var requirement = createRequirement(request, pageable, user);
-        var pageResult = service.get(requirement);
+
+        var res = service.get(requirement);
 
         return ApiResponse.success(
-            PageResponse.from(pageResult)
+            res
         );
     }
 
     @GetMapping
-    ApiResponse<PageResponse<PollSummary>> get(@SortDefaults(
-                                                                @SortDefault(sort = "createdAt", direction = DESC)
-                                                             )
-                                                             @PageableDefault Pageable pageable,
-                                                             Request request) {
-        System.out.println("@@@controller pageable sort: " + pageable.getSort());
+    ApiResponse<PageResponse<PollSummary>> get(
+        @SortDefaults(
+            @SortDefault(sort = "createdAt", direction = DESC)
+        )
+        @PageableDefault Pageable pageable,
+        Request request
+    ) {
         request.validate();
         var requirement = createRequirement(request, pageable);
-        var pageResult = service.get(requirement);
+        var res = service.get(requirement);
 
         return ApiResponse.success(
-            PageResponse.from(pageResult)
+            res
         );
     }
 

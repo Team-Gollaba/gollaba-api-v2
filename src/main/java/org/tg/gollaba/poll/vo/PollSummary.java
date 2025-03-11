@@ -1,6 +1,8 @@
 package org.tg.gollaba.poll.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.tg.gollaba.poll.controller.serializer.HashIdDeserializer;
 import org.tg.gollaba.poll.controller.serializer.HashIdSerializer;
 import org.tg.gollaba.poll.domain.Poll;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 public record PollSummary(
     @JsonSerialize(using = HashIdSerializer.class)
+    @JsonDeserialize(using = HashIdDeserializer.class)
     Long id,
     String title,
     String creatorName,

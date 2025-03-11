@@ -3,6 +3,7 @@ package org.tg.gollaba.poll.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.tg.gollaba.common.support.CachedList;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.HashIdHandler;
@@ -24,7 +25,7 @@ public class GetTopPollsController extends HashIdController {
     }
 
     @GetMapping
-    public ApiResponse<List<PollSummary>> get(Integer limit){
+    public ApiResponse<CachedList<PollSummary>> get(Integer limit){
         limit = limit == null ? DEFAULT_LIMIT : limit;
 
         return ApiResponse.success(
