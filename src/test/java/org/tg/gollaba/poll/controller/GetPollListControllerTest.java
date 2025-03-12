@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.tg.gollaba.common.ControllerTestContext;
+import org.tg.gollaba.common.web.PageResponse;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.service.GetPollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
@@ -108,8 +109,8 @@ class GetPollListControllerTest extends ControllerTestContext {
             .status(HttpStatus.OK);
     }
 
-    private PageImpl<PollSummary> mockResult() {
-        return new PageImpl<>(
+    private PageResponse<PollSummary> mockResult() {
+        return PageResponse.from(new PageImpl<>(
             List.of(
                 new PollSummary(
                     1L,
@@ -134,6 +135,6 @@ class GetPollListControllerTest extends ControllerTestContext {
             ),
             PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt")),
             1
-        );
+        ));
     }
 }
