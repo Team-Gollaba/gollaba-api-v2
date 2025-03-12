@@ -139,6 +139,11 @@ public class Poll extends BaseEntity {
         MULTIPLE
     }
 
+    public enum PollResponseTypeB {
+        SINGLE,
+        MULTIPLE
+    }
+
     public enum PollType {
         NAMED,
         ANONYMOUS

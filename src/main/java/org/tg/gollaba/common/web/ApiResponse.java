@@ -79,17 +79,5 @@ public record ApiResponse<T>(
             data
         );
     }
-
-    @JsonValue
-    public ApiResponse<?> toJson() {
-        System.out.println();
-
-        return new ApiResponse<>(
-            this.status,
-            this.message,
-            this.serverDateTime,
-            this.data
-        );
-    }
 }
 

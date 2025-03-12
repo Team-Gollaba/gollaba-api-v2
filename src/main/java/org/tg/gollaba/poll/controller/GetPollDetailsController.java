@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.domain.Poll;

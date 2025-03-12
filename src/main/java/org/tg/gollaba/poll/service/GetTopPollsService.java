@@ -19,8 +19,7 @@ public class GetTopPollsService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = CacheKeys.TOP_POLLS, key = "#limit")
-    public CachedList<PollSummary> get(int limit) {
-        var result = pollRepository.findTopPolls(LocalDate.now(), limit);
-        return CachedList.from(result);
+    public List<PollSummary> get(int limit) {
+        return pollRepository.findTopPolls(LocalDate.now(), limit);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.CreatePollService;
 import org.tg.gollaba.poll.domain.Poll;
@@ -29,7 +28,7 @@ public class CreatePollController extends HashIdController {
     }
 
     @PostMapping(headers = HttpHeaders.AUTHORIZATION)
-    public ApiResponse<Response> create(AuthenticatedUser user,
+    ApiResponse<Response> create(AuthenticatedUser user,
                                         @Valid Request request) {
         var requirement = request.toRequirement(Optional.of(user.id()));
         var pollId = service.create(requirement);
@@ -42,7 +41,7 @@ public class CreatePollController extends HashIdController {
     }
 
     @PostMapping
-    public ApiResponse<Response> create(@Valid Request request) {
+    ApiResponse<Response> create(@Valid Request request) {
         var requirement = request.toRequirement(Optional.empty());
         var pollId = service.create(requirement);
 

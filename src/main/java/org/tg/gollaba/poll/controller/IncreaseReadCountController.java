@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.IncreaseReadCountService;
 

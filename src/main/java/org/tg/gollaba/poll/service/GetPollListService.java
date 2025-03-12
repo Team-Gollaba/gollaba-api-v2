@@ -1,6 +1,7 @@
 package org.tg.gollaba.poll.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,37 @@ public class GetPollListService {
     @Cacheable(
         value = CacheKeys.POLL_LIST_HOME, 
         key = "'page-' + #requirement.pageable.pageNumber + '-size-' + #requirement.pageable.pageSize",
-        condition = "#requirement.query.isEmpty() && #requirement.pageable.pageNumber <= 3 && #requirement.pageable.pageSize <= 20"
+        condition = """
+            #requirement.query().isEmpty() &&
+            #requirement.userId().isEmpty() &&
+            #requirement.isActive().isEmpty() &&
+            #requirement.pollType().isEmpty() &&
+            #requirement.pageable.pageNumber <= 3 &&
+            #requirement.pageable.pageSize <= 20
+            """
     )
     public PageResponse<PollSummary> get(Requirement requirement) {
+        return getResult(requirement);
+    }
+
+    @Transactional
+    @CachePut(
+        value = CacheKeys.POLL_LIST_HOME,
+        key = "'page-' + #requirement.pageable.pageNumber + '-size-' + #requirement.pageable.pageSize",
+        condition = """
+            #requirement.query().isEmpty() &&
+            #requirement.userId().isEmpty() &&
+            #requirement.isActive().isEmpty() &&
+            #requirement.pollType().isEmpty() &&
+            #requirement.pageable.pageNumber <= 3 &&
+            #requirement.pageable.pageSize <= 20
+            """
+    )
+    public PageResponse<PollSummary> refresh(Requirement requirement) {
+        return getResult(requirement);
+    }
+
+    private PageResponse<PollSummary> getResult(Requirement requirement) {
         requirement.optionGroup
             .filter(optionGroup -> optionGroup == OptionGroup.TITLE)
             .ifPresent(optionGroup -> {

@@ -12,7 +12,6 @@ import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.support.StringUtils;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.PageResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
@@ -35,7 +34,7 @@ public class GetPollListController extends HashIdController {
         this.service = service;
     }
     @GetMapping(headers = HttpHeaders.AUTHORIZATION)
-    ApiResponse<PageResponse<PollSummary>> get(
+    ApiResponse<PageResponse<PollSummaryResponse>> get(
         @SortDefaults(
             @SortDefault(sort = "createdAt", direction = DESC)
         )
@@ -46,15 +45,13 @@ public class GetPollListController extends HashIdController {
         request.validate();
         var requirement = createRequirement(request, pageable, user);
 
-        var res = service.get(requirement);
-
         return ApiResponse.success(
-            res
+            convertToResponse(service.get(requirement))
         );
     }
 
     @GetMapping
-    ApiResponse<PageResponse<PollSummary>> get(
+    ApiResponse<PageResponse<PollSummaryResponse>> get(
         @SortDefaults(
             @SortDefault(sort = "createdAt", direction = DESC)
         )
@@ -63,10 +60,9 @@ public class GetPollListController extends HashIdController {
     ) {
         request.validate();
         var requirement = createRequirement(request, pageable);
-        var res = service.get(requirement);
 
         return ApiResponse.success(
-            res
+            convertToResponse(service.get(requirement))
         );
     }
 
