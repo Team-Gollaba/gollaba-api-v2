@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
+import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.common.web.PageResponse;
 import org.tg.gollaba.poll.service.GetMyFavoritePollListService;
 import org.tg.gollaba.poll.vo.PollSummary;
@@ -18,13 +19,17 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/v2/polls/favorites-me")
-@RequiredArgsConstructor
-public class GetMyFavoritePollListController {
+public class GetMyFavoritePollListController extends HashIdController {
     private final GetMyFavoritePollListService service;
+
+    public GetMyFavoritePollListController(HashIdHandler hashIdHandler, GetMyFavoritePollListService service) {
+        super(hashIdHandler);
+        this.service = service;
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    ApiResponse<PageResponse<PollSummary>> get(AuthenticatedUser user,
+    ApiResponse<PageResponse<PollSummaryResponse>> get(AuthenticatedUser user,
                                                @SortDefault.SortDefaults(
                                                    @SortDefault(sort = "createdAt", direction = DESC)
                                                )
@@ -32,7 +37,7 @@ public class GetMyFavoritePollListController {
         var pollSummaries = service.get(user.id(), pageable);
 
         return ApiResponse.success(
-            PageResponse.from(pollSummaries)
+            convertToResponse(PageResponse.from(pollSummaries))
         );
     }
 }

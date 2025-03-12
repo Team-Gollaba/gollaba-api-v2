@@ -26,13 +26,17 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/v2/polls/me")
-@RequiredArgsConstructor
-public class GetMyPollsController {
+public class GetMyPollsController extends HashIdController {
     private final GetMyPollsService service;
+
+    public GetMyPollsController(HashIdHandler hashIdHandler, GetMyPollsService service) {
+        super(hashIdHandler);
+        this.service = service;
+    }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping
-    public ApiResponse<PageResponse<PollSummary>> get(AuthenticatedUser user,
+    ApiResponse<PageResponse<PollSummaryResponse>> get(AuthenticatedUser user,
                                                       @SortDefault.SortDefaults(
                                                           @SortDefault(sort = "createdAt", direction = DESC)
                                                       )
@@ -40,7 +44,7 @@ public class GetMyPollsController {
         var pollSummaries = service.get(user.id(), pageable);
 
         return ApiResponse.success(
-            PageResponse.from(pollSummaries)
+            convertToResponse(PageResponse.from(pollSummaries))
         );
     }
 }
