@@ -6,21 +6,22 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.tg.gollaba.common.web.HashIdHandler;
+import org.tg.gollaba.config.ApplicationContextProvider;
+
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
 public class HashIdDeserializer extends JsonDeserializer<Long> {
     private final HashIdHandler hashIdHandler;
 
-    @Override
-    public Long deserialize(JsonParser p, DeserializationContext ctxt) {
-        String text;
-        try {
-            text = p.getText();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public HashIdDeserializer() {
+        this.hashIdHandler = ApplicationContextProvider.getApplicationContext()
+            .getBean(HashIdHandler.class);
+    }
 
-        return hashIdHandler.decode(text);
+    @Override
+    public Long deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return hashIdHandler.decode(p.getValueAsString());
     }
 }

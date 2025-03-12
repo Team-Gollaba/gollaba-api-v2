@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tg.gollaba.auth.vo.AuthenticatedUser;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.UpdatePollService;
 
@@ -32,7 +31,7 @@ public class UpdatePollController extends HashIdController{
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ApiResponse<Void> update(AuthenticatedUser user,
+    ApiResponse<Void> update(AuthenticatedUser user,
                                     @PathVariable String pollHashId,
                                     @Valid @RequestBody Request request){
         service.update(

@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tg.gollaba.common.web.ApiResponse;
-import org.tg.gollaba.common.web.HashIdController;
 import org.tg.gollaba.common.web.HashIdHandler;
 import org.tg.gollaba.poll.service.GetTrendingPollsService;
 import org.tg.gollaba.poll.vo.PollSummary;
@@ -24,11 +23,11 @@ public class GetTrendingPollsController extends HashIdController {
     }
 
     @GetMapping
-    public ApiResponse<List<PollSummary>> get(Integer limit){
+    ApiResponse<List<PollSummaryResponse>> get(Integer limit){
         limit = limit == null ? DEFAULT_LIMIT : limit;
 
         return ApiResponse.success(
-            service.get(limit)
+            convertToResponse(service.get(limit))
         );
     }
 

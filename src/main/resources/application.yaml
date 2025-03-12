@@ -107,6 +107,8 @@ spring:
             authorization-uri: "https://appleid.apple.com/auth/authorize?scope=name%20email&response_mode=form_post"
             token-uri: "https://appleid.apple.com/auth/token"
 
+  cache:
+    type: redis
 
 server:
   servlet:

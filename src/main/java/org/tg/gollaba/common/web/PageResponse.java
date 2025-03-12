@@ -1,17 +1,24 @@
 package org.tg.gollaba.common.web;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.Collections;
 import java.util.List;
 
-public record PageResponse<T>(
-    List<T> items,
-    Integer page,
-    Integer size,
-    Long totalCount,
-    Integer totalPage
-) {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PageResponse<T> {
+    private List<T> items;
+    private Integer page;
+    private Integer size;
+    private Long totalCount;
+    private Integer totalPage;
+
     public PageResponse(List<T> items,
                         Integer page,
                         Integer size,
@@ -43,6 +50,6 @@ public record PageResponse<T>(
     }
 
     public boolean isEmpty() {
-        return this.items == null || this.items().isEmpty();
+        return this.items == null || this.items.isEmpty();
     }
 }

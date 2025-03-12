@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.tg.gollaba.common.exception.BadRequestException;
+import org.tg.gollaba.common.support.Status;
 import org.tg.gollaba.common.web.AdminUtilController;
 import org.tg.gollaba.common.web.ApiResponse;
 import org.tg.gollaba.common.web.HashIdHandler;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v2/hash")
@@ -24,17 +28,23 @@ public class GetHashIdController extends AdminUtilController {
     }
 
     @GetMapping
-    ApiResponse<String> get(@Valid Request request) {
+    ApiResponse<Object> get(@Valid Request request) {
         validate(request.adminKey());
 
-        return ApiResponse.success(
-            hashIdHandler.encode(request.pollId())
-        );
+        if (request.pollId().isPresent()) {
+            return ApiResponse.success(hashIdHandler.encode(request.pollId().get()));
+        }
+
+        if (request.pollHashId().isPresent()) {
+            return ApiResponse.success(hashIdHandler.decode(request.pollHashId().get()));
+        }
+
+        throw new BadRequestException(Status.INVALID_PARAMETER);
     }
 
     record Request(
-        @NotNull(message = "pollId는 필수입니다.")
-        Long pollId,
+        Optional<Long> pollId,
+        Optional<String> pollHashId,
         @NotBlank(message = "adminKey는 필수입니다.")
         String adminKey
     ) {
