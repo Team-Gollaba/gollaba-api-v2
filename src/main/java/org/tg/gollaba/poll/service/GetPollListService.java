@@ -32,7 +32,7 @@ public class GetPollListService {
             #requirement.isActive().isEmpty() &&
             #requirement.pollType().isEmpty() &&
             #requirement.pageable.pageNumber <= 3 &&
-            #requirement.pageable.pageSize <= 20
+            #requirement.pageable.pageSize <= 30
             """
     )
     public PageResponse<PollSummary> get(Requirement requirement) {
@@ -49,7 +49,7 @@ public class GetPollListService {
             #requirement.isActive().isEmpty() &&
             #requirement.pollType().isEmpty() &&
             #requirement.pageable.pageNumber <= 3 &&
-            #requirement.pageable.pageSize <= 20
+            #requirement.pageable.pageSize <= 30
             """
     )
     public PageResponse<PollSummary> refresh(Requirement requirement) {
