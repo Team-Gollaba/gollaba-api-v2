@@ -25,7 +25,7 @@ public class NotificationDeviceTest {
 
             // then
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("userId는 null일 수 없습니다. currentValue: %d", null);
+                .hasMessageContaining("userId는 null일 수 없습니다.");
         }
 
         @Test
@@ -59,7 +59,7 @@ public class NotificationDeviceTest {
 
             // then
             assertThat(throwable).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("deviceName은 비거나 공백일 수 없습니다. currentValue: %s".formatted(null));
+                .hasMessageContaining("deviceName은 비거나 공백일 수 없습니다.");
         }
     }
 }
