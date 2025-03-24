@@ -1,10 +1,12 @@
 package org.tg.gollaba.poll.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.tg.gollaba.config.CacheKeys;
 import org.tg.gollaba.poll.component.FileUploader;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.domain.PollItem;
@@ -19,8 +21,8 @@ import java.util.Optional;
 public class CreatePollService {
     private final PollRepository pollRepository;
     private final FileUploader fileUploader;
-    private final ApplicationEventPublisher eventPublisher;
 
+    @CacheEvict(value = CacheKeys.POLL_LIST_HOME, allEntries = true)
     @Transactional
     public long create(Requirement requirement) {
         var items = requirement.items()
