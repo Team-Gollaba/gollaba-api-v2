@@ -30,7 +30,7 @@ public class VoteService {
     private final DuplicatedVotingChecker duplicatedVotingChecker;
     private final VotingValidator votingValidator;
 
-    @CacheEvict(CacheKeys.POLL_DETAILS)
+    @CacheEvict(value = CacheKeys.POLL_DETAILS , key = "#requirement.pollId()")
     @Transactional
     public void vote(Requirement requirement) {
         checkAlreadyVoting(requirement);
