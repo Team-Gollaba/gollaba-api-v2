@@ -2,9 +2,11 @@ package org.tg.gollaba.voting.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.exception.BadRequestException;
+import org.tg.gollaba.config.CacheKeys;
 import org.tg.gollaba.voting.component.DuplicatedVotingChecker;
 import org.tg.gollaba.voting.component.VotingValidator;
 import org.tg.gollaba.voting.domain.Voting;
@@ -28,6 +30,7 @@ public class VoteService {
     private final DuplicatedVotingChecker duplicatedVotingChecker;
     private final VotingValidator votingValidator;
 
+    @CacheEvict(value = CacheKeys.POLL_DETAILS , key = "#requirement.pollId()")
     @Transactional
     public void vote(Requirement requirement) {
         checkAlreadyVoting(requirement);
