@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.poll.domain.PollFixture;
@@ -38,7 +39,8 @@ class UpdateVotingServiceTest {
     private PollRepository pollRepository;
     @Mock
     private UserRepository userRepository;
-
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @Test
     void success() {

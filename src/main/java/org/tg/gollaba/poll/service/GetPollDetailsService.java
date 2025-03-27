@@ -1,6 +1,7 @@
 package org.tg.gollaba.poll.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,12 @@ public class GetPollDetailsService {
     @Transactional(readOnly = true)
     @Cacheable(value = CacheKeys.POLL_DETAILS, key = "#pollId")
     public PollDetails get(long pollId) {
+        return pollRepository.findPollDetails(pollId);
+    }
+
+    @Transactional(readOnly = true)
+    @CachePut(value = CacheKeys.POLL_DETAILS, key = "#pollId")
+    public PollDetails refresh(long pollId) {
         return pollRepository.findPollDetails(pollId);
     }
 

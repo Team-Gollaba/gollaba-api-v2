@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.tg.gollaba.common.TestFixture;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.common.support.Status;
@@ -40,6 +41,8 @@ class CreateVotingServiceTest {
     private DuplicatedVotingChecker duplicatedVotingChecker;
     @Mock
     private VotingValidator votingValidator;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @DisplayName("투표 요청을 처리한다.")
     @Test

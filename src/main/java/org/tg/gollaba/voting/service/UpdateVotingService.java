@@ -1,18 +1,20 @@
 package org.tg.gollaba.voting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.exception.BadRequestException;
+import org.tg.gollaba.poll.domain.Poll;
+import org.tg.gollaba.poll.domain.PollItem;
+import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.user.domain.User;
 import org.tg.gollaba.user.repository.UserRepository;
 import org.tg.gollaba.voting.component.VotingValidator;
 import org.tg.gollaba.voting.domain.VoterName;
 import org.tg.gollaba.voting.domain.Voting;
 import org.tg.gollaba.voting.domain.VotingItem;
-import org.tg.gollaba.poll.repository.PollRepository;
-import org.tg.gollaba.poll.domain.Poll;
-import org.tg.gollaba.poll.domain.PollItem;
+import org.tg.gollaba.voting.listener.AuditVotingEventListener;
 import org.tg.gollaba.voting.repository.VotingRepository;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class UpdateVotingService {
     private final VotingValidator votingValidator;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void update(Requirement requirement) {
@@ -52,6 +55,7 @@ public class UpdateVotingService {
         voting.update(newVoterName, newItems);
         votingValidator.validate(voting);
         votingRepository.save(voting);
+        eventPublisher.publishEvent(new AuditVotingEventListener.Event(voting));
     }
 
     private void validate(User user, Poll poll, Voting voting) {
