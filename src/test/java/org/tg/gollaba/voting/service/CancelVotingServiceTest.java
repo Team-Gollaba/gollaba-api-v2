@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.tg.gollaba.voting.component.DuplicatedVotingChecker;
 import org.tg.gollaba.voting.domain.VotingFixture;
 import org.tg.gollaba.voting.repository.VotingRepository;
@@ -20,12 +21,12 @@ import static org.mockito.Mockito.*;
 class CancelVotingServiceTest {
     @InjectMocks
     private CancelVotingService service;
-
     @Mock
     private VotingRepository votingRepository;
-
     @Mock
     private DuplicatedVotingChecker duplicatedVotingChecker;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @DisplayName("회원이 투표를 철회한다.")
     @Test

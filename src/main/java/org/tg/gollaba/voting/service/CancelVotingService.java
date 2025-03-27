@@ -1,10 +1,12 @@
 package org.tg.gollaba.voting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.exception.BadRequestException;
 import org.tg.gollaba.voting.component.DuplicatedVotingChecker;
+import org.tg.gollaba.voting.listener.AuditVotingEventListener;
 import org.tg.gollaba.voting.repository.VotingRepository;
 
 import static org.tg.gollaba.common.support.Status.VOTING_NOT_FOUND;
@@ -14,6 +16,7 @@ import static org.tg.gollaba.common.support.Status.VOTING_NOT_FOUND;
 public class CancelVotingService {
     private final VotingRepository votingRepository;
     private final DuplicatedVotingChecker duplicatedVotingChecker;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void cancel(Long votingId, String ipAddress) {
@@ -24,6 +27,7 @@ public class CancelVotingService {
 
         duplicatedVotingChecker.delete(ipAddress, voting.pollId());
         votingRepository.save(voting);
+        eventPublisher.publishEvent(new AuditVotingEventListener.Event(voting));
     }
 
 }

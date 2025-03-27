@@ -3,6 +3,7 @@ package org.tg.gollaba.voting.service;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tg.gollaba.common.exception.BadRequestException;
@@ -14,6 +15,7 @@ import org.tg.gollaba.voting.domain.VoterName;
 import org.tg.gollaba.poll.domain.Poll;
 import org.tg.gollaba.poll.repository.PollRepository;
 import org.tg.gollaba.voting.domain.VotingItem;
+import org.tg.gollaba.voting.listener.AuditVotingEventListener;
 import org.tg.gollaba.voting.repository.VotingRepository;
 
 import java.util.Optional;
@@ -29,8 +31,8 @@ public class VoteService {
     private final VotingRepository votingRepository;
     private final DuplicatedVotingChecker duplicatedVotingChecker;
     private final VotingValidator votingValidator;
+    private final ApplicationEventPublisher eventPublisher;
 
-    @CacheEvict(value = CacheKeys.POLL_DETAILS , key = "#requirement.pollId()")
     @Transactional
     public void vote(Requirement requirement) {
         checkAlreadyVoting(requirement);
@@ -42,6 +44,7 @@ public class VoteService {
         votingValidator.validate(voting);
         votingRepository.save(voting);
         duplicatedVotingChecker.record(requirement.ipAddress(), requirement.pollId());
+        eventPublisher.publishEvent(new AuditVotingEventListener.Event(voting));
     }
 
     private void checkAlreadyVoting(Requirement requirement) {

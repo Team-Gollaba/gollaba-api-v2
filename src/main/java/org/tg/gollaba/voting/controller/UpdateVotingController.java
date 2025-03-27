@@ -19,9 +19,9 @@ public class UpdateVotingController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ApiResponse<Void> update(AuthenticatedUser user,
-                                    @PathVariable Long votingId,
-                                    @RequestBody @Valid Request request) {
+    ApiResponse<Void> update(AuthenticatedUser user,
+                             @PathVariable Long votingId,
+                             @RequestBody @Valid Request request) {
         var requirement = createRequirement(
             user.id(),
             request,
